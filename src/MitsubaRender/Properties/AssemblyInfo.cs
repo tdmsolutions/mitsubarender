@@ -6,21 +6,21 @@ using Rhino.PlugIns;
 
 // Plug-in Description Attributes - all of these are optional
 // These will show in Rhino's option dialog, in the tab Plug-ins
-[assembly: PlugInDescription(DescriptionType.Address, "-")]
-[assembly: PlugInDescription(DescriptionType.Country, "-")]
-[assembly: PlugInDescription(DescriptionType.Email, "-")]
-[assembly: PlugInDescription(DescriptionType.Phone, "-")]
-[assembly: PlugInDescription(DescriptionType.Fax, "-")]
-[assembly: PlugInDescription(DescriptionType.Organization, "-")]
-[assembly: PlugInDescription(DescriptionType.UpdateUrl, "-")]
-[assembly: PlugInDescription(DescriptionType.WebSite, "-")]
+[assembly: PlugInDescription(DescriptionType.Address, "Teixidores 1, Office 17. Premià de Dalt, Barcelona")]
+[assembly: PlugInDescription(DescriptionType.Country, "Spain")]
+[assembly: PlugInDescription(DescriptionType.Email, "info@tdmsolutions.com")]
+[assembly: PlugInDescription(DescriptionType.Phone, "+34 937547774")]
+[assembly: PlugInDescription(DescriptionType.Fax, "+34 937525215")]
+[assembly: PlugInDescription(DescriptionType.Organization, "TDM Solutions SL")]
+[assembly: PlugInDescription(DescriptionType.UpdateUrl, "http://tdmsolutions.github.io/mitsubarender/")]
+[assembly: PlugInDescription(DescriptionType.WebSite, "http://tdmsolutions.github.io/mitsubarender/")]
 
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Mitsuba Render by TDM Solutions SL")] // Plug-In title is extracted from this
-[assembly: AssemblyDescription("Open Source Render for RhinoGold and Rhino")]
+[assembly: AssemblyTitle("Mitsuba Render Plugin by TDM Solutions SL")] // Plug-In title is extracted from this
+[assembly: AssemblyDescription("Open Source Render Plugin for RhinoGold and Rhino")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("www.tdmsolutions.com")]
 [assembly: AssemblyProduct("Mitsuba Render by TDM Solutions SL")]
