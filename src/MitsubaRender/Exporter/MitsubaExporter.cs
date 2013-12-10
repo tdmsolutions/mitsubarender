@@ -81,8 +81,7 @@ namespace MitsubaRender
 				m_xmlIdMap = new Dictionary<int, string>();
 				m_materialNames = new HashSet<string>();
                 
-                /* Create default emitter */
-				docRoot.AppendChild(CreateEmitter());
+                
 
 				/* Export the integrator */
 				ExportIntegrator(docRoot);
@@ -101,8 +100,13 @@ namespace MitsubaRender
 
 			    if (doc.RenderEnvironments.Count > 0)
 			    {
-			        RenderEnvironment env = doc.RenderEnvironments[0];
-                    
+			        ExportEnvironment(doc, docRoot);
+
+			    }
+			    else
+			    {
+                    /* Create default emitter */
+                    docRoot.AppendChild(CreateEmitter());
 			    }
 
 				/* Write the XML scene document */
@@ -236,6 +240,40 @@ namespace MitsubaRender
             
                 
         }
+
+        /// <summary>
+        /// Export all the materials
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="docRoot"></param>
+        private void ExportEnvironment(RhinoDoc doc, XmlElement docRoot)
+        {
+
+            var environment = doc.RenderEnvironments[0];
+            SimulatedEnvironment simulation = new SimulatedEnvironment();
+            environment.SimulateEnvironment(ref simulation,  false);
+
+            //simulation.BackgroundImage.Filename
+
+            string fileNamefield = simulation.BackgroundImage.Filename;
+     
+
+            //if (environment.Fields.ContainsField("fileName"))
+            //{
+            //    fileNamefield = environment.Fields.GetField("filename").ToString();
+            //}
+
+            //creamos el xml element para el enviorment y lo Ñdimos al root
+            XmlElement env = m_xmlDocument.CreateElement("emitter");
+            env.SetAttribute("type", "envmap");
+            var el = XmlMitsuba.AddElement(m_xmlDocument, "string", "filename", fileNamefield);
+            env.AppendChild(el);
+            
+            docRoot.AppendChild(env);
+
+
+        }
+
 
         /// <summary>
         /// 

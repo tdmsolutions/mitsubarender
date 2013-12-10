@@ -17,8 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Net.Mime;
+using MitsubaRender.Settings;
 using Rhino;
 using Rhino.Commands;
 using Rhino.Display;
@@ -62,7 +65,7 @@ namespace MitsubaRender
         protected override Result Render(RhinoDoc doc, RunMode mode, bool fastPreview)
         {
             //TODO: Crear xml(mitsuba) de todo el documento
-            string basePath = MitsubaRender.Settings.Settings.WorkingDirectory;
+            string basePath = MitsubaRender.Settings.MitsubaSettings.WorkingDirectory;
             string name;
             if (String.IsNullOrEmpty(doc.Path))
             {
@@ -88,16 +91,17 @@ namespace MitsubaRender
 
             //TODO: Añadirlo a un archivo temporal
             //TODO:llamar a mitsuba con el xml como argumento
-            //Process proc = new Process();
-            //proc.StartInfo.FileName = Path.Combine(RhinoRenderPlugIn.Settings.MitsubaRoot, "mtsgui.exe");
-            //proc.StartInfo.Arguments = "\"" + sceneFile + "\"";
-            //proc.StartInfo.WorkingDirectory = basePath;
-            //proc.Start();
-            //proc.Disposed += RenderEnd;
+            Process proc = new Process();
+            proc.StartInfo.FileName = MitsubaSettings.MitsubaPath;
+            proc.StartInfo.Arguments = sceneFile;
+            proc.StartInfo.WorkingDirectory = basePath;
+            proc.Start();
+            proc.Disposed += RenderEnd;
 
             return Result.Success;
             //throw new NotImplementedException("Render is not implemented in the RhinoRenderPlugIn.RhinoRenderPlugInPlugIn class.");
         }
+       
 
         private string createDirectory(string basePath, string name)
         {
@@ -144,6 +148,14 @@ namespace MitsubaRender
         protected override LoadReturnCode OnLoad(ref string errorMessage)
         {
             RenderContent.RegisterContent(this);
+            var pluginPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            MitsubaSettings.ApplicationPath = Path.GetDirectoryName(pluginPath);
+            MitsubaSettings.MitsubaPath = System.IO.Path.Combine(MitsubaSettings.ApplicationPath, "Mitsuba\\mtsgui.exe");
+            string docFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            MitsubaSettings.WorkingDirectory = System.IO.Path.Combine(docFolder, "Mitsuba");
+            if (!Directory.Exists(MitsubaSettings.WorkingDirectory))
+                Directory.CreateDirectory(MitsubaSettings.WorkingDirectory);
 
             return base.OnLoad(ref errorMessage);
         }

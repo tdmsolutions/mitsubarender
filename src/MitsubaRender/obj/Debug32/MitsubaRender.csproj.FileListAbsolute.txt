@@ -1,0 +1,10 @@
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.csprojResolveAssemblyReference.cache
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.Settings.MitsubaOptions.resources
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.csproj.GenerateResource.Cache
+C:\dev\mitsubarender\src\MitsubaRender\bin\MitsubaRender.dll
+C:\dev\mitsubarender\src\MitsubaRender\bin\MitsubaRender.pdb
+C:\dev\mitsubarender\src\MitsubaRender\bin\Ionic.Zlib.dll
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.dll
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.pdb
+C:\Program Files\Mitsuba Plugin for Rhino and RhinoGold 1.0\System\MitsubaRender.dll
+C:\Program Files\Mitsuba Plugin for Rhino and RhinoGold 1.0\System\MitsubaRender.pdb
