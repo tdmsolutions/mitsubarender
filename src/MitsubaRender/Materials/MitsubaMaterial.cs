@@ -17,8 +17,9 @@
 
 using System.Xml;
 using Rhino.Render;
+using Rhino.Display;
 
-namespace MitsubaRender.MitsubaMaterials
+namespace MitsubaRender.Materials
 {
     /// <summary>
     /// Parent material for all Mitsuba materials
@@ -26,16 +27,38 @@ namespace MitsubaRender.MitsubaMaterials
     public abstract class MitsubaMaterial:RenderMaterial
     {
         /// <summary>
-        /// Generate the xml material for mitsuba render
+        /// The internal ID of the current material.
+        /// </summary>
+        public string MaterialId { get; set; }
+
+        /// <summary>
+        /// If there aren't any texture it's used a simple colour.
+        /// </summary>
+        public Color4f MaterialColor { get; set; }
+
+        /// <summary>
+        /// True if it's using a texture instead of a color.
+        /// </summary>
+        public bool HasTexture { get; set; }
+
+        /// <summary>
+        /// The fisical path of the texture file. Usually we copy the texture file to the scene folder.
+        /// </summary>
+        public string TextureFile { get; set; }
+
+
+
+        /// <summary>
+        /// Generate the XML material for mitsuba render
         /// </summary>
         /// <param name="doc">Xml document</param>
         /// <param name="destFile"></param>
         /// <returns>the material xml element</returns>
         public abstract XmlElement GetMitsubaMaterialXml(XmlDocument doc, string destFile);
 
-        public abstract string GetIdMaterial();
+        //public abstract string GetIdMaterial();
 
-        public abstract string GetFileNameMaterial();
+        //public abstract string GetFileNameMaterial();
 
         protected override void OnAddUserInterfaceSections()
         {

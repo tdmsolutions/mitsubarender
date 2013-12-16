@@ -20,7 +20,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Xml;
 using Rhino.Display;
-using MitsubaRender.MitsubaMaterials;
 
 namespace MitsubaRender.Materials
 {
@@ -29,12 +28,16 @@ namespace MitsubaRender.Materials
     {
         public static Guid MitsubaMaterialId = new Guid("b7d7e743-edce-429a-a5ce-326cb37a3cc4");
 
+        ////////////////
+        // COMUNES
         private Color4f _color;
-        private float _intIOR;
         private string _colorString;
-        string _file = null;
         bool _textureOn;
+        string _file;
         private string _idMat;
+        ////////////////
+
+        private float _intIOR;
 
         public MitsubaDielectricMaterial()
         {
@@ -44,12 +47,12 @@ namespace MitsubaRender.Materials
 
         public override string TypeName
         {
-            get { throw new NotImplementedException(); }
+            get { return "Mitsuba Dielectric material"; }
         }
 
         public override string TypeDescription
         {
-            get { throw new NotImplementedException(); }
+            get { return "Mitsuba Dielectric material"; }
         }
 
         public override XmlElement GetMitsubaMaterialXml(XmlDocument doc, string destFile)
@@ -57,14 +60,14 @@ namespace MitsubaRender.Materials
             throw new NotImplementedException();
         }
 
-        public override string GetIdMaterial()
-        {
-            throw new NotImplementedException();
-        }
+        //public override string GetIdMaterial()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public override string GetFileNameMaterial()
-        {
-            throw new NotImplementedException();
-        }
+        //public override string GetFileNameMaterial()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

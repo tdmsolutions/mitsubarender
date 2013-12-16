@@ -16,45 +16,45 @@
  */
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
+using MitsubaRender.Exporter;
 using Rhino.Display;
+using Rhino.DocObjects;
 using Rhino.Render;
-using Rhino.Render.Fields;
 
-namespace MitsubaRender.MitsubaMaterials
+namespace MitsubaRender.Materials
 {
     [Guid("c69b06b1-ef5e-47fd-b455-3eef6ec8c38e")]
-    public class MitsubaRoughMaterial: MitsubaMaterial
+    public class MitsubaRoughMaterial : MitsubaMaterial
     {
         public static Guid MitsubaMaterialId = new Guid("c69b06b1-ef5e-47fd-b455-3eef6ec8c38e");
+        //private float _bump;
+        private bool _bumpOn;
 
         private Color4f _color;
-        
+
         private string _colorString;
-        string _file = null;
-        string _fileRough = null;
-        bool _textureOn;
-        bool _roughOn;
-        float _rough;
-        bool _qualityOn;
+        //private float _enviroment;
+        private bool _enviromentOn;
+        private string _file;
+        private string _fileBump;
+        private string _fileEnvi;
+        private string _fileRough;
+        private string _fileTrans;
         private string _idMat;
-
-
-        string _fileTrans = null;
-        string _fileBump = null;
-        string _fileEnvi = null;
-        bool _transparencyOn;
-        bool _bumpOn;
-        bool _enviromentOn;
-        float _transparency;
-        float _bump;
-        float _enviroment;
+        private bool _qualityOn;
+        private float _rough;
+        private bool _roughOn;
+        private bool _textureOn;
+        //private float _transparency;
+        private bool _transparencyOn;
 
         public MitsubaRoughMaterial()
         {
-            string paramName = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
-            string paramNameRough = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
+            var paramName = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
+            var paramNameRough = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
 
             /* Color */
             var field = Fields.Add("reflectance", _color, "Diffuse Color");
@@ -66,7 +66,7 @@ namespace MitsubaRender.MitsubaMaterials
 
             /* Roughness Texture */
             var boolField = Fields.AddTextured("textureRough", false, "Texture Rough");
-            BindParameterToField(paramNameRough,StandardChildSlots.Diffuse.ToString(), boolField, ChangeContexts.UI);
+            BindParameterToField(paramNameRough, StandardChildSlots.Diffuse.ToString(), boolField, ChangeContexts.UI);
 
             /* Roughness Spectrum*/
             _rough = 0.2f;
@@ -76,7 +76,6 @@ namespace MitsubaRender.MitsubaMaterials
             /* High Quality Version*/
             var qField = Fields.Add("bool", false, "Fast Aproximation Version");
             BindParameterToField("bool", qField, ChangeContexts.UI);
-
         }
 
         public override string TypeName
@@ -89,13 +88,12 @@ namespace MitsubaRender.MitsubaMaterials
             get { return "Mitsuba Rough Material"; }
         }
 
-        public override void SimulateMaterial(ref Rhino.DocObjects.Material simulatedMaterial, bool forDataOnly)
+        public override void SimulateMaterial(ref Material simulatedMaterial, bool forDataOnly)
         {
-            
-            simTexture(ref simulatedMaterial, forDataOnly);
+            simulateTexture(ref simulatedMaterial, forDataOnly);
 
             /* Diffuse Color */
-            Rhino.Display.Color4f color;
+            Color4f color;
             if (Fields.TryGetValue("reflectance", out color))
             {
                 simulatedMaterial.DiffuseColor = color.AsSystemColor();
@@ -105,49 +103,35 @@ namespace MitsubaRender.MitsubaMaterials
 
             /* Rough Texture */
             simTextureRough(ref simulatedMaterial, forDataOnly);
-
-            if (Fields.TryGetValue("roughness", out _rough))
-            {
-                
-            }
-
-            if (Fields.TryGetValue("bool", out _qualityOn))
-            {
-                
-            }
-            
+            if (Fields.TryGetValue("roughness", out _rough)) {}
+            if (Fields.TryGetValue("bool", out _qualityOn)) {}
         }
 
         public override XmlElement GetMitsubaMaterialXml(XmlDocument doc, string destFile)
         {
             string destTexture = null;
             string destRoughTexture = null;
-
             if (_rough <= 0.0f) _rough = 0.0f;
             else if (_rough > 0.7f) _rough = 0.7f;
-            
             /* Copy texture image to destination folder */
             if (_file != null)
             {
-                destTexture = System.IO.Path.Combine(destFile, System.IO.Path.GetFileName(_file));
-                System.IO.File.Copy(_file, destTexture.Replace('$','-'), true);
+                destTexture = Path.Combine(destFile, Path.GetFileName(_file));
+                File.Copy(_file, destTexture.Replace('$', '-'), true);
             }
-
             if (_fileRough != null)
             {
-                destRoughTexture = System.IO.Path.Combine(destFile, System.IO.Path.GetFileName(_fileRough));
-                System.IO.File.Copy(_fileRough, destRoughTexture.Replace('$', '-'), true);
+                destRoughTexture = Path.Combine(destFile, Path.GetFileName(_fileRough));
+                File.Copy(_fileRough, destRoughTexture.Replace('$', '-'), true);
             }
-
-            _idMat = this.Id.ToString();
-            XmlElement material = doc.CreateElement("bsdf");
+            _idMat = Id.ToString();
+            var material = doc.CreateElement("bsdf");
             material.SetAttribute("type", "roughdiffuse");
-            material.SetAttribute("id", this.Id.ToString());
-
+            material.SetAttribute("id", Id.ToString());
             if (_textureOn)
             {
                 var texture = XmlMitsuba.AddElement(doc, "texture", "reflectance", null, "bitmap");
-                texture.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename", destTexture.Replace('$','-'), null));
+                texture.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename", destTexture.Replace('$', '-'), null));
                 material.AppendChild(texture);
             }
             else
@@ -155,57 +139,52 @@ namespace MitsubaRender.MitsubaMaterials
                 var color = XmlMitsuba.AddElement(doc, "srgb", "reflectance", _colorString);
                 material.AppendChild(color);
             }
-
             if (_roughOn)
             {
                 var textureRough = XmlMitsuba.AddElement(doc, "texture", "alpha", null, "bitmap");
-                textureRough.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename", destRoughTexture.Replace('$', '-'), null));
-
+                textureRough.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename",
+                                                               destRoughTexture.Replace('$', '-'), null));
                 material.AppendChild(textureRough);
             }
-            else
-            {
-                material.AppendChild(XmlMitsuba.AddElement(doc, "float", "alpha", _rough.ToString()));
-            }
-
+            else material.AppendChild(XmlMitsuba.AddElement(doc, "float", "alpha", _rough.ToString()));
             material.AppendChild(XmlMitsuba.AddElement(doc, "boolean", "useFastApprox", _qualityOn.ToString().ToLower()));
             return material;
         }
 
-        public override string GetIdMaterial()
-        {
-            return _idMat;
-        }
+        //public override string GetIdMaterial()
+        //{
+        //    return _idMat;
+        //}
 
-        public override string GetFileNameMaterial()
-        {
-            return _file;
-        }
+        //public override string GetFileNameMaterial()
+        //{
+        //    return _file;
+        //}
 
-        private void simTexture(ref Rhino.DocObjects.Material simulatedMaterial, bool forDataOnly)
+        private void simulateTexture(ref Material simulatedMaterial, bool forDataOnly)
         {
             /* Diffuse Texture */
             if (Fields.TryGetValue("texture", out _textureOn))
             {
                 if (_textureOn)
                 {
-                    Object textureParam = this.GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(), StandardChildSlots.Diffuse.ToString());
+                    var textureParam = GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(), StandardChildSlots.Diffuse.ToString());
+                    //Object textureParam = null;
                     if (textureParam != null)
                     {
-                        RenderContent tx = FindChild("texture");
+                        var tx = FindChild("texture");
                         if (tx == null) return;
-
                         if (tx.Fields.ContainsField("filename"))
                         {
-                            Field fields = tx.Fields.GetField("filename");
+                            var fields = tx.Fields.GetField("filename");
                             _file = fields.ValueAsObject().ToString();
                         }
                         else
                         {
-                            RenderTexture text = tx as RenderTexture;
+                            var text = tx as RenderTexture;
                             if (text != null)
                             {
-                                SimulatedTexture texSim = new SimulatedTexture();
+                                var texSim = new SimulatedTexture();
                                 text.SimulateTexture(ref texSim, false);
                                 _file = texSim.Filename;
                             }
@@ -216,30 +195,30 @@ namespace MitsubaRender.MitsubaMaterials
             }
         }
 
-        private void simTextureRough(ref Rhino.DocObjects.Material simulatedMaterial, bool forDataOnly)
+        private void simTextureRough(ref Material simulatedMaterial, bool forDataOnly)
         {
             /* Diffuse Texture */
             if (Fields.TryGetValue("textureRough", out _roughOn))
             {
                 if (_roughOn)
                 {
-                    Object textureParam = this.GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(), StandardChildSlots.Diffuse.ToString());
+                    var textureParam = GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(),
+                                                             StandardChildSlots.Diffuse.ToString());
                     if (textureParam != null)
                     {
-                        RenderContent tx = FindChild("textureRough");
+                        var tx = FindChild("textureRough");
                         if (tx == null) return;
-
                         if (tx.Fields.ContainsField("filename"))
                         {
-                            Field fields = tx.Fields.GetField("filename");
+                            var fields = tx.Fields.GetField("filename");
                             _fileRough = fields.ValueAsObject().ToString();
                         }
                         else
                         {
-                            RenderTexture text = tx as RenderTexture;
+                            var text = tx as RenderTexture;
                             if (text != null)
                             {
-                                SimulatedTexture texSim = new SimulatedTexture();
+                                var texSim = new SimulatedTexture();
                                 text.SimulateTexture(ref texSim, false);
                                 _fileRough = texSim.Filename;
                             }
@@ -250,30 +229,30 @@ namespace MitsubaRender.MitsubaMaterials
             }
         }
 
-        private void simTransparency(ref Rhino.DocObjects.Material simulatedMaterial, bool forDataOnly)
+        private void simTransparency(ref Material simulatedMaterial, bool forDataOnly)
         {
             /* Transparency Texture */
             if (Fields.TryGetValue("transparency", out _transparencyOn))
             {
                 if (_transparencyOn)
                 {
-                    Object textureParam = this.GetChildSlotParameter(StandardChildSlots.Transparency.ToString(), StandardChildSlots.Transparency.ToString());
+                    var textureParam = GetChildSlotParameter(StandardChildSlots.Transparency.ToString(),
+                                                             StandardChildSlots.Transparency.ToString());
                     if (textureParam != null)
                     {
-                        RenderContent tx = FindChild("transparency");
+                        var tx = FindChild("transparency");
                         if (tx == null) return;
-
                         if (tx.Fields.ContainsField("filename"))
                         {
-                            Field fields = tx.Fields.GetField("filename");
+                            var fields = tx.Fields.GetField("filename");
                             _fileTrans = fields.ValueAsObject().ToString();
                         }
                         else
                         {
-                            RenderTexture text = tx as RenderTexture;
+                            var text = tx as RenderTexture;
                             if (text != null)
                             {
-                                SimulatedTexture texSim = new SimulatedTexture();
+                                var texSim = new SimulatedTexture();
                                 text.SimulateTexture(ref texSim, false);
                                 _fileTrans = texSim.Filename;
                             }
@@ -284,30 +263,30 @@ namespace MitsubaRender.MitsubaMaterials
             }
         }
 
-        private void simBump(ref Rhino.DocObjects.Material simulatedMaterial, bool forDataOnly)
+        private void simBump(ref Material simulatedMaterial, bool forDataOnly)
         {
             /* Bump Texture */
             if (Fields.TryGetValue("bump", out _bumpOn))
             {
                 if (_bumpOn)
                 {
-                    Object textureParam = this.GetChildSlotParameter(StandardChildSlots.Bump.ToString(), StandardChildSlots.Bump.ToString());
+                    var textureParam = GetChildSlotParameter(StandardChildSlots.Bump.ToString(),
+                                                             StandardChildSlots.Bump.ToString());
                     if (textureParam != null)
                     {
-                        RenderContent tx = FindChild("bump");
+                        var tx = FindChild("bump");
                         if (tx == null) return;
-
                         if (tx.Fields.ContainsField("filename"))
                         {
-                            Field fields = tx.Fields.GetField("filename");
+                            var fields = tx.Fields.GetField("filename");
                             _fileBump = fields.ValueAsObject().ToString();
                         }
                         else
                         {
-                            RenderTexture text = tx as RenderTexture;
+                            var text = tx as RenderTexture;
                             if (text != null)
                             {
-                                SimulatedTexture texSim = new SimulatedTexture();
+                                var texSim = new SimulatedTexture();
                                 text.SimulateTexture(ref texSim, false);
                                 _fileBump = texSim.Filename;
                             }
@@ -318,30 +297,30 @@ namespace MitsubaRender.MitsubaMaterials
             }
         }
 
-        private void simEnviroment(ref Rhino.DocObjects.Material simulatedMaterial, bool forDataOnly)
+        private void simEnviroment(ref Material simulatedMaterial, bool forDataOnly)
         {
             /* Bump Texture */
             if (Fields.TryGetValue("enviroment", out _enviromentOn))
             {
                 if (_enviromentOn)
                 {
-                    Object textureParam = this.GetChildSlotParameter(StandardChildSlots.Environment.ToString(), StandardChildSlots.Environment.ToString());
+                    var textureParam = GetChildSlotParameter(StandardChildSlots.Environment.ToString(),
+                                                             StandardChildSlots.Environment.ToString());
                     if (textureParam != null)
                     {
-                        RenderContent tx = FindChild("enviroment");
+                        var tx = FindChild("enviroment");
                         if (tx == null) return;
-
                         if (tx.Fields.ContainsField("filename"))
                         {
-                            Field fields = tx.Fields.GetField("filename");
+                            var fields = tx.Fields.GetField("filename");
                             _fileEnvi = fields.ValueAsObject().ToString();
                         }
                         else
                         {
-                            RenderTexture text = tx as RenderTexture;
+                            var text = tx as RenderTexture;
                             if (text != null)
                             {
-                                SimulatedTexture texSim = new SimulatedTexture();
+                                var texSim = new SimulatedTexture();
                                 text.SimulateTexture(ref texSim, false);
                                 _fileEnvi = texSim.Filename;
                             }

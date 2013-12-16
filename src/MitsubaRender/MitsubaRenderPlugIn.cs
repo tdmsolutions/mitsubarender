@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net.Mime;
+using MitsubaRender.Exporter;
 using MitsubaRender.Settings;
 using Rhino;
 using Rhino.Commands;
@@ -29,7 +29,6 @@ using Rhino.FileIO;
 using Rhino.PlugIns;
 using Rhino.Render;
 using Rhino.UI;
-using MitsubaRender;
 
 namespace MitsubaRender
 {
@@ -66,16 +65,10 @@ namespace MitsubaRender
         {
             //TODO: Crear xml(mitsuba) de todo el documento
             string basePath = MitsubaRender.Settings.MitsubaSettings.WorkingDirectory;
-            string name;
-            if (String.IsNullOrEmpty(doc.Path))
-            {
-                name = Path.GetFileNameWithoutExtension(Path.GetTempFileName());
-            }
-            else
-            {
-                name = Path.GetFileNameWithoutExtension(doc.Path);
-            }
+            string name = Path.GetFileNameWithoutExtension(String.IsNullOrEmpty(doc.Path) ? Path.GetTempFileName() : doc.Path);
+
             basePath = createDirectory(basePath, name);
+
             string filename = name + ".xml";
             string sceneFile;
             try
@@ -91,17 +84,21 @@ namespace MitsubaRender
 
             //TODO: Añadirlo a un archivo temporal
             //TODO:llamar a mitsuba con el xml como argumento
-            Process proc = new Process();
-            proc.StartInfo.FileName = MitsubaSettings.MitsubaPath;
-            proc.StartInfo.Arguments = sceneFile;
-            proc.StartInfo.WorkingDirectory = basePath;
+            var proc = new Process
+            {
+                StartInfo =
+                {
+                    FileName = MitsubaSettings.MitsubaPath, 
+                    Arguments = sceneFile, 
+                    WorkingDirectory = basePath
+                }
+            };
+
             proc.Start();
             proc.Disposed += RenderEnd;
 
             return Result.Success;
-            //throw new NotImplementedException("Render is not implemented in the RhinoRenderPlugIn.RhinoRenderPlugInPlugIn class.");
         }
-       
 
         private string createDirectory(string basePath, string name)
         {
@@ -151,9 +148,11 @@ namespace MitsubaRender
             var pluginPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 
             MitsubaSettings.ApplicationPath = Path.GetDirectoryName(pluginPath);
-            MitsubaSettings.MitsubaPath = System.IO.Path.Combine(MitsubaSettings.ApplicationPath, "Mitsuba\\mtsgui.exe");
-            string docFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            MitsubaSettings.WorkingDirectory = System.IO.Path.Combine(docFolder, "Mitsuba");
+            MitsubaSettings.MitsubaPath = Path.Combine(MitsubaSettings.ApplicationPath, "Mitsuba\\mtsgui.exe");
+
+            var docFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            MitsubaSettings.WorkingDirectory = Path.Combine(docFolder, "Mitsuba");
             if (!Directory.Exists(MitsubaSettings.WorkingDirectory))
                 Directory.CreateDirectory(MitsubaSettings.WorkingDirectory);
 
