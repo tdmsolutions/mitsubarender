@@ -1,8 +1,19 @@
-﻿using System;
-using System.IO;
+﻿// This file is part of MitsubaRenderPlugin project.
+//  
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3 of the License, or (at your
+// option) any later version. This program is distributed in the hope that
+// it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details. 
+// 
+// You should have received a copy of the GNU General Public License
+// along with MitsubaRenderPlugin.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// Copyright 2014 TDM Solutions SL
+
 using System.Runtime.InteropServices;
-using System.Xml;
-using MitsubaRender.Exporter;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
@@ -16,16 +27,16 @@ namespace MitsubaRender.Materials
     [Guid("90f1187e-06c6-4f3d-bfc9-62e64bc632aa")]
     public class MitsubaDiffuseMaterial : MitsubaMaterial
     {
-        public static Guid MitsubaMaterialId = new Guid("90f1187e-06c6-4f3d-bfc9-62e64bc632aa");
+        //public static Guid MitsubaMaterialId = new Guid("90f1187e-06c6-4f3d-bfc9-62e64bc632aa");
+        private static uint _count;
 
         public MitsubaDiffuseMaterial()
         {
             var paramName = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
-            var field = Fields.Add("reflectance", MaterialColor, "Diffuse Color");
-            var bfield = Fields.AddTextured("texture", false, "Texture");
-
-            BindParameterToField("reflectance", field, ChangeContexts.UI);
-            BindParameterToField(paramName, StandardChildSlots.Diffuse.ToString(), bfield, ChangeContexts.UI);
+            var reflectance_field = Fields.AddTextured("reflectance", MaterialColor, "Diffuse Color");
+            var texture_field = Fields.AddTextured("texture", false, "Texture");
+            BindParameterToField("reflectance", reflectance_field, ChangeContexts.UI);
+            BindParameterToField(paramName, StandardChildSlots.Diffuse.ToString(), texture_field, ChangeContexts.UI);
         }
 
         public override string TypeName
@@ -35,26 +46,28 @@ namespace MitsubaRender.Materials
 
         public override string TypeDescription
         {
-            get { return "Mitsuba Diffuse material"; } //TODO better description maybe ?
+            get { return "The smooth diffuse material (also referred to as “Lambertian”) " +
+                         "represents an ideally diffuse material with a user-specified " +
+                         "amount of reflectance."; } //TODO better description maybe ?
         }
 
-        protected override void OnAddUserInterfaceSections()
+        public override string GetMaterialId()
         {
-            base.OnAddUserInterfaceSections();
+            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__diffuse" + _count++;
+            return MaterialId;
         }
 
         public override void SimulateMaterial(ref Material simulatedMaterial, bool forDataOnly)
         {
             bool hasTexture;
-
             if (Fields.TryGetValue("texture", out hasTexture))
             {
                 HasTexture = hasTexture;
-
                 if (HasTexture)
                 {
                     var textureParam = GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(),
                                                              StandardChildSlots.Diffuse.ToString());
+
                     if (textureParam != null)
                     {
                         var tx = FindChild("texture");
@@ -74,11 +87,13 @@ namespace MitsubaRender.Materials
                                 TextureFile = texSim.Filename;
                             }
                         }
+
                         simulatedMaterial.SetBitmapTexture(TextureFile);
                         return;
                     }
                 }
             }
+
             Color4f color;
             if (Fields.TryGetValue("reflectance", out color))
             {
@@ -87,35 +102,6 @@ namespace MitsubaRender.Materials
                 //_colorString = color.R.ToString() + " ," + color.G.ToString() + " ," + color.B.ToString();
             }
             else base.SimulateMaterial(ref simulatedMaterial, forDataOnly);
-        }
-
-        public override XmlElement GetMitsubaMaterialXml(XmlDocument doc, string destFile)
-        {
-            /* Copy texture image to destination folder */
-            if (TextureFile != null)
-            {
-                destFile = Path.Combine(destFile, Path.GetFileName(TextureFile));
-                File.Copy(TextureFile, destFile.Replace('$', '-'), true);
-            }
-
-            MaterialId = Id.ToString();
-            var material = doc.CreateElement("bsdf");
-            material.SetAttribute("type", "diffuse");
-            material.SetAttribute("id", Id.ToString());
-
-            if (HasTexture)
-            {
-                var texture = XmlMitsuba.AddElement(doc, "texture", "reflectance", null, "bitmap");
-                texture.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename", destFile.Replace('$', '-')));
-                material.AppendChild(texture);
-            }
-            else
-            {
-                string colorString = MaterialColor.R + MaterialColor.G + MaterialColor.B + "";
-                material.AppendChild(XmlMitsuba.AddElement(doc, "srgb", "reflectance", colorString));
-            }
-
-            return material;
         }
     }
 }

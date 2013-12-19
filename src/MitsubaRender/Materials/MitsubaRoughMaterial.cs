@@ -1,25 +1,19 @@
-﻿/*
- * This file is part of MitsubaRenderPlugin project.
- * 
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version. This program is distributed in the hope that
- * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with MitsubaRenderPlugin.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * Copyright 2014 TDM Solutions SL
- */
+﻿// This file is part of MitsubaRenderPlugin project.
+//  
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3 of the License, or (at your
+// option) any later version. This program is distributed in the hope that
+// it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details. 
+// 
+// You should have received a copy of the GNU General Public License
+// along with MitsubaRenderPlugin.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// Copyright 2014 TDM Solutions SL
 
-using System;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Xml;
-using MitsubaRender.Exporter;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
@@ -29,7 +23,9 @@ namespace MitsubaRender.Materials
     [Guid("c69b06b1-ef5e-47fd-b455-3eef6ec8c38e")]
     public class MitsubaRoughMaterial : MitsubaMaterial
     {
-        public static Guid MitsubaMaterialId = new Guid("c69b06b1-ef5e-47fd-b455-3eef6ec8c38e");
+        //public static Guid MitsubaMaterialId = new Guid("c69b06b1-ef5e-47fd-b455-3eef6ec8c38e");
+        private static uint _count;
+
         //private float _bump;
         private bool _bumpOn;
 
@@ -55,24 +51,19 @@ namespace MitsubaRender.Materials
         {
             var paramName = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
             var paramNameRough = ParamNameFromChildSlotName(StandardChildSlots.Diffuse.ToString());
-
             /* Color */
             var field = Fields.Add("reflectance", _color, "Diffuse Color");
             BindParameterToField("reflectance", field, ChangeContexts.UI);
-
             /* Texture */
             var bfield = Fields.AddTextured("texture", false, "Texture");
             BindParameterToField(paramName, StandardChildSlots.Diffuse.ToString(), bfield, ChangeContexts.UI);
-
             /* Roughness Texture */
             var boolField = Fields.AddTextured("textureRough", false, "Texture Rough");
             BindParameterToField(paramNameRough, StandardChildSlots.Diffuse.ToString(), boolField, ChangeContexts.UI);
-
             /* Roughness Spectrum*/
             _rough = 0.2f;
             var fField = Fields.Add("roughness", _rough, "Roughness");
             BindParameterToField("roughness", fField, ChangeContexts.UI);
-
             /* High Quality Version*/
             var qField = Fields.Add("bool", false, "Fast Aproximation Version");
             BindParameterToField("bool", qField, ChangeContexts.UI);
@@ -88,10 +79,15 @@ namespace MitsubaRender.Materials
             get { return "Mitsuba Rough Material"; }
         }
 
+        public override string GetMaterialId()
+        {
+            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__rough" + _count++;
+            return MaterialId;
+        }
+
         public override void SimulateMaterial(ref Material simulatedMaterial, bool forDataOnly)
         {
             simulateTexture(ref simulatedMaterial, forDataOnly);
-
             /* Diffuse Color */
             Color4f color;
             if (Fields.TryGetValue("reflectance", out color))
@@ -100,56 +96,56 @@ namespace MitsubaRender.Materials
                 _colorString = color.R.ToString() + " ," + color.G.ToString() + " ," + color.B.ToString();
             }
             else base.SimulateMaterial(ref simulatedMaterial, forDataOnly);
-
             /* Rough Texture */
             simTextureRough(ref simulatedMaterial, forDataOnly);
             if (Fields.TryGetValue("roughness", out _rough)) {}
             if (Fields.TryGetValue("bool", out _qualityOn)) {}
         }
 
-        public override XmlElement GetMitsubaMaterialXml(XmlDocument doc, string destFile)
-        {
-            string destTexture = null;
-            string destRoughTexture = null;
-            if (_rough <= 0.0f) _rough = 0.0f;
-            else if (_rough > 0.7f) _rough = 0.7f;
-            /* Copy texture image to destination folder */
-            if (_file != null)
-            {
-                destTexture = Path.Combine(destFile, Path.GetFileName(_file));
-                File.Copy(_file, destTexture.Replace('$', '-'), true);
-            }
-            if (_fileRough != null)
-            {
-                destRoughTexture = Path.Combine(destFile, Path.GetFileName(_fileRough));
-                File.Copy(_fileRough, destRoughTexture.Replace('$', '-'), true);
-            }
-            _idMat = Id.ToString();
-            var material = doc.CreateElement("bsdf");
-            material.SetAttribute("type", "roughdiffuse");
-            material.SetAttribute("id", Id.ToString());
-            if (_textureOn)
-            {
-                var texture = XmlMitsuba.AddElement(doc, "texture", "reflectance", null, "bitmap");
-                texture.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename", destTexture.Replace('$', '-'), null));
-                material.AppendChild(texture);
-            }
-            else
-            {
-                var color = XmlMitsuba.AddElement(doc, "srgb", "reflectance", _colorString);
-                material.AppendChild(color);
-            }
-            if (_roughOn)
-            {
-                var textureRough = XmlMitsuba.AddElement(doc, "texture", "alpha", null, "bitmap");
-                textureRough.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename",
-                                                               destRoughTexture.Replace('$', '-'), null));
-                material.AppendChild(textureRough);
-            }
-            else material.AppendChild(XmlMitsuba.AddElement(doc, "float", "alpha", _rough.ToString()));
-            material.AppendChild(XmlMitsuba.AddElement(doc, "boolean", "useFastApprox", _qualityOn.ToString().ToLower()));
-            return material;
-        }
+        //public override XmlElement GetMitsubaMaterialXml(string destFile)
+        //{
+        //    string destTexture = null;
+        //    string destRoughTexture = null;
+        //    if (_rough <= 0.0f) _rough = 0.0f;
+        //    else if (_rough > 0.7f) _rough = 0.7f;
+        //    /* Copy texture image to destination folder */
+        //    if (_file != null)
+        //    {
+        //        destTexture = Path.Combine(destFile, Path.GetFileName(_file));
+        //        File.Copy(_file, destTexture.Replace('$', '-'), true);
+        //    }
+        //    if (_fileRough != null)
+        //    {
+        //        destRoughTexture = Path.Combine(destFile, Path.GetFileName(_fileRough));
+        //        File.Copy(_fileRough, destRoughTexture.Replace('$', '-'), true);
+        //    }
+        //    _idMat = Id.ToString();
+        //    //var material = doc.CreateElement("bsdf");
+        //    //material.SetAttribute("type", "roughdiffuse");
+        //    //material.SetAttribute("id", Id.ToString());
+        //    //if (_textureOn)
+        //    //{
+        //    //    var texture = XmlMitsuba.AddElement(doc, "texture", "reflectance", null, "bitmap");
+        //    //    texture.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename", destTexture.Replace('$', '-'), null));
+        //    //    material.AppendChild(texture);
+        //    //}
+        //    //else
+        //    //{
+        //    //    var color = XmlMitsuba.AddElement(doc, "srgb", "reflectance", _colorString);
+        //    //    material.AppendChild(color);
+        //    //}
+        //    //if (_roughOn)
+        //    //{
+        //    //    var textureRough = XmlMitsuba.AddElement(doc, "texture", "alpha", null, "bitmap");
+        //    //    textureRough.AppendChild(XmlMitsuba.AddElement(doc, "string", "filename",
+        //    //                                                   destRoughTexture.Replace('$', '-'), null));
+        //    //    material.AppendChild(textureRough);
+        //    //}
+        //    //else material.AppendChild(XmlMitsuba.AddElement(doc, "float", "alpha", _rough.ToString()));
+        //    //material.AppendChild(XmlMitsuba.AddElement(doc, "boolean", "useFastApprox", _qualityOn.ToString().ToLower()));
+        //    //return material;
+        //    return null;
+        //}
 
         //public override string GetIdMaterial()
         //{
@@ -168,7 +164,8 @@ namespace MitsubaRender.Materials
             {
                 if (_textureOn)
                 {
-                    var textureParam = GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(), StandardChildSlots.Diffuse.ToString());
+                    var textureParam = GetChildSlotParameter(StandardChildSlots.Diffuse.ToString(),
+                                                             StandardChildSlots.Diffuse.ToString());
                     //Object textureParam = null;
                     if (textureParam != null)
                     {

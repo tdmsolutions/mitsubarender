@@ -59,10 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exporter\MeshStore.cs" />
-    <Compile Include="Exporter\MitsubaExporter.cs" />
+    <Compile Include="Exporter\MitsubaScene.cs" />
+    <Compile Include="Exporter\MitsubaXml.cs" />
     <Compile Include="Materials\MitsubaDielectricMaterial.cs" />
     <Compile Include="Materials\MitsubaDiffuseMaterial.cs" />
     <Compile Include="Materials\MitsubaMaterial.cs" />
+    <Compile Include="Materials\MitsubaSmoothConductorMaterial.cs" />
     <Compile Include="Settings\MitsubaOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,7 +75,6 @@
     <Compile Include="MitsubaRenderPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <Compile Include="Exporter\XmlMitsuba.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Settings\MitsubaOptions.resx">

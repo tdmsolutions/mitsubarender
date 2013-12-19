@@ -14,16 +14,36 @@
 // Copyright 2014 TDM Solutions SL
 
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
-namespace MitsubaRender.Settings
+namespace MitsubaRender.Materials
 {
-    [Guid("c204ea50-7b2a-493e-bf83-74aa5f57f7af")]
-    public partial class MitsubaOptions : UserControl
+    /// <summary>
+    /// TODO MitsubaSmoothConductorMaterial summary
+    /// </summary>
+    [Guid("8D83D79D-0E66-49be-8264-CCD7F37AF074")]
+    public class MitsubaSmoothConductorMaterial : MitsubaMaterial
     {
-        public MitsubaOptions()
+        public static uint _count;
+
+        public MitsubaSmoothConductorMaterial()
         {
-            InitializeComponent();
+            
+        }
+
+        public override string GetMaterialId()
+        {
+            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__smoothconductor" + _count++;
+            return MaterialId;
+        }
+
+        public override string TypeDescription
+        {
+            get { return "Mitsuba Smooth Conductor material"; }
+        }
+
+        public override string TypeName
+        {
+            get { return "Mitsuba Smooth Conductor material"; }
         }
     }
 }
