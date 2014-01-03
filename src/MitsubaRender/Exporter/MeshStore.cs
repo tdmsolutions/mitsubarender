@@ -72,8 +72,11 @@ namespace MitsubaRender.Exporter
             faces.ConvertQuadsToTriangles();
             var vertexCount = vertices.Count;
             var triangleCount = faces.TriangleCount;
-            Log("MeshStore[" + _meshCount + "]: adding mesh with " + vertexCount + " vertices, " + triangleCount +
-                " triangles" + (name.Length > 0 ? (" (\"" + name + "\")") : ""));
+
+            // Commented, it takes a lot of time
+            Log("Creating render...");
+            //Log("MeshStore[" + _meshCount + "]: adding mesh with " + vertexCount + " vertices, " + triangleCount +
+             //   " triangles" + (name.Length > 0 ? (" (\"" + name + "\")") : ""));
             _meshDict.Add((ulong) _output.Position);
             Serialize(_output, MTS_FILEFORMAT_HEADER);
             Serialize(_output, MTS_FILEFORMAT_VERSION_V4);

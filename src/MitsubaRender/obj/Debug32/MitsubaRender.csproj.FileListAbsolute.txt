@@ -5,3 +5,5 @@ C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.csproj.Generate
 C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.dll
 C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.pdb
 C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.csprojResolveAssemblyReference.cache
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.Properties.Resources.resources
+C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.Commands.About.AboutDialog.resources
