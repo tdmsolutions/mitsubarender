@@ -14,6 +14,7 @@
 // Copyright 2014 TDM Solutions SL
 
 using System.Runtime.InteropServices;
+using Rhino.Render.Fields;
 
 namespace MitsubaRender.Materials
 {
@@ -23,13 +24,30 @@ namespace MitsubaRender.Materials
     [Guid("8D83D79D-0E66-49be-8264-CCD7F37AF074")]
     public class MitsubaSmoothConductorMaterial : MitsubaMaterial
     {
+
+        // 
         public static uint _count;
+
+        public string PresetName { get; set; }
 
         public MitsubaSmoothConductorMaterial()
         {
-            
+            var intIOR_field = Fields.Add("intIOR", IntIOR, "Interior Index of Refraction");
+            var extIOR_field = Fields.Add("extIOR", ExtIOR, "Exterior Index of Refraction");
+            BindParameterToField("intIOR", intIOR_field, ChangeContexts.UI);
+            BindParameterToField("extIOR", extIOR_field, ChangeContexts.UI);
+            var field = Fields.Add("presetName", PresetName, "Preset Name");
+            BindParameterToField("presetName", field, ChangeContexts.UI);
         }
+        /// <summary>
+        ///   Interior Index of Refraction.
+        /// </summary>
+        public float IntIOR { get; set; }
 
+        /// <summary>
+        ///   Exterior Index of Refraction.
+        /// </summary>
+        public float ExtIOR { get; set; }
         public override string GetMaterialId()
         {
             if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__smoothconductor" + _count++;
@@ -44,6 +62,13 @@ namespace MitsubaRender.Materials
         public override string TypeName
         {
             get { return "Mitsuba Smooth Conductor material"; }
+        }
+
+        public override void SimulateMaterial(ref Rhino.DocObjects.Material simulation, bool isForDataOnly)
+        {
+            string d;
+            Fields.TryGetValue("presetName", out d);
+            base.SimulateMaterial(ref simulation, isForDataOnly);
         }
     }
 }

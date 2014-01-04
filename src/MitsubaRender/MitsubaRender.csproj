@@ -65,6 +65,7 @@
     <Compile Include="Materials\MitsubaDielectricMaterial.cs" />
     <Compile Include="Materials\MitsubaDiffuseMaterial.cs" />
     <Compile Include="Materials\MitsubaMaterial.cs" />
+    <Compile Include="Materials\MitsubaPresetMaterial.cs" />
     <Compile Include="Materials\MitsubaSmoothConductorMaterial.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
