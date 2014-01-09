@@ -15,25 +15,37 @@
 
 using System.Runtime.InteropServices;
 
-
 namespace MitsubaRender.Materials
 {
     [Guid("23159962-30a3-44bb-aec5-3d5017b2d639")]
-    public class MitsubaPresetMaterial : MitsubaMaterial
+    public sealed class MitsubaPresetMaterial : MitsubaMaterial
     {
         public static uint _count;
         public string PresetName { get; set; }
 
         public MitsubaPresetMaterial()
         {
-            var field = Fields.Add("presetName", PresetName, "Preset Name");
-            BindParameterToField("presetName", field, ChangeContexts.UI);
+            CreateUserInterface();
         }
 
         public override string GetMaterialId()
         {
             if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__preset" + _count++;
             return MaterialId;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void CreateUserInterface()
+        {
+            var field = Fields.Add("presetName", PresetName, "Preset Name");
+            BindParameterToField("presetName", field, ChangeContexts.UI);
+        }
+
+        protected override void ReadDataFromUI()
+        {
+            throw new System.NotImplementedException();
         }
 
         public override string TypeDescription
@@ -43,7 +55,7 @@ namespace MitsubaRender.Materials
 
         public override string TypeName
         {
-            get { return "Mitsuba Preset material"; }
+            get { return "------ Mitsuba Preset material"; }
         }
     }
 }

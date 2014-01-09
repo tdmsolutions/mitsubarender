@@ -13,7 +13,6 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -128,8 +127,7 @@ namespace MitsubaRender.Exporter
             objects.AddRange(RhinoDoc.ActiveDoc.Objects.FindByObjectType(ObjectType.Extrusion));
             objects.AddRange(RhinoDoc.ActiveDoc.Objects.FindByObjectType(ObjectType.Mesh));
 
-            foreach (var o in objects) 
-                ExportRenderMesh(_mitsubaXml.GetRootElement(), o);
+            foreach (var o in objects) ExportRenderMesh(_mitsubaXml.GetRootElement(), o);
         }
 
         /// <summary>
@@ -141,8 +139,10 @@ namespace MitsubaRender.Exporter
         private void ExportRenderMesh(XmlElement parent, RhinoObject obj)
         {
             var type = obj.ObjectType;
-            if (type != ObjectType.Surface && type != ObjectType.Brep && 
-                type != ObjectType.Mesh && type != ObjectType.Extrusion)
+            if (type != ObjectType.Surface &&
+                type != ObjectType.Brep &&
+                type != ObjectType.Mesh &&
+                type != ObjectType.Extrusion)
             {
                 RhinoApp.WriteLine("Not exporting object of type " + type);
                 return;
@@ -159,7 +159,7 @@ namespace MitsubaRender.Exporter
             }
         }
 
-        private List<string> _materialsUsed; 
+        private List<string> _materialsUsed;
 
         /// <summary>
         ///   This method iterates the Rhino active document and export all Mitsuba material to the XML file.
@@ -175,7 +175,7 @@ namespace MitsubaRender.Exporter
                 {
                     //!_materialsUsed.Contains(material.GetMaterialId())
                     var isDuplicated = _materialsUsed.Contains(material.GetMaterialId());
-                    _mitsubaXml.CreateMaterial(material, obj.Id, isDuplicated); 
+                    _mitsubaXml.CreateMaterialXml(material, obj.Id, isDuplicated);
                     _materialsUsed.Add(material.GetMaterialId());
                 }
             }
@@ -187,7 +187,7 @@ namespace MitsubaRender.Exporter
             //    if (material != null)
             //    {
             //        //if (MaterialsUsed.Contains(material.GetMaterialId()))
-            //        _mitsubaXml.CreateMaterial(material, idx);
+            //        _mitsubaXml.CreateMaterialXml(material, idx);
             //    }
             //    idx++;
             //}

@@ -69,17 +69,18 @@ namespace MitsubaRender
             basePath = CreateDirectory(basePath, name);
 
             var filename = name + ".xml";
-            string sceneFile;
-            try
-            {
-                var scene = new MitsubaScene(basePath, filename);
-                sceneFile = scene.ExportSceneFile();
-            }
-            catch (Exception ex)
-            {
-                RhinoApp.WriteLine(ex.ToString());
-                return Result.Failure;
-            }
+            var scene = new MitsubaScene(basePath, filename);
+            var sceneFile = scene.ExportSceneFile();
+
+            //try
+            //{
+                
+            //}
+            //catch (Exception ex)
+            //{
+            //    RhinoApp.WriteLine(ex.ToString());
+            //    return Result.Failure;
+            //}
 
             //TODO: Añadirlo a un archivo temporal
             //TODO:llamar a mitsuba con el xml como argumento
@@ -106,6 +107,7 @@ namespace MitsubaRender
                 // Try to create the directory.
                 Directory.CreateDirectory(path);
             }
+
             return path;
         }
 
@@ -128,7 +130,7 @@ namespace MitsubaRender
                                                Rectangle rect, bool inWindow)
         {
             throw new NotImplementedException();
-            return Result.Success;
+            //return Result.Success;
         }
 
         protected override LoadReturnCode OnLoad(ref string errorMessage)

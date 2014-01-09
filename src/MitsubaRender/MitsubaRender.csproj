@@ -62,11 +62,20 @@
     <Compile Include="Exporter\MeshStore.cs" />
     <Compile Include="Exporter\MitsubaScene.cs" />
     <Compile Include="Exporter\MitsubaXml.cs" />
-    <Compile Include="Materials\MitsubaDielectricMaterial.cs" />
-    <Compile Include="Materials\MitsubaDiffuseMaterial.cs" />
+    <Compile Include="Materials\Interfaces\ICoating.cs" />
+    <Compile Include="Materials\Interfaces\IConductor.cs" />
+    <Compile Include="Materials\Interfaces\IDielectric.cs" />
+    <Compile Include="Materials\Interfaces\IDiffuse.cs" />
+    <Compile Include="Materials\Interfaces\IPlastic.cs" />
+    <Compile Include="Materials\Interfaces\IRough.cs" />
+    <Compile Include="Materials\RoughDielectricMaterial.cs" />
+    <Compile Include="Materials\SmoothDielectricMaterial.cs" />
+    <Compile Include="Materials\RoughConductorMaterial.cs" />
+    <Compile Include="Materials\SmoothDiffuseMaterial.cs" />
     <Compile Include="Materials\MitsubaMaterial.cs" />
     <Compile Include="Materials\MitsubaPresetMaterial.cs" />
-    <Compile Include="Materials\MitsubaSmoothConductorMaterial.cs" />
+    <Compile Include="Materials\SmoothConductorMaterial.cs" />
+    <Compile Include="Materials\Wrappers\MitsubaType.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -78,7 +87,6 @@
     <Compile Include="Settings\MitsubaOptions.Designer.cs">
       <DependentUpon>MitsubaOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Materials\MitsubaRoughMaterial.cs" />
     <Compile Include="MitsubaRenderPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\Settings.cs" />

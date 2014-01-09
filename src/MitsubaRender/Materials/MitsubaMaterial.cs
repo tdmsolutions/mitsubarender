@@ -29,41 +29,38 @@ namespace MitsubaRender.Materials
         protected string MaterialId;
 
         /// <summary>
-        ///   If there aren't any texture (TextureFile == null) it's used a simple colour.
-        /// </summary>
-        public Color4f MaterialColor { get; set; }
-
-        /// <summary>
-        ///   True if it's using a texture instead of a color. NO ES NECESARIO...
-        /// </summary>
-        public bool HasTexture { get; set; }
-
-        /// <summary>
-        ///   The fisical path of the texture file. Usually we copy the texture file to the scene folder.
-        /// </summary>
-        public string TextureFile { get; set; }
-
-        /// <summary>
+        /// This method has to be implemented in each material with 
         /// </summary>
         /// <returns></returns>
         public abstract string GetMaterialId();
 
         /// <summary>
-        ///   This method returns the hexadecimal representation (with # in the begin) of the MaterialColor field.
+        /// This method creates the UI in Rhino for the current material.
         /// </summary>
-        /// <returns>A hexadecimal representation without alpha channel.</returns>
-        public string GetHexColor()
-        {
-            var sysColor = MaterialColor.AsSystemColor();
-            return "#" + sysColor.R.ToString("X2") + sysColor.G.ToString("X2") + sysColor.B.ToString("X2");
-        }
+        protected abstract void CreateUserInterface();
+
+        /// <summary>
+        /// This method reads the values introduced by the user and established class properties with them.
+        /// </summary>
+        protected abstract void ReadDataFromUI();
 
         /// <summary>
         /// This method creates a new section named "Parameters" in the material selector of the Rhino user interface.
         /// </summary>
         protected override void OnAddUserInterfaceSections()
         {
-            AddAutomaticUserInterfaceSection("Parameters", 0);
+            AddAutomaticUserInterfaceSection("Mitsuba Parameters", 0);
+        }
+
+        /// <summary>
+        /// This method creates a hexadecimal representation of a Color4f Rhino class.
+        /// </summary>
+        /// <param name="color">The color to cast</param>
+        /// <returns>A string with the hexadecimal with # in the begin representation (without alpha channel)</returns>
+        public static string GetColorHex(Color4f color)
+        {
+            var sysColor = color.AsSystemColor();
+            return "#" + sysColor.R.ToString("X2") + sysColor.G.ToString("X2") + sysColor.B.ToString("X2");
         }
     }
 }
