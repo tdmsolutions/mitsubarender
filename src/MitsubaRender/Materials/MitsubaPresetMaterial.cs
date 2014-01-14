@@ -14,6 +14,7 @@
 // Copyright 2014 TDM Solutions SL
 
 using System.Runtime.InteropServices;
+using Rhino.DocObjects;
 
 namespace MitsubaRender.Materials
 {
@@ -23,11 +24,18 @@ namespace MitsubaRender.Materials
         public static uint _count;
         public string PresetName { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public MitsubaPresetMaterial()
         {
             CreateUserInterface();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string GetMaterialId()
         {
             if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__preset" + _count++;
@@ -43,7 +51,20 @@ namespace MitsubaRender.Materials
             BindParameterToField("presetName", field, ChangeContexts.UI);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ReadDataFromUI()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="simulation"></param>
+        /// <param name="isForDataOnly"></param>
+        public override void SimulateMaterial(ref Material simulation, bool isForDataOnly)
         {
             throw new System.NotImplementedException();
         }

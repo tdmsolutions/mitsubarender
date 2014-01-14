@@ -41,6 +41,8 @@ namespace MitsubaRender.Materials
         /// </summary>
         public static uint _count;
 
+        #region Material Parameters
+
         /// <summary>
         /// Name of material preset.
         /// Default: Cu / copper
@@ -71,6 +73,8 @@ namespace MitsubaRender.Materials
         /// Default: 1.0
         /// </summary>
         //public MitsubaType<Color4f, string> SpecularReflectance;
+
+        #endregion
 
         /// <summary>
         /// Main ctor.

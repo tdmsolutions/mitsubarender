@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
 using Rhino.Display;
+using Rhino.DocObjects;
 
 namespace MitsubaRender.Materials
 {
@@ -31,6 +32,8 @@ namespace MitsubaRender.Materials
         /// 
         /// </summary>
         private static int _count;
+
+        #region Material Parameters
 
         /// <summary>
         /// Specifies the type of microfacet normal distribution used to model the surface roughness.
@@ -62,6 +65,8 @@ namespace MitsubaRender.Materials
         /// </summary>
         public MitsubaType<float, string> ExtIOR { get; set; }
 
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>
@@ -75,7 +80,7 @@ namespace MitsubaRender.Materials
         /// </summary>
         public override string TypeDescription
         {
-            get { return "Mitsuba Rough Dielectric material"; }
+            get { return "TODO not working ! ---- Mitsuba Rough Dielectric material"; }
         }
 
         /// <summary>
@@ -100,6 +105,16 @@ namespace MitsubaRender.Materials
         /// This method reads the values introduced by the user and established class properties with them.
         /// </summary>
         protected override void ReadDataFromUI()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="simulation"></param>
+        /// <param name="isForDataOnly"></param>
+        public override void SimulateMaterial(ref Material simulation, bool isForDataOnly)
         {
             throw new NotImplementedException();
         }
