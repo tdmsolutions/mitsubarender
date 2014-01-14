@@ -21,9 +21,11 @@ using System.IO;
 using System.Xml;
 using MitsubaRender.Materials;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.Tools;
 using Rhino;
 using Rhino.DocObjects;
 using Rhino.Geometry;
+using MitsubaRender.Emitters;
 
 namespace MitsubaRender.Exporter
 {
@@ -99,6 +101,31 @@ namespace MitsubaRender.Exporter
             defaultEmitter.AppendChild(sunScale);
 
             return defaultEmitter;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="emitter_file"></param>
+        /// <returns></returns>
+        public void CreateEnvironmentEmitterXml(string emitter_file)
+        {
+            var emitter = CreateEmitter.EnvironmentEmitter(emitter_file);
+            if (emitter != null) AddToXmlRoot(emitter);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="emitter"></param>
+        /// <returns></returns>
+        public XmlElement CreateEmitterXml(MitsubaEmitter emitter)
+        {
+            //TODO more emitters
+
+            XmlElement result = null;
+
+            return result;
         }
 
         /// <summary>
@@ -367,6 +394,8 @@ namespace MitsubaRender.Exporter
 
         #endregion
 
+        #endregion
+
         #region Material creation
 
         internal class CreateMaterial
@@ -376,23 +405,7 @@ namespace MitsubaRender.Exporter
             /// </summary>
             /// <param name="file"></param>
             /// <returns></returns>
-            private static string CopyTexture(string file)
-            {
-                if (file == null) return null;
-
-                //Copy the texture if the file does not exists
-                var tempRhinoName = Path.GetFileName(file);
-
-                if (String.IsNullOrEmpty(tempRhinoName)) return null;
-
-                tempRhinoName = tempRhinoName.Replace('$', '-');
-                var destFile = Path.Combine(MitsubaScene.BasePath, tempRhinoName);
-                destFile = destFile.Replace('$', '-');
-                File.Copy(file, destFile, true);
-
-                return destFile;
-                //diffuse.ReflectanceTexture = destFile;
-            }
+            
 
             /// <summary>
             ///   TODO summary
@@ -406,7 +419,7 @@ namespace MitsubaRender.Exporter
             {
                 if (type.HasTextureOrName)
                 {
-                    var copied = CopyTexture(type.SecondParameter as string);
+                    var copied = FileTools.CopyTextureToScenePath(type.SecondParameter as string);
                     if (copied != null)
                     {
                         type.SecondParameter = (S) Convert.ChangeType(copied, typeof (S));
@@ -419,6 +432,7 @@ namespace MitsubaRender.Exporter
                 else
                 {
                     var color = type.GetColorHex();
+
                     if (color != null)
                         element.AppendChild(AddElement("srgb", name, color));
                     else
@@ -511,6 +525,38 @@ namespace MitsubaRender.Exporter
 
         #endregion
 
+        #region Emitter creation
+
+        internal class CreateEmitter
+        {
+            /// <summary>
+            /// TODO improve this
+            /// </summary>
+            /// <param name="hdr_file"></param>
+            /// <returns></returns>
+            public static XmlElement EnvironmentEmitter(string hdr_file)
+            {
+                var copied = FileTools.CopyTextureToScenePath(hdr_file);
+
+                var element = _document.CreateElement("emitter");
+                element.SetAttribute("type", "envmap");
+                element.SetAttribute("id", "envmaphdr"); //TODO get better ID!
+                element.AppendChild(AddElement("string", "filename", copied));
+                //TODO transform
+                //element.AppendChild(AddElement("float", "scale", emitter.Scale + ""));
+
+                return element;
+            }
+
+            public static XmlElement PointLightSource()
+            {
+                //TODO PointLightSource
+                return null;
+            }
+        }
+
+        #endregion
+
         //TODO implement integrator
         //private XmlElement DefineIntegrator(bool softRays, double darkMatter)
         //{
@@ -527,7 +573,7 @@ namespace MitsubaRender.Exporter
         //    return toRet;
         //}
 
-        #endregion
+        
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 

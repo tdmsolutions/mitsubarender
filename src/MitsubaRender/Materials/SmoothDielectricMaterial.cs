@@ -38,6 +38,8 @@ namespace MitsubaRender.Materials
         /// </summary>
         private static uint _count;
 
+        #region Material Parameters
+
         /// <summary>
         /// Interior Index of Refraction.
         /// </summary>
@@ -50,6 +52,8 @@ namespace MitsubaRender.Materials
 
         //TODO: specular Reflectance && specular Transmittance
         //Note that for physical realism, this parameter should never be touched. (Default: 1.0)
+
+        #endregion
 
         /// <summary>
         /// Main ctor.
@@ -114,17 +118,16 @@ namespace MitsubaRender.Materials
         }
 
         /// <summary>
-        /// 
+        /// This method simulates the selected material in the Rhino viewport.
         /// </summary>
-        /// <param name="simulation"></param>
-        /// <param name="isForDataOnly"></param>
+        /// <param name="simulation">Set the properties of the input basic material to provide the simulation for this material.</param>
+        /// <param name="isForDataOnly">Called when only asking for a hash - don't write any textures to the disk - 
+        /// just provide the filenames they will get.</param>
         public override void SimulateMaterial(ref Rhino.DocObjects.Material simulation, bool isForDataOnly)
         {
             ReadDataFromUI();
-
-            if (IntIOR.FirstParameter > 0)
-                simulation.Transparency = 0.5D; // TODO que transparencia poner ??
-            else base.SimulateMaterial(ref simulation, isForDataOnly);
+            // TODO que transparencia poner ??
+            if (IntIOR.FirstParameter > 0) simulation.Transparency = 0.5D;
         }
     }
 }

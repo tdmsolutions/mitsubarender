@@ -56,6 +56,8 @@ namespace MitsubaRender.Materials
         /// </summary>
         private static int _count;
 
+        #region Material Parameters
+
         /// <summary>
         /// Specifies the type of microfacet normal distribution used to model the surface roughness.
         /// </summary>
@@ -102,6 +104,8 @@ namespace MitsubaRender.Materials
         /// Default: air
         /// </summary>
         public MitsubaType<float, string> ExtEta { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Main ctor.
@@ -346,8 +350,7 @@ namespace MitsubaRender.Materials
         public override void SimulateMaterial(ref Rhino.DocObjects.Material simulation, bool isForDataOnly)
         {
             ReadDataFromUI();
-
-            base.SimulateMaterial(ref simulation, isForDataOnly);
+            //TODO simulate RoughConductorMaterial
         }
     }
 }

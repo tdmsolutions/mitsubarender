@@ -14,6 +14,7 @@
 // Copyright 2014 TDM Solutions SL
 
 using Rhino.Display;
+using Rhino.DocObjects;
 using Rhino.Render;
 
 namespace MitsubaRender.Materials
@@ -29,7 +30,7 @@ namespace MitsubaRender.Materials
         protected string MaterialId;
 
         /// <summary>
-        /// This method has to be implemented in each material with 
+        /// This method has to be implemented in each material. 
         /// </summary>
         /// <returns></returns>
         public abstract string GetMaterialId();
@@ -43,6 +44,14 @@ namespace MitsubaRender.Materials
         /// This method reads the values introduced by the user and established class properties with them.
         /// </summary>
         protected abstract void ReadDataFromUI();
+
+        /// <summary>
+        /// This method simulates the selected material in the Rhino viewport.
+        /// </summary>
+        /// <param name="simulation">Set the properties of the input basic material to provide the simulation for this material.</param>
+        /// <param name="isForDataOnly">Called when only asking for a hash - don't write any textures to the disk - 
+        /// just provide the filenames they will get.</param>
+        public abstract override void SimulateMaterial(ref Material simulation, bool isForDataOnly);
 
         /// <summary>
         /// This method creates a new section named "Parameters" in the material selector of the Rhino user interface.

@@ -20,6 +20,7 @@ using System.Xml;
 using MitsubaRender.Materials;
 using Rhino;
 using Rhino.DocObjects;
+using Rhino.Render;
 
 namespace MitsubaRender.Exporter
 {
@@ -39,6 +40,7 @@ namespace MitsubaRender.Exporter
         //TODO default values ?? 
         //TODO use the Setting value perhaps ????
         //TODO summaries !
+
         public static string BasePath { get; set; }
         public static string FileName { get; set; }
 
@@ -89,18 +91,24 @@ namespace MitsubaRender.Exporter
             {
                 _mitsubaXml.CreateDefaultIntegrator();
                 ExportAllMaterials();
+
+                //ExportAllLights();
                 /* Export all instance defitions and references */
                 //ExportAllInstaceDefReference(doc, docRoot);
                 /* Export the remaining geometry */
                 ExportGeometry();
                 /* Create a sensor for the current view */
                 _mitsubaXml.ExportSensor();
-                //TODO environments!
+                /* Export current environment */
+
+                //TODO environment
+                ExportEmitters();
+
                 //if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0) ExportEnvironment(doc, docRoot);
                 //else
                 //{
-                /* Create default emitter */
-                //docRoot.AppendChild(CreateEmitter());
+                //    /* Create default emitter */
+                //    docRoot.AppendChild(CreateEmitter());
                 //}
                 //Write the XML file in the disk
                 _mitsubaXml.WriteData(sceneFile);
@@ -147,7 +155,7 @@ namespace MitsubaRender.Exporter
                 RhinoApp.WriteLine("Not exporting object of type " + type);
                 return;
             }
-            var meshes = RhinoObject.GetRenderMeshes(new[] {obj}, true, true);
+            var meshes = RhinoObject.GetRenderMeshes(new[] { obj }, true, true);
             if (meshes == null) return;
 
             foreach (var meshRef in meshes)
@@ -170,6 +178,7 @@ namespace MitsubaRender.Exporter
 
             foreach (var obj in RhinoDoc.ActiveDoc.Objects.GetObjectList(ObjectType.AnyObject))
             {
+                if (!obj.Visible) continue;
                 var material = obj.RenderMaterial as MitsubaMaterial;
                 if (material != null)
                 {
@@ -191,6 +200,48 @@ namespace MitsubaRender.Exporter
             //    }
             //    idx++;
             //}
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ExportEmitters()
+        {
+            if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0)
+            {
+                //HDR environment
+
+                var texture = RenderEnvironment.CurrentEnvironment.FindChild("texture");
+                if (texture != null)
+                {
+                    var env_file = texture.Fields.GetField("filename").ValueAsObject();
+                    _mitsubaXml.CreateEnvironmentEmitterXml(env_file.ToString());
+                }
+
+                //var env = RhinoDoc.ActiveDoc.RenderEnvironments[0];
+                
+                //SimulatedEnvironment envSim = new SimulatedEnvironment();
+                //env.SimulateEnvironment(ref envSim, true);
+            }
+
+            //Lights
+            foreach (var obj in RhinoDoc.ActiveDoc.Objects.GetObjectList(ObjectType.Light))
+            {
+                if (!obj.Visible) continue;
+
+                var objRef = new ObjRef(obj);
+
+                var light = objRef.Light();
+
+                if (light.IsPointLight)
+                {
+                    var location = light.Location;
+                    var spectrum = light.Diffuse;
+                    var sampleWeight = light.Intensity;
+
+
+                }
+            }
         }
 
         #endregion

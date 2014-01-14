@@ -42,10 +42,14 @@ namespace MitsubaRender.Materials
         /// </summary>
         private static uint _count;
 
+        #region Material Parameters
+
         /// <summary>
         ///   Spectrum or texture
         /// </summary>
         public MitsubaType<Color4f, string> Reflectance { get; set; }
+
+        #endregion
 
         /// <summary>
         ///   Main ctor.
@@ -151,8 +155,6 @@ namespace MitsubaRender.Materials
             if (Reflectance.HasTextureOrName) 
                 simulation.SetBitmapTexture(Reflectance.SecondParameter);
             else simulation.DiffuseColor = Reflectance.FirstParameter.AsSystemColor();
-
-            //else base.SimulateMaterial(ref simulation, isForDataOnly);
         }
     }
 }
