@@ -18,6 +18,7 @@ using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
 using Rhino.Display;
 using Rhino.DocObjects;
+using Rhino.Render;
 
 namespace MitsubaRender.Materials
 {
@@ -25,7 +26,7 @@ namespace MitsubaRender.Materials
     /// TODO summary RoughDiffuseMaterial
     /// </summary>
     [Guid("2dbf06cd-e57b-43b2-b990-ce70a8d86eed")]
-    public class RoughDiffuseMaterial : MitsubaMaterial, IDiffuse, IRough<Color4f>
+    public sealed class RoughDiffuseMaterial : MitsubaMaterial, IDiffuse, IRough<float>
     {
         #region Field constants
 
@@ -47,7 +48,7 @@ namespace MitsubaRender.Materials
 
         public override string TypeName
         {
-            get { return "TODO not working ! ---- Mitsuba Rough Diffuse material"; }
+            get { return "Mitsuba Rough Diffuse material"; }
         }
 
         public override string TypeDescription
@@ -67,7 +68,7 @@ namespace MitsubaRender.Materials
         /// Specifies the roughness of the unresolved surface microgeometry using the root mean square (RMS) slope of the microfacets. 
         /// Default: 0.2
         /// </summary>
-        public MitsubaType<Color4f, string> Alpha { get; set; }
+        public MitsubaType<float, string> Alpha { get; set; }
 
         /// <summary>
         /// This parameter selects between the full version of themodel or a fast approximation that still retainsmost qualitative features. 
@@ -76,6 +77,16 @@ namespace MitsubaRender.Materials
         public bool UseFastApprox { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RoughDiffuseMaterial()
+        {
+            Reflectance = new MitsubaType<Color4f, string>();
+            Alpha = new MitsubaType<float, string>();
+            CreateUserInterface();
+        }
 
         /// <summary>
         /// This method has to be implemented in each material with 
@@ -92,7 +103,17 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void CreateUserInterface()
         {
-            throw new System.NotImplementedException();
+            var reflectance_field = Fields.Add(REFLECTANCE_COLOR_FIELD, Reflectance.FirstParameter, "Reflectance Color");
+            var texture_field = Fields.AddTextured(REFLECTANCE_TEXTURE_FIELD, false, "Reflectance Texture");
+            var alpha_float_field = Fields.Add(ALPHA_FLOAT_FIELD, Alpha.FirstParameter, "Alpha Float");
+            var alpha_texture_field = Fields.AddTextured(ALPHA_TEXTURE_FIELD, false, "Alpha Texture");
+            var use_fast_approx_field = Fields.Add(USE_FAST_APPROX_FIELD, UseFastApprox, "Use fast approximation");
+            
+            BindParameterToField(REFLECTANCE_COLOR_FIELD, reflectance_field, ChangeContexts.UI);
+            BindParameterToField(REFLECTANCE_TEXTURE_FIELD, REFLECTANCE_TEXTURE_SLOT, texture_field, ChangeContexts.UI);
+            BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
+            BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, alpha_texture_field, ChangeContexts.UI);
+            BindParameterToField(USE_FAST_APPROX_FIELD, use_fast_approx_field, ChangeContexts.UI);
         }
 
         /// <summary>
@@ -100,7 +121,83 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void ReadDataFromUI()
         {
-            throw new System.NotImplementedException();
+            bool hasTexture;
+            var textureParam = GetChildSlotParameter(REFLECTANCE_TEXTURE_FIELD, REFLECTANCE_TEXTURE_SLOT);
+            Fields.TryGetValue(REFLECTANCE_TEXTURE_FIELD, out hasTexture);
+
+            //Reflectance
+            if (hasTexture && textureParam != null)
+            {
+                //We have texture
+                var tx = FindChild(REFLECTANCE_TEXTURE_FIELD);
+                if (tx != null)
+                {
+                    if (tx.Fields.ContainsField("filename"))
+                    {
+                        var fields = tx.Fields.GetField("filename");
+                        Reflectance.SecondParameter = fields.ValueAsObject().ToString();
+                    }
+                    else
+                    {
+                        var text = tx as RenderTexture;
+                        if (text != null)
+                        {
+                            var texSim = new SimulatedTexture();
+                            text.SimulateTexture(ref texSim, false);
+                            Reflectance.SecondParameter = texSim.Filename;
+                        }
+                    }
+                }
+                else Reflectance.SecondParameter = string.Empty;
+            }
+            else
+            {
+                //We have color
+                Color4f color;
+                Fields.TryGetValue(REFLECTANCE_COLOR_FIELD, out color);
+                Reflectance.FirstParameter = color;
+                Reflectance.SecondParameter = string.Empty;
+            }
+
+            //Alpha
+            textureParam = GetChildSlotParameter(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT);
+            Fields.TryGetValue(ALPHA_TEXTURE_FIELD, out hasTexture);
+            if (hasTexture && textureParam != null)
+            {
+                //We have texture
+                var tx = FindChild(ALPHA_TEXTURE_FIELD);
+                if (tx != null)
+                {
+                    if (tx.Fields.ContainsField("filename"))
+                    {
+                        var fields = tx.Fields.GetField("filename");
+                        Alpha.SecondParameter = fields.ValueAsObject().ToString();
+                    }
+                    else
+                    {
+                        var text = tx as RenderTexture;
+                        if (text != null)
+                        {
+                            var texSim = new SimulatedTexture();
+                            text.SimulateTexture(ref texSim, false);
+                            Alpha.SecondParameter = texSim.Filename;
+                        }
+                    }
+                }
+                else Alpha.SecondParameter = string.Empty;
+            }
+            else
+            {
+                float alpha;
+                Fields.TryGetValue(ALPHA_FLOAT_FIELD, out alpha);
+                Alpha.FirstParameter = alpha;
+                Reflectance.SecondParameter = string.Empty;
+            }
+
+            //Use fast approximation?
+            bool useFastApprox;
+            Fields.TryGetValue(USE_FAST_APPROX_FIELD, out useFastApprox);
+            UseFastApprox = useFastApprox;
         }
 
         /// <summary>
@@ -111,7 +208,8 @@ namespace MitsubaRender.Materials
         /// just provide the filenames they will get.</param>
         public override void SimulateMaterial(ref Material simulation, bool isForDataOnly)
         {
-            throw new System.NotImplementedException();
+            ReadDataFromUI();
+            //TODO simulate RoughDiffuse
         }
     }
 }

@@ -159,9 +159,14 @@ namespace MitsubaRender.Exporter
                     var diffuse = material as SmoothDiffuseMaterial;
                     result = CreateMaterial.SmoothDiffuseMaterial(diffuse);
                 }
-                else if (materialType == typeof (RoughConductorMaterial)) result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
-                else if (materialType == typeof (SmoothDielectricMaterial)) result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
-                else if (materialType == typeof (SmoothConductorMaterial)) result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
+                else if (materialType == typeof (RoughConductorMaterial)) 
+                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
+                else if (materialType == typeof (SmoothDielectricMaterial)) 
+                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
+                else if (materialType == typeof (SmoothConductorMaterial)) 
+                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
+                else if (materialType == typeof(RoughDiffuseMaterial))
+                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
 
                 if (result != null) AddToXmlRoot(result);
             }
@@ -209,10 +214,20 @@ namespace MitsubaRender.Exporter
             return element;
         }
 
-        public static XmlElement AddElement(string tag, string name, MitsubaTransform transform)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transform"></param>
+        /// <returns></returns>
+        public static XmlElement AddElement(MitsubaTransform transform)
         {
-            //TODO MitsubaTransform
-            return null;
+            var element = _document.CreateElement("transform");
+            element.SetAttribute("name", "toWorld");
+            var lookat = _document.CreateElement("lookat");
+            lookat.SetAttribute("origin", transform.GetOriginForMitsuba());
+            lookat.SetAttribute("target", transform.GetTargetForMitsuba());
+            element.AppendChild(lookat);
+            return element;
         }
 
         /// <summary>
@@ -507,6 +522,17 @@ namespace MitsubaRender.Exporter
                 return element;
             }
 
+            public static XmlElement RoughDiffuseMaterial(RoughDiffuseMaterial material)
+            {
+                var element = _document.CreateElement("bsdf");
+                element.SetAttribute("type", "roughdiffuse");
+                element.SetAttribute("id", material.GetMaterialId());
+                MakeMitsubaType(ref element, "reflectance", material.Reflectance);
+                MakeMitsubaType(ref element, "alpha", material.Alpha);
+                element.AppendChild(AddElement("boolean", "useFastApprox", material.UseFastApprox.ToString().ToLower()));
+                return element;
+            }
+
             /// <summary>
             /// </summary>
             /// <param name="material"></param>
@@ -566,6 +592,11 @@ namespace MitsubaRender.Exporter
                 return element;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="emitter"></param>
+            /// <returns></returns>
             public static XmlElement PointLightSource(PointLightSource emitter)
             {
                 var element = _document.CreateElement("emitter");
@@ -576,18 +607,19 @@ namespace MitsubaRender.Exporter
                 return element;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="emitter"></param>
+            /// <returns></returns>
             public static XmlElement SpotLightSource(SpotLightSource emitter)
             {
                 var element = _document.CreateElement("emitter");
                 element.SetAttribute("type", "spot");
                 element.SetAttribute("id", emitter.EmitterId);
-
-                var transform = _document.CreateElement("transform");
-                transform.SetAttribute("name", "toWorld");
-                //transform.AppendChild(AddElement());
-                //TODO SpotLightSource
-                //element.AppendChild(AddElement("point", "position", emitter.Position));
-                element.AppendChild(AddElement("spectrum", "intensity", emitter.Intensity + "")); //TODO intensity
+                element.AppendChild(AddElement(emitter.ToWorld)); //MitsubaTransform
+                element.AppendChild(AddElement("spectrum", "intensity", emitter.Intensity + ""));
+                element.AppendChild(AddElement("float", "cutoffAngle", emitter.CutOffAngle + ""));
                 return element;
             }
         }

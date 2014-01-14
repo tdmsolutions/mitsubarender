@@ -43,12 +43,10 @@ namespace MitsubaRender.Exporter
         //TODO summaries !
 
         /// <summary>
-        /// 
         /// </summary>
         public static string BasePath { get; set; }
 
         /// <summary>
-        /// 
         /// </summary>
         public static string FileName { get; set; }
 
@@ -67,12 +65,12 @@ namespace MitsubaRender.Exporter
         private readonly MitsubaXml _mitsubaXml;
 
         /// <summary>
-        /// This list handles the different materials of the scene and reuse any material if needed.
+        ///   This list handles the different materials of the scene and reuse any material if needed.
         /// </summary>
         private List<string> _materialsUsed;
 
         /// <summary>
-        /// This list handles the different emitters of the scene and reuse any emitter if needed.
+        ///   This list handles the different emitters of the scene and reuse any emitter if needed.
         /// </summary>
         private List<MitsubaEmitter> _emittersUsed;
 
@@ -173,7 +171,7 @@ namespace MitsubaRender.Exporter
                 RhinoApp.WriteLine("Not exporting object of type " + type);
                 return;
             }
-            var meshes = RhinoObject.GetRenderMeshes(new[] { obj }, true, true);
+            var meshes = RhinoObject.GetRenderMeshes(new[] {obj}, true, true);
             if (meshes == null) return;
 
             foreach (var meshRef in meshes)
@@ -219,7 +217,6 @@ namespace MitsubaRender.Exporter
         }
 
         /// <summary>
-        /// 
         /// </summary>
         private void ExportEmitters()
         {
@@ -255,16 +252,15 @@ namespace MitsubaRender.Exporter
                     //var location = light.Location;
                     //var spectrum = light.Diffuse;
                     //var sampleWeight = light.Intensity;
-                    emitter = new PointLightSource(light.Location, (float)light.Intensity * 100);
+                    emitter = new PointLightSource(light.Location, (float) light.Intensity*100);
                 }
                 else if (light.IsSpotLight)
                 {
-                    //TODO SpotLight
-                    var origin = light.Location; 
-                    var target = light.PerpendicularDirection;
+                    var origin = light.Location;
+                    var target = light.Direction;
                     var cutoffAngle = (float) RhinoMath.ToDegrees(light.SpotAngleRadians);
-                    var intensity = (float) light.Intensity * 100;
-                    emitter = new SpotLightSource(origin, target, cutoffAngle, intensity);
+                    var intensity = (float)light.Intensity * 50000; //TODO Multiplicador SpotLight ???
+                    emitter = new SpotLightSource(origin, target, intensity, cutoffAngle);
                 }
                 else if (light.IsSunLight)
                 {

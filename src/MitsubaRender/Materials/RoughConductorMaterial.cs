@@ -13,8 +13,6 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Wrappers;
 using Rhino.Display;
@@ -220,7 +218,7 @@ namespace MitsubaRender.Materials
             else
             {
                 float alpha;
-                Fields.TryGetValue(ALPHAU_FLOAT_FIELD, out alpha);
+                Fields.TryGetValue(ALPHA_FLOAT_FIELD, out alpha);
                 Alpha.FirstParameter = alpha;
             }
 

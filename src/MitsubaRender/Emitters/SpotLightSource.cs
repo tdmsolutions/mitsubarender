@@ -48,9 +48,7 @@ namespace MitsubaRender.Emitters
         public SpotLightSource(Point3d origin, Vector3d target, float intensity = 100, float angle = 20)
         {
             EmitterId = "__spotlight" + _count++;
-
-            ToWorld.Origin = origin; //Point
-            ToWorld.Target = target; //Direction vector
+            ToWorld = new MitsubaTransform {Origin = origin, Target = target};
             Intensity = intensity;
             CutOffAngle = angle;
         }
