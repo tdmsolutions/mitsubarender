@@ -23,17 +23,6 @@ namespace MitsubaRender.Emitters
         /// <summary>
         ///   The internal ID of the current emitter.
         /// </summary>
-        protected string EmitterId;
-
-        /// <summary>
-        /// This method has to be implemented in each emitter.
-        /// </summary>
-        /// <returns></returns>
-        public abstract string GetEmitterId();
-
-        /// <summary>
-        /// This method reads the values introduced by the user and established class properties with them.
-        /// </summary>
-        protected abstract void ReadDataFromUI();
+        public string EmitterId { get; protected set; }
     }
 }

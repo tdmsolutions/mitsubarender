@@ -1,9 +1,0 @@
-C:\Program Files\Mitsuba Plugin for Rhino and RhinoGold 1.0\System\MitsubaRender.dll
-C:\Program Files\Mitsuba Plugin for Rhino and RhinoGold 1.0\System\MitsubaRender.pdb
-C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.Settings.MitsubaOptions.resources
-C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.csproj.GenerateResource.Cache
-C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.dll
-C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.pdb
-C:\Dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.csprojResolveAssemblyReference.cache
-C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.Properties.Resources.resources
-C:\dev\mitsubarender\src\MitsubaRender\obj\Debug32\MitsubaRender.Commands.About.AboutDialog.resources

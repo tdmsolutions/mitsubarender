@@ -55,5 +55,23 @@ namespace MitsubaRender.Materials.Wrappers
             Origin = new Point3d(oX, oY, oZ);
             Target = new Vector3d(tX, tY, tZ);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string GetOriginForMitsuba()
+        {
+            return Origin.X + ", " + Origin.Y + ", " + Origin.Z;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string GetTargetForMitsuba()
+        {
+            return Target.X + ", " + Target.Y + ", " + Target.Z;
+        }
     }
 }

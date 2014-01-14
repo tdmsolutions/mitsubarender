@@ -19,13 +19,13 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using MitsubaRender.Emitters;
 using MitsubaRender.Materials;
 using MitsubaRender.Materials.Wrappers;
 using MitsubaRender.Tools;
 using Rhino;
 using Rhino.DocObjects;
 using Rhino.Geometry;
-using MitsubaRender.Emitters;
 
 namespace MitsubaRender.Exporter
 {
@@ -99,12 +99,10 @@ namespace MitsubaRender.Exporter
             defaultEmitter.AppendChild(emitterTrafo);
             defaultEmitter.AppendChild(extendProperty);
             defaultEmitter.AppendChild(sunScale);
-
             return defaultEmitter;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="emitter_file"></param>
         /// <returns></returns>
@@ -115,15 +113,18 @@ namespace MitsubaRender.Exporter
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="emitter"></param>
         /// <returns></returns>
         public XmlElement CreateEmitterXml(MitsubaEmitter emitter)
         {
-            //TODO more emitters
-
             XmlElement result = null;
+
+            var type = emitter.GetType();
+            if (type == typeof (PointLightSource)) result = CreateEmitter.PointLightSource((PointLightSource) emitter);
+            else if (type == typeof (SpotLightSource)) result = CreateEmitter.SpotLightSource((SpotLightSource) emitter);
+
+            if (result != null) AddToXmlRoot(result);
 
             return result;
         }
@@ -158,12 +159,9 @@ namespace MitsubaRender.Exporter
                     var diffuse = material as SmoothDiffuseMaterial;
                     result = CreateMaterial.SmoothDiffuseMaterial(diffuse);
                 }
-                else if (materialType == typeof (RoughConductorMaterial)) 
-                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
-                else if (materialType == typeof (SmoothDielectricMaterial)) 
-                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
-                else if (materialType == typeof (SmoothConductorMaterial)) 
-                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
+                else if (materialType == typeof (RoughConductorMaterial)) result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
+                else if (materialType == typeof (SmoothDielectricMaterial)) result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
+                else if (materialType == typeof (SmoothConductorMaterial)) result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
 
                 if (result != null) AddToXmlRoot(result);
             }
@@ -195,8 +193,26 @@ namespace MitsubaRender.Exporter
             element.SetAttribute("name", name);
             if (!String.IsNullOrEmpty(type)) element.SetAttribute("type", type);
             if (!String.IsNullOrEmpty(value)) element.SetAttribute("value", value);
-
             return element;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public static XmlElement AddElement(string tag, string name, Point3d point)
+        {
+            var element = _document.CreateElement(tag);
+            element.SetAttribute("name", name);
+            element.SetAttribute("x", point.X + "");
+            element.SetAttribute("y", point.Y + "");
+            element.SetAttribute("z", point.Z + "");
+            return element;
+        }
+
+        public static XmlElement AddElement(string tag, string name, MitsubaTransform transform)
+        {
+            //TODO MitsubaTransform
+            return null;
         }
 
         /// <summary>
@@ -321,7 +337,8 @@ namespace MitsubaRender.Exporter
             if (type == typeof (string)) elementType = "string";
             else if (type == typeof (int)) elementType = "integer";
             else if (type == typeof (string)) elementType = "string";
-            else if (type == typeof (float) || type == typeof (double)) elementType = "float";
+            else if (type == typeof (float) ||
+                     type == typeof (double)) elementType = "float";
             else if (type == typeof (Transform)) elementType = "transform";
             else if (type == typeof (Color)) elementType = "srgb";
             else throw new Exception("Unknown element type!");
@@ -334,9 +351,7 @@ namespace MitsubaRender.Exporter
                 var matrix = _document.CreateElement("matrix");
                 var trafo = (Transform) value;
                 var matStr = "";
-                for (var i = 0; i < 4; ++i) 
-                    for (var j = 0; j < 4; ++j) 
-                        matStr += trafo[i, j].ToString(CultureInfo.InvariantCulture) + ", ";
+                for (var i = 0; i < 4; ++i) for (var j = 0; j < 4; ++j) matStr += trafo[i, j].ToString(CultureInfo.InvariantCulture) + ", ";
 
                 matrix.SetAttribute("value", matStr.Substring(0, matStr.Length - 2));
                 element.AppendChild(matrix);
@@ -345,9 +360,9 @@ namespace MitsubaRender.Exporter
             {
                 var color = (Color) value;
                 element.SetAttribute("value",
-                    ToStringHelper(color.R/255.0f) + ", " + 
-                    ToStringHelper(color.G/255.0f) + ", " +
-                    ToStringHelper(color.B/255.0f));
+                                     ToStringHelper(color.R/255.0f) + ", " +
+                                     ToStringHelper(color.G/255.0f) + ", " +
+                                     ToStringHelper(color.B/255.0f));
             }
             else if (type == typeof (float)) element.SetAttribute("value", ToStringHelper((float) value));
             else if (type == typeof (double)) element.SetAttribute("value", ToStringHelper((double) value));
@@ -398,6 +413,9 @@ namespace MitsubaRender.Exporter
 
         #region Material creation
 
+        /// <summary>
+        ///   Internal class for handle the material creation.
+        /// </summary>
         internal class CreateMaterial
         {
             /// <summary>
@@ -405,8 +423,6 @@ namespace MitsubaRender.Exporter
             /// </summary>
             /// <param name="file"></param>
             /// <returns></returns>
-            
-
             /// <summary>
             ///   TODO summary
             /// </summary>
@@ -415,7 +431,7 @@ namespace MitsubaRender.Exporter
             /// <param name="element"></param>
             /// <param name="name"></param>
             /// <param name="type"></param>
-            private static void MakeMitsubaType<T, S>(ref XmlElement element, string name ,MitsubaType<T, S> type)
+            private static void MakeMitsubaType<T, S>(ref XmlElement element, string name, MitsubaType<T, S> type)
             {
                 if (type.HasTextureOrName)
                 {
@@ -433,15 +449,13 @@ namespace MitsubaRender.Exporter
                 {
                     var color = type.GetColorHex();
 
-                    if (color != null)
-                        element.AppendChild(AddElement("srgb", name, color));
-                    else
-                        element.AppendChild(AddElement("float", name, type.FirstParameter + ""));
+                    if (color != null) element.AppendChild(AddElement("srgb", name, color));
+                    else element.AppendChild(AddElement("float", name, type.FirstParameter + ""));
                 }
             }
 
-            /// <summary>
             ////   TODO summary
+            /// <summary>
             /// </summary>
             /// <param name="material"></param>
             /// <returns></returns>
@@ -502,8 +516,8 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "conductor");
                 element.SetAttribute("id", material.GetMaterialId());
-
                 element.AppendChild(AddElement("string", "material", material.Material));
+
                 //TODO another conductor properties !
                 //element.AppendChild(AddElement("srgb", "eta", MitsubaMaterial.GetColorHex(material.Eta)));
                 //element.AppendChild(AddElement("srgb", "k", MitsubaMaterial.GetColorHex(material.K)));
@@ -527,10 +541,13 @@ namespace MitsubaRender.Exporter
 
         #region Emitter creation
 
+        /// <summary>
+        ///   Internal class for handle the emitter creation.
+        /// </summary>
         internal class CreateEmitter
         {
             /// <summary>
-            /// TODO improve this
+            ///   TODO improve this
             /// </summary>
             /// <param name="hdr_file"></param>
             /// <returns></returns>
@@ -541,17 +558,37 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("emitter");
                 element.SetAttribute("type", "envmap");
                 element.SetAttribute("id", "envmaphdr"); //TODO get better ID!
-                element.AppendChild(AddElement("string", "filename", copied));
+                element.AppendChild(AddElement("point", "filename", copied));
+
                 //TODO transform
                 //element.AppendChild(AddElement("float", "scale", emitter.Scale + ""));
 
                 return element;
             }
 
-            public static XmlElement PointLightSource()
+            public static XmlElement PointLightSource(PointLightSource emitter)
             {
-                //TODO PointLightSource
-                return null;
+                var element = _document.CreateElement("emitter");
+                element.SetAttribute("type", "point");
+                element.SetAttribute("id", emitter.EmitterId);
+                element.AppendChild(AddElement("point", "position", emitter.Position));
+                element.AppendChild(AddElement("spectrum", "intensity", emitter.Intensity + "")); //TODO intensity
+                return element;
+            }
+
+            public static XmlElement SpotLightSource(SpotLightSource emitter)
+            {
+                var element = _document.CreateElement("emitter");
+                element.SetAttribute("type", "spot");
+                element.SetAttribute("id", emitter.EmitterId);
+
+                var transform = _document.CreateElement("transform");
+                transform.SetAttribute("name", "toWorld");
+                //transform.AppendChild(AddElement());
+                //TODO SpotLightSource
+                //element.AppendChild(AddElement("point", "position", emitter.Position));
+                element.AppendChild(AddElement("spectrum", "intensity", emitter.Intensity + "")); //TODO intensity
+                return element;
             }
         }
 
@@ -571,178 +608,6 @@ namespace MitsubaRender.Exporter
         //    toRet.AppendChild(boolean);
         //    toRet.AppendChild(flo);
         //    return toRet;
-        //}
-
-        
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //NOTA: El metodo ExportAllInstaceDefReference guarda las copias de los objetos del documento transformadas
-        //con el objetivo de ser mas eficiente (en vez de usar copias de la geometría)
-
-        ///// <summary>
-        ///// Export all instance definitions and reference
-        ///// </summary>
-        ///// <param name="doc"></param>
-        ///// <param name="docRoot"></param>
-        //private void ExportAllInstaceDefReference(int index, string meshStoreFileName)
-        //{
-        //    foreach (InstanceDefinition idef in RhinoDoc.ActiveDoc.InstanceDefinitions)
-        //    {
-        //        RhinoApp.WriteLine("Exporting instance definition '" + idef.Name + "'");
-        //        ExportInstanceDef(_document.DocumentElement, idef);
-        //    }
-
-        //    RhinoObject[] instanceRefs = RhinoDoc.ActiveDoc.Objects.FindByObjectType(ObjectType.InstanceReference);
-        //    foreach (RhinoObject o in instanceRefs)
-        //    {
-        //        if (o.Name.Length > 0)
-        //            RhinoApp.WriteLine("Exporting instance reference '" + o.Name + "'");
-        //        ExportInstanceRef(_document.DocumentElement, (InstanceObject)o);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Export an a Rhino instance reference using the 'instance' plugin
-        ///// </summary>
-        ///// <param name="parent">The parent node in the output XML document</param>
-        ///// <param name="inst">The InstanceObject instance to be exported</param>
-        ///// <returns>true if any content was exported</returns>
-        //private bool ExportInstanceRef(XmlElement parent, InstanceObject inst)
-        //{
-        //    Guid guid = inst.InstanceDefinition.Id;
-
-        //    if (!_idMap.ContainsKey(guid))
-        //    {
-        //        RhinoApp.WriteLine("Warning: no content found -- perhaps the instance definition was empty?");
-        //        return false;
-        //    }
-
-        //    XmlElement shapeElement = _document.CreateElement("shape");
-        //    if (inst.Name.Length > 0)
-        //        shapeElement.AppendChild(_document.CreateComment(" Rhino object '" + inst.Name + "' "));
-        //    if (inst.InstanceDefinition.Name.Length > 0)
-        //        shapeElement.AppendChild(_document.CreateComment(" (references '"
-        //            + inst.InstanceDefinition.Name + "') "));
-
-        //    shapeElement.SetAttribute("type", "instance");
-
-        //    string id = _idMap[guid];
-        //    shapeElement.AppendChild(MakeReference(id));
-        //    parent.AppendChild(shapeElement);
-        //    shapeElement.AppendChild(MakeProperty("toWorld", inst.InstanceXform));
-        //    return true;
-        //}
-
-        ///// <summary>
-        ///// Export an entire Rhino instance definition by turning it into a Mitsuba shapegroup
-        ///// </summary>
-        ///// <param name="parent">The parent node in the output XML document</param>
-        ///// <param name="idef">The InstanceDefinition instance to be exported</param>
-        ///// <returns>true if any content was exported</returns>
-        //private bool ExportInstanceDef(XmlElement parent, InstanceDefinition idef)
-        //{
-        //    if (!idef.InUse(1))
-        //        return false;
-
-        //    string id = GetID("group");
-        //    _idMap.Add(idef.Id, id);
-
-        //    XmlElement shapeElement = _document.CreateElement("shape");
-        //    if (idef.Name.Length > 0)
-        //        shapeElement.AppendChild(_document.CreateComment(" Rhino object '" + idef.Name + "' "));
-
-        //    shapeElement.SetAttribute("type", "shapegroup");
-        //    shapeElement.SetAttribute("id", id);
-
-        //    RhinoObject[] objects = idef.GetObjects();
-
-        //    bool success = false;
-        //    foreach (RhinoObject o in objects)
-        //        success |= ExportRenderMesh(shapeElement, o);
-
-        //    if (success)
-        //        parent.AppendChild(shapeElement);
-        //    return success;
-        //}
-
-        ///// <summary>
-        ///// Export the render mesh associated with a certain object
-        ///// </summary>
-        ///// <param name="parent">The parent node in the output XML document</param>
-        ///// <param name="obj">The RhinoObject instance to be exported</param>
-        ///// <returns>true if any content was exported</returns>
-        //private bool ExportRenderMesh(XmlElement parent, RhinoObject obj, int index, string meshStoreFileName)
-        //{
-        //    ObjectType type = obj.ObjectType;
-        //    if (type != ObjectType.Surface && type != ObjectType.Brep &&
-        //        type != ObjectType.Mesh && type != ObjectType.Extrusion)
-        //    {
-        //        RhinoApp.WriteLine("Not exporting object of type " + type);
-        //        return false;
-        //    }
-
-        //    ObjRef[] meshes = RhinoObject.GetRenderMeshes(new[] { obj }, true, true);
-
-        //    if (meshes == null)
-        //        return false;
-
-        //    foreach (ObjRef meshRef in meshes)
-        //    {
-        //        if (meshRef == null)
-        //            continue;
-
-        //        XmlElement shapeElement = _document.CreateElement("shape");
-        //        if (obj.Name.Length > 0)
-        //            shapeElement.AppendChild(_document.CreateComment(" Rhino object '" + obj.Name + "' "));
-
-        //        RhinoDoc doc = obj.Document;
-        //        Mesh mesh = meshRef.Mesh();
-
-        //        int matIdx = -1;
-        //        switch (obj.Attributes.MaterialSource)
-        //        {
-        //            case ObjectMaterialSource.MaterialFromLayer:
-        //                matIdx = doc.Layers[obj.Attributes.LayerIndex].RenderMaterialIndex;
-        //                break;
-        //            case ObjectMaterialSource.MaterialFromObject:
-        //                matIdx = obj.Attributes.MaterialIndex;
-        //                break;
-
-        //        }
-
-        //        //int index = _meshStore.Store(mesh, obj.Name);
-        //        shapeElement.AppendChild(MakeProperty("filename", meshStoreFileName)); //_meshStore.Filename
-        //        shapeElement.AppendChild(MakeProperty("shapeIndex", index));
-        //        shapeElement.SetAttribute("type", "serialized");
-        //        parent.AppendChild(shapeElement);
-
-        //        if (matIdx >= 0 && _xmlIdMap.ContainsKey(matIdx))
-        //        {
-        //            //Referenciamos el material del modelo con el material mitsuba
-        //            shapeElement.AppendChild(MakeReference(_xmlIdMap[matIdx]));
-
-        //            /* Create an area emitter if requested */
-        //            Material mat = doc.Materials[matIdx];
-        //            if (mat.EmissionColor.GetBrightness() > 0)
-        //            {
-        //                XmlElement emitterElement = _document.CreateElement("emitter");
-        //                emitterElement.SetAttribute("type", "area");
-        //                emitterElement.AppendChild(MakeProperty("radiance", mat.EmissionColor));
-        //                shapeElement.AppendChild(emitterElement);
-        //            }
-        //        }
-        //    }
-
-        //    return meshes.Length > 0;
-        //}
-
-        ///// <summary>
-        ///// Return an unique ID string for use in the generated XML document
-        ///// </summary>
-        //private string GetID(string prefix)
-        //{
-        //    return prefix + _idCounter++.ToString();
         //}
     }
 }

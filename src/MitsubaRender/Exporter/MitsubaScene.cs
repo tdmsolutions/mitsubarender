@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
+using MitsubaRender.Emitters;
 using MitsubaRender.Materials;
 using Rhino;
 using Rhino.DocObjects;
@@ -41,7 +42,14 @@ namespace MitsubaRender.Exporter
         //TODO use the Setting value perhaps ????
         //TODO summaries !
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static string BasePath { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static string FileName { get; set; }
 
         #endregion
@@ -57,6 +65,16 @@ namespace MitsubaRender.Exporter
         ///   The XML file handler.
         /// </summary>
         private readonly MitsubaXml _mitsubaXml;
+
+        /// <summary>
+        /// This list handles the different materials of the scene and reuse any material if needed.
+        /// </summary>
+        private List<string> _materialsUsed;
+
+        /// <summary>
+        /// This list handles the different emitters of the scene and reuse any emitter if needed.
+        /// </summary>
+        private List<MitsubaEmitter> _emittersUsed;
 
         #endregion
 
@@ -167,8 +185,6 @@ namespace MitsubaRender.Exporter
             }
         }
 
-        private List<string> _materialsUsed;
-
         /// <summary>
         ///   This method iterates the Rhino active document and export all Mitsuba material to the XML file.
         /// </summary>
@@ -207,10 +223,11 @@ namespace MitsubaRender.Exporter
         /// </summary>
         private void ExportEmitters()
         {
+            _emittersUsed = new List<MitsubaEmitter>();
+
             if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0)
             {
                 //HDR environment
-
                 var texture = RenderEnvironment.CurrentEnvironment.FindChild("texture");
                 if (texture != null)
                 {
@@ -219,7 +236,6 @@ namespace MitsubaRender.Exporter
                 }
 
                 //var env = RhinoDoc.ActiveDoc.RenderEnvironments[0];
-                
                 //SimulatedEnvironment envSim = new SimulatedEnvironment();
                 //env.SimulateEnvironment(ref envSim, true);
             }
@@ -230,17 +246,32 @@ namespace MitsubaRender.Exporter
                 if (!obj.Visible) continue;
 
                 var objRef = new ObjRef(obj);
-
                 var light = objRef.Light();
+
+                MitsubaEmitter emitter = null;
 
                 if (light.IsPointLight)
                 {
-                    var location = light.Location;
-                    var spectrum = light.Diffuse;
-                    var sampleWeight = light.Intensity;
-
-
+                    //var location = light.Location;
+                    //var spectrum = light.Diffuse;
+                    //var sampleWeight = light.Intensity;
+                    emitter = new PointLightSource(light.Location, (float)light.Intensity * 100);
                 }
+                else if (light.IsSpotLight)
+                {
+                    //TODO SpotLight
+                    var origin = light.Location; 
+                    var target = light.PerpendicularDirection;
+                    var cutoffAngle = (float) RhinoMath.ToDegrees(light.SpotAngleRadians);
+                    var intensity = (float) light.Intensity * 100;
+                    emitter = new SpotLightSource(origin, target, cutoffAngle, intensity);
+                }
+                else if (light.IsSunLight)
+                {
+                    //TODO SunLight
+                }
+
+                if (emitter != null) _mitsubaXml.CreateEmitterXml(emitter);
             }
         }
 

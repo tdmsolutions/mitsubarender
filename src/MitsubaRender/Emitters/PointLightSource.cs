@@ -22,13 +22,20 @@ namespace MitsubaRender.Emitters
     /// <summary>
     /// A simple point light source, which uniformly radiates illumination into all directions.
     /// </summary>
-    public class PointLightSource
+    public class PointLightSource : MitsubaEmitter
     {
+        /// <summary>
+        ///   Static emitter count used to create unique ID's.
+        /// </summary>
+        private static uint _count;
+
+        #region Mitsuba parameters
+
         /// <summary>
         /// Specifies an optional sensor-to-world transformation. 
         /// Default:none (i.e. sensor space = world space)
         /// </summary>
-        public MitsubaType<MitsubaTransform, MitsubaAnimation> ToWorld { get; set; }
+        //public MitsubaType<MitsubaTransform, MitsubaAnimation> ToWorld { get; set; }
 
         /// <summary>
         /// Alternative parameter for specifying the light source position. 
@@ -40,12 +47,24 @@ namespace MitsubaRender.Emitters
         /// Specifies the radiant intensity in units of power per unit steradian. 
         /// Default: 1
         /// </summary>
-        public Color4f Intensity { get; set; }
+        public float Intensity { get; set; }
 
         /// <summary>
         /// Specifies the relative amount of samples allocated to this emitter. 
         /// Default: 1
         /// </summary>
-        public float SamplingWeight { get; set; }
+        //public float SamplingWeight { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// Main ctor.
+        /// </summary>
+        public PointLightSource(Point3d pos, float intensity = 1)
+        {
+            Position = pos;
+            Intensity = intensity;
+            EmitterId = "__pointlight" + _count++;
+        }
     }
 }

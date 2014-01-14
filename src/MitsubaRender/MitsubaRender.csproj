@@ -62,6 +62,7 @@
     <Compile Include="Emitters\EnvironmentEmitter.cs" />
     <Compile Include="Emitters\MitsubaEmitter.cs" />
     <Compile Include="Emitters\PointLightSource.cs" />
+    <Compile Include="Emitters\SpotLightSource.cs" />
     <Compile Include="Exporter\MeshStore.cs" />
     <Compile Include="Exporter\MitsubaScene.cs" />
     <Compile Include="Exporter\MitsubaXml.cs" />
