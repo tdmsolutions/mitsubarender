@@ -1,2 +1,4 @@
 /src/MitsubaRender/obj
 /src/*.suo
+/src/MitsubaRender/obj
+*.suo

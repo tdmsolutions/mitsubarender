@@ -96,6 +96,7 @@
     <Compile Include="Settings\IntegratorDialog.Designer.cs">
       <DependentUpon>IntegratorDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\IntegratorObjects\Objects.cs" />
     <Compile Include="Settings\MitsubaOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
