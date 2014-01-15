@@ -88,6 +88,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\IntegratorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\IntegratorDialog.Designer.cs">
+      <DependentUpon>IntegratorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\MitsubaOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -113,6 +119,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Settings\IntegratorDialog.resx">
+      <DependentUpon>IntegratorDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Settings\MitsubaOptions.resx">
       <DependentUpon>MitsubaOptions.cs</DependentUpon>
     </EmbeddedResource>
@@ -123,7 +132,9 @@
   <ItemGroup>
     <None Include="Resources\About_Icon_Mitsuba.gif" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Integrators\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
