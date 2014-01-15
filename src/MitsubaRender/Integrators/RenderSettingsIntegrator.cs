@@ -19,20 +19,20 @@ namespace MitsubaRender.Integrators
 {
     internal static class IntegratorObjectInstances
     {
-        public static IntegratorAmbientOclusion AmbientOclusion;
-        public static IntegratorDirectIlumination DirectIlumination;
-        public static IntegratorPathTracer PathTracer;
-        public static IntegratorVolumetricPathTracerSimple VolumetricPathTracerSimple;
-        public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended;
-        public static IntegratorAdjointParticleTracer AdjointParticleTracer;
-        public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer;
-        public static IntegratorPhotonMapper PhotonMapper;
-        public static ProgressivePhotonMapper ProgressivePhotonMapper;
-        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
-        public static BidirectionalPathTracer BidirectionalPathTracer;
-        public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT;
-        public static SampleSpaceMLT SampleSpaceMLT;
-        public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing;
+        public static IntegratorAmbientOclusion AmbientOclusion = new IntegratorAmbientOclusion();
+        public static IntegratorDirectIlumination DirectIlumination= new IntegratorDirectIlumination();
+        public static IntegratorPathTracer PathTracer= new IntegratorPathTracer();
+        public static IntegratorVolumetricPathTracerSimple VolumetricPathTracerSimple= new IntegratorVolumetricPathTracerSimple();
+        public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended= new IntegratorVolumetricPathTracerExtended();
+        public static IntegratorAdjointParticleTracer AdjointParticleTracer= new IntegratorAdjointParticleTracer();
+        public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer= new IntegratorVirtualPointLightRenderer();
+        public static IntegratorPhotonMapper PhotonMapper= new IntegratorPhotonMapper();
+        public static ProgressivePhotonMapper ProgressivePhotonMapper= new ProgressivePhotonMapper();
+        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper = new StochasticProgressivePhotonMapper();
+        public static BidirectionalPathTracer BidirectionalPathTracer= new BidirectionalPathTracer();
+        public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT= new PrimarySampleSpaceMLT();
+        public static SampleSpaceMLT SampleSpaceMLT= new SampleSpaceMLT();
+        public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing= new EnergyRedisributionPathTracing();
     }
 
     public class IntegratorAmbientOclusion
