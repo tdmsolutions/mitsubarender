@@ -14,6 +14,7 @@
 // Copyright 2014 TDM Solutions SL
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -25,6 +26,7 @@ using Rhino.Commands;
 using Rhino.Display;
 using Rhino.PlugIns;
 using Rhino.Render;
+using Rhino.UI;
 
 namespace MitsubaRender
 {
@@ -148,6 +150,12 @@ namespace MitsubaRender
                 Directory.CreateDirectory(MitsubaSettings.WorkingDirectory);
 
             return base.OnLoad(ref errorMessage);
+        }
+
+        protected override void OptionsDialogPages(List<OptionsDialogPage> pages)
+        {
+            var page = new MainOptionPage();
+            pages.Add(page);
         }
 
         protected override bool AllowChooseContent(RenderContent content)
