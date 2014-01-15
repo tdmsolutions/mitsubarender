@@ -13,6 +13,7 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using MitsubaRender.UI;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
