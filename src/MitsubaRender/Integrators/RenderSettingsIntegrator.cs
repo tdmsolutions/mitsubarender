@@ -13,7 +13,7 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
-namespace MitsubaRender.Settings
+namespace MitsubaRender.Integrators
 {
     internal static class IntegratorObjectInstances
     {
@@ -26,20 +26,20 @@ namespace MitsubaRender.Settings
         public static VirtualPointLightRenderer VirtualPointLightRenderer;
         public static PhotonMapper PhotonMapper;
         public static ProgressivePhotonMapper ProgressivePhotonMapper;
-        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper;
+        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
         public static BidirectionalPathTracer BidirectionalPathTracer;
         public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT;
         public static SampleSpaceMLT SampleSpaceMLT;
         public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing;
     }
 
-    internal class AmbientOclusion
+    class AmbientOclusion
     {
         public int ShadingSamples;
         public float OcclusionRayLength;
     }
 
-    internal class DirectIlumination
+    class DirectIlumination
     {
         public int EmitterSmaples;
         public int BSDFSamples;
@@ -47,46 +47,41 @@ namespace MitsubaRender.Settings
         public bool HideDirectlyVisibleEmitters;
     }
 
-    internal class PathTracer
+    class PathTracer
     {
         public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-
-    internal class VolumetricPathTracerSimple
+    class VolumetricPathTracerSimple
     {
         public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-
     public class VolumetricPathTracerExtended
     {
-        public int MaximumDepth;
+ public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-
-    internal class AdjointParticleTracer
+    class AdjointParticleTracer
     {
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public int MaximumDepth;
         public bool BruteForce;
     }
-
-    internal class VirtualPointLightRenderer
+    class VirtualPointLightRenderer
     {
         public int Shadow;
         public int MaximumDepth;
         public float ClampingFactor;
     }
-
-    internal class PhotonMapper
+    class PhotonMapper
     {
         public int DirectSamples;
         public int GlossySamples;
@@ -98,33 +93,30 @@ namespace MitsubaRender.Settings
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public bool HideDirectlyVisibleEmitters;
-    }
 
-    internal class ProgressivePhotonMapper
+    }
+    class ProgressivePhotonMapper
     {
         public int SamplesPerIteration;
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public float SizeReductionParameter;
     }
-
-    internal class StochasticProgressivePhotonMapper
+    class StochasticProgressivePhotonMapper
     {
         public int PhotonsPerIteration;
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public float SizeReductionParameter;
     }
-
-    internal class BidirectionalPathTracer
+    class BidirectionalPathTracer
     {
         public int MaximumDepth;
         public bool CreateLightImage;
         public bool UseDirectSamplingMethods;
         public int RussianRouletteSartingDepth;
     }
-
-    internal class PrimarySampleSpaceMLT
+    class PrimarySampleSpaceMLT
     {
         public bool Bidirectional;
         public int MaximumDepth;
@@ -134,8 +126,7 @@ namespace MitsubaRender.Settings
         public float LargeStepProbability;
         public int RussianRouletteSartingDepth;
     }
-
-    internal class SampleSpaceMLT
+    class SampleSpaceMLT
     {
         public int MaximumDepth;
         public int DirectSamples;
@@ -147,8 +138,7 @@ namespace MitsubaRender.Settings
         public bool MultiChainPerturbation;
         public bool ManifoldPerturbation;
     }
-
-    internal class EnergyRedisributionPathTracing
+    class EnergyRedisributionPathTracing
     {
         public int MaximumDepth;
         public int AverageNumberOfChains;
