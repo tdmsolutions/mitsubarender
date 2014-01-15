@@ -96,7 +96,7 @@
     <Compile Include="Settings\IntegratorDialog.Designer.cs">
       <DependentUpon>IntegratorDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Settings\IntegratorObjects\Objects.cs" />
+    <Compile Include="Settings\IntegratorObjects.cs" />
     <Compile Include="Settings\MitsubaOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -105,6 +105,8 @@
     </Compile>
     <Compile Include="MitsubaRenderPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ReconstructionFilterObjects.cs" />
+    <Compile Include="Settings\SamplerObjects.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Commands\About\AboutDialog.cs">
       <SubType>Form</SubType>

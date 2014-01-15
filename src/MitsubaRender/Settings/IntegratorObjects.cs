@@ -61,6 +61,9 @@ namespace MitsubaRender.Settings.IntegratorObjects
         public int VolumePhotons;
         public float LookUpradiusGlobal;
         public float LookUpradiusCaustic;
+        public int WorkUnitGranularity;
+        public int RussianRouletteSartingDepth;
+        public bool HideDirectlyVisibleEmitters;
 
     }
     class ProgressivePhotonMapper
