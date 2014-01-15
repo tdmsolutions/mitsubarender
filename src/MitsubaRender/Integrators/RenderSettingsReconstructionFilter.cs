@@ -17,7 +17,7 @@ using System.ComponentModel;
 
 namespace MitsubaRender.Integrators
 {
-    class IntegratorGaussianFilter
+   public class IntegratorGaussianFilter
     {
         public IntegratorGaussianFilter()
         {
