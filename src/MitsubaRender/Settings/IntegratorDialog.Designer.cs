@@ -38,12 +38,19 @@
             this.labelOtherFeatures = new System.Windows.Forms.Label();
             this.checkBoxIrradianceCache = new System.Windows.Forms.CheckBox();
             this.checkBoxAdaptiveIntegration = new System.Windows.Forms.CheckBox();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.propertyGridIntegrator = new System.Windows.Forms.PropertyGrid();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.labelDocumentation = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            this.tabControlProperties = new System.Windows.Forms.TabControl();
+            this.tabPageIntegrator = new System.Windows.Forms.TabPage();
+            this.tabPageSampler = new System.Windows.Forms.TabPage();
+            this.TabPageReconstruction = new System.Windows.Forms.TabPage();
+            this.propertyGridSampler = new System.Windows.Forms.PropertyGrid();
+            this.propertyGridReconstruction = new System.Windows.Forms.PropertyGrid();
+            this.tabControlProperties.SuspendLayout();
+            this.tabPageIntegrator.SuspendLayout();
+            this.tabPageSampler.SuspendLayout();
+            this.TabPageReconstruction.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelIntegrator
@@ -74,6 +81,7 @@
             this.comboBoxIntegrator.Name = "comboBoxIntegrator";
             this.comboBoxIntegrator.Size = new System.Drawing.Size(291, 21);
             this.comboBoxIntegrator.TabIndex = 1;
+            this.comboBoxIntegrator.SelectedIndexChanged += new System.EventHandler(this.ComboBoxIntegratorSelectedIndexChanged);
             // 
             // labelSampler
             // 
@@ -99,6 +107,7 @@
             this.comboBoxSampler.Name = "comboBoxSampler";
             this.comboBoxSampler.Size = new System.Drawing.Size(291, 21);
             this.comboBoxSampler.TabIndex = 3;
+            this.comboBoxSampler.SelectedIndexChanged += new System.EventHandler(this.ComboBoxSamplerSelectedIndexChanged);
             // 
             // comboBoxReconstruction
             // 
@@ -115,6 +124,7 @@
             this.comboBoxReconstruction.Name = "comboBoxReconstruction";
             this.comboBoxReconstruction.Size = new System.Drawing.Size(291, 21);
             this.comboBoxReconstruction.TabIndex = 6;
+            this.comboBoxReconstruction.SelectedIndexChanged += new System.EventHandler(this.ComboBoxReconstructionSelectedIndexChanged);
             // 
             // labelReconstruction
             // 
@@ -154,23 +164,13 @@
             this.checkBoxAdaptiveIntegration.Text = "Adaptive Integration";
             this.checkBoxAdaptiveIntegration.UseVisualStyleBackColor = true;
             // 
-            // propertyGrid1
+            // propertyGridIntegrator
             // 
-            this.propertyGrid1.Location = new System.Drawing.Point(12, 137);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(387, 191);
-            this.propertyGrid1.TabIndex = 11;
-            this.propertyGrid1.ToolbarVisible = false;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.labelDocumentation);
-            this.groupBox1.Location = new System.Drawing.Point(15, 346);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(384, 130);
-            this.groupBox1.TabIndex = 12;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Documentation";
+            this.propertyGridIntegrator.Location = new System.Drawing.Point(0, 3);
+            this.propertyGridIntegrator.Name = "propertyGridIntegrator";
+            this.propertyGridIntegrator.Size = new System.Drawing.Size(373, 191);
+            this.propertyGridIntegrator.TabIndex = 11;
+            this.propertyGridIntegrator.ToolbarVisible = false;
             // 
             // button1
             // 
@@ -180,7 +180,6 @@
             this.button1.TabIndex = 13;
             this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -191,23 +190,74 @@
             this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // labelDocumentation
+            // tabControlProperties
             // 
-            this.labelDocumentation.Location = new System.Drawing.Point(10, 25);
-            this.labelDocumentation.Name = "labelDocumentation";
-            this.labelDocumentation.Size = new System.Drawing.Size(368, 93);
-            this.labelDocumentation.TabIndex = 0;
-            this.labelDocumentation.Text = "...";
+            this.tabControlProperties.Controls.Add(this.tabPageIntegrator);
+            this.tabControlProperties.Controls.Add(this.tabPageSampler);
+            this.tabControlProperties.Controls.Add(this.TabPageReconstruction);
+            this.tabControlProperties.Location = new System.Drawing.Point(12, 123);
+            this.tabControlProperties.Name = "tabControlProperties";
+            this.tabControlProperties.SelectedIndex = 0;
+            this.tabControlProperties.Size = new System.Drawing.Size(387, 220);
+            this.tabControlProperties.TabIndex = 15;
+            // 
+            // tabPageIntegrator
+            // 
+            this.tabPageIntegrator.Controls.Add(this.propertyGridIntegrator);
+            this.tabPageIntegrator.Location = new System.Drawing.Point(4, 22);
+            this.tabPageIntegrator.Name = "tabPageIntegrator";
+            this.tabPageIntegrator.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageIntegrator.Size = new System.Drawing.Size(379, 194);
+            this.tabPageIntegrator.TabIndex = 0;
+            this.tabPageIntegrator.Text = "Integrator";
+            this.tabPageIntegrator.UseVisualStyleBackColor = true;
+            // 
+            // tabPageSampler
+            // 
+            this.tabPageSampler.Controls.Add(this.propertyGridSampler);
+            this.tabPageSampler.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSampler.Name = "tabPageSampler";
+            this.tabPageSampler.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSampler.Size = new System.Drawing.Size(379, 194);
+            this.tabPageSampler.TabIndex = 1;
+            this.tabPageSampler.Text = "Sampler";
+            this.tabPageSampler.UseVisualStyleBackColor = true;
+            // 
+            // TabPageReconstruction
+            // 
+            this.TabPageReconstruction.Controls.Add(this.propertyGridReconstruction);
+            this.TabPageReconstruction.Location = new System.Drawing.Point(4, 22);
+            this.TabPageReconstruction.Name = "TabPageReconstruction";
+            this.TabPageReconstruction.Padding = new System.Windows.Forms.Padding(3);
+            this.TabPageReconstruction.Size = new System.Drawing.Size(379, 194);
+            this.TabPageReconstruction.TabIndex = 2;
+            this.TabPageReconstruction.Text = "Reconstruction";
+            this.TabPageReconstruction.UseVisualStyleBackColor = true;
+            // 
+            // propertyGridSampler
+            // 
+            this.propertyGridSampler.Location = new System.Drawing.Point(3, 2);
+            this.propertyGridSampler.Name = "propertyGridSampler";
+            this.propertyGridSampler.Size = new System.Drawing.Size(373, 191);
+            this.propertyGridSampler.TabIndex = 12;
+            this.propertyGridSampler.ToolbarVisible = false;
+            // 
+            // propertyGridReconstruction
+            // 
+            this.propertyGridReconstruction.Location = new System.Drawing.Point(3, 2);
+            this.propertyGridReconstruction.Name = "propertyGridReconstruction";
+            this.propertyGridReconstruction.Size = new System.Drawing.Size(373, 191);
+            this.propertyGridReconstruction.TabIndex = 12;
+            this.propertyGridReconstruction.ToolbarVisible = false;
             // 
             // IntegratorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(411, 514);
+            this.Controls.Add(this.tabControlProperties);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.propertyGrid1);
             this.Controls.Add(this.checkBoxAdaptiveIntegration);
             this.Controls.Add(this.checkBoxIrradianceCache);
             this.Controls.Add(this.labelOtherFeatures);
@@ -222,7 +272,11 @@
             this.MinimizeBox = false;
             this.Name = "IntegratorDialog";
             this.Text = "Render Settings";
-            this.groupBox1.ResumeLayout(false);
+            this.Load += new System.EventHandler(this.IntegratorDialogLoad);
+            this.tabControlProperties.ResumeLayout(false);
+            this.tabPageIntegrator.ResumeLayout(false);
+            this.tabPageSampler.ResumeLayout(false);
+            this.TabPageReconstruction.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -239,10 +293,14 @@
         private System.Windows.Forms.Label labelOtherFeatures;
         private System.Windows.Forms.CheckBox checkBoxIrradianceCache;
         private System.Windows.Forms.CheckBox checkBoxAdaptiveIntegration;
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.PropertyGrid propertyGridIntegrator;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label labelDocumentation;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TabControl tabControlProperties;
+        private System.Windows.Forms.TabPage tabPageIntegrator;
+        private System.Windows.Forms.TabPage tabPageSampler;
+        private System.Windows.Forms.TabPage TabPageReconstruction;
+        private System.Windows.Forms.PropertyGrid propertyGridSampler;
+        private System.Windows.Forms.PropertyGrid propertyGridReconstruction;
     }
 }
