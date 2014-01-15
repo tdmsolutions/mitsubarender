@@ -1,22 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MitsubaRender.Settings.IntegratorObjects
+﻿namespace MitsubaRender.Settings
 {
-     class AmbientOclusion
+    internal static class IntegratorObjectInstances
     {
-        public  int ShadingSamples;
-        public  float OcclusionRayLength;
+        public static AmbientOclusion AmbientOclusion;
+        public static DirectIlumination DirectIlumination;
+        public static PathTracer PathTracer;
+        public static VolumetricPathTracerSimple VolumetricPathTracerSimple;
+        public static VolumetricPathTracerExtended VolumetricPathTracerExtended;
+        public static AdjointParticleTracer AdjointParticleTracer;
+        public static VirtualPointLightRenderer VirtualPointLightRenderer;
+        public static PhotonMapper PhotonMapper;
+        public static ProgressivePhotonMapper ProgressivePhotonMapper;
+        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
+        public static BidirectionalPathTracer BidirectionalPathTracer;
+        public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT;
+        public static SampleSpaceMLT SampleSpaceMLT;
+        public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing;
+    }
+
+    class AmbientOclusion
+    {
+        public int ShadingSamples;
+        public float OcclusionRayLength;
     }
 
     class DirectIlumination
     {
-        public  int EmitterSmaples;
-        public  int BSDFSamples;
-        public  bool StrictSurfaceNormals;
-        public  bool HideDirectlyVisibleEmitters;
+        public int EmitterSmaples;
+        public int BSDFSamples;
+        public bool StrictSurfaceNormals;
+        public bool HideDirectlyVisibleEmitters;
     }
 
     class PathTracer
@@ -26,16 +39,17 @@ namespace MitsubaRender.Settings.IntegratorObjects
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-    class VolumetricPathTracer
+    class VolumetricPathTracerSimple
     {
         public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-    class VolumetricPathTracerExtended
+    public class VolumetricPathTracerExtended
     {
-       
+ public int MaximumDepth;
+        public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
@@ -68,20 +82,60 @@ namespace MitsubaRender.Settings.IntegratorObjects
     }
     class ProgressivePhotonMapper
     {
+        public int SamplesPerIteration;
+        public int WorkUnitGranularity;
+        public int RussianRouletteSartingDepth;
+        public float SizeReductionParameter;
     }
     class StochasticProgressivePhotonMapper
     {
+        public int PhotonsPerIteration;
+        public int WorkUnitGranularity;
+        public int RussianRouletteSartingDepth;
+        public float SizeReductionParameter;
     }
     class BidirectionalPathTracer
     {
+        public int MaximumDepth;
+        public bool CreateLightImage;
+        public bool UseDirectSamplingMethods;
+        public int RussianRouletteSartingDepth;
     }
     class PrimarySampleSpaceMLT
     {
+        public bool Bidirectional;
+        public int MaximumDepth;
+        public int DirectSamples;
+        public bool TwoStageMLT;
+        public int LuminanceSamples;
+        public float LargeStepProbability;
+        public int RussianRouletteSartingDepth;
     }
     class SampleSpaceMLT
     {
+        public int MaximumDepth;
+        public int DirectSamples;
+        public bool TwoStageMLT;
+        public int LuminanceSamples;
+        public bool BidirectionalMutation;
+        public bool LensPerturbation;
+        public bool CausticPerturbation;
+        public bool MultiChainPerturbation;
+        public bool ManifoldPerturbation;
     }
     class EnergyRedisributionPathTracing
     {
+        public int MaximumDepth;
+        public int AverageNumberOfChains;
+        public int MutationsPerChain;
+        public int DirectSamples;
+        public int LuminanceSamples;
+        public bool BidirectionalMutation;
+        public bool LensPerturbation;
+        public bool CausticPerturbation;
+        public bool MultiChainPerturbation;
+        public bool ManifoldPerturbation;
+        public int ProbabilityFactor;
+        public int RussianRouletteSartingDepth;
     }
 }

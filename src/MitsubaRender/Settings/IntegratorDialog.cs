@@ -34,8 +34,8 @@ namespace MitsubaRender.Settings
             tabControlProperties.SelectedIndex = 0;
             switch (comboBoxIntegrator.SelectedIndex)
             {
-                case 0:
-                    //propertyGridIntegrator.SelectedObject
+                case :
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AmbientOclusion;
                     break;
 
             }
