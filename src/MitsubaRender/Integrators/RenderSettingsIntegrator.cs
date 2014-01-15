@@ -26,7 +26,7 @@ namespace MitsubaRender.Integrators
         public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended;
         public static IntegratorAdjointParticleTracer AdjointParticleTracer;
         public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer;
-        public static PhotonMapper PhotonMapper;
+        public static IntegratorPhotonMapper PhotonMapper;
         public static ProgressivePhotonMapper ProgressivePhotonMapper;
         public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
         public static BidirectionalPathTracer BidirectionalPathTracer;
@@ -184,7 +184,7 @@ namespace MitsubaRender.Integrators
     }
 
 
-    class IntegratorVirtualPointLightRenderer
+    public class IntegratorVirtualPointLightRenderer
     {
         public IntegratorVirtualPointLightRenderer()
         {
@@ -205,20 +205,71 @@ namespace MitsubaRender.Integrators
         [Description("Relative clamping factor (0=no clamping, 1=full clamping)")]
         public float ClampingFactor { get; set; } 
     }
-    class PhotonMapper
+    public class IntegratorPhotonMapper
     {
+        public IntegratorPhotonMapper()
+        {
+            DirectSamples = 16;
+            GlossySamples = 32;
+            MaximumDepth = -1;
+            GlobalPhotons = 250000;
+            CausticPhotons = 250000;
+            VolumePhotons = 250000;
+            LookupRadiusGlobal = 0.05f;
+            LookupRadiusCaustic = 0.0125f;
+            CausticPhotonMapLookupSize = 120;
+            WorkUnitGranularity = 0;
+            RussianRouletteSartingDepth = 5;
+            HideDirectlyVisibleEmitters = false;
+        }
 
+        [DisplayName(@"Direct samples")]
+        [Description("Number of luminaire samples for direct illumination")]
+        public int DirectSamples { get; set; }
 
-        public int DirectSamples;
-        public int GlossySamples;
-        public int MaximumDepth;
-        public int GlobalPhotons;
-        public int VolumePhotons;
-        public float LookUpradiusGlobal;
-        public float LookUpradiusCaustic;
-        public int WorkUnitGranularity;
-        public int RussianRouletteSartingDepth;
-        public bool HideDirectlyVisibleEmitters;
+        [DisplayName(@"Glossy samples")]
+        [Description("Number of glossy samples for direct illumination")]
+        public int GlossySamples { get; set; }
+
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }
+
+        [DisplayName(@"Global photons")]
+        [Description("Number of photons to collect for the global photon map (if applicable)")]
+        public int GlobalPhotons { get; set; }
+
+        [DisplayName(@"Caustic photons")]
+        [Description("Number of photons to collect for the caustic photon map (if applicable)")]
+        public int CausticPhotons { get; set; }
+
+        [DisplayName(@"Volume photons")]
+        [Description("Number of photons to collect for the volume photon map (if applicable)")]
+        public int VolumePhotons { get; set; }
+
+        [DisplayName(@"Lookup radius (global)")]
+        [Description("Radius of lookups in the global photon map (relative to the scene size)")]
+        public float LookupRadiusGlobal { get; set; }
+
+        [DisplayName(@"Lookup radius (caustic)")]
+        [Description("Radius of lookups in the caustic photon map (relative to the scene size)")]
+        public float LookupRadiusCaustic { get; set; }
+
+        [DisplayName(@"Caustic photon map lookup size")]
+        [Description("Number of photons that should be fetched in photon map queries")]
+        public int CausticPhotonMapLookupSize { get; set; }
+
+        [DisplayName(@"Work unit granularity")]
+        [Description("Granularity of photon tracing work units (in shot particles, 0 => decide automatically)")]
+        public int WorkUnitGranularity { get; set; }
+
+        [DisplayName(@"Russian roulette starting depth")]
+        [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
+        public int RussianRouletteSartingDepth { get; set; }
+
+        [DisplayName(@"Hide directly visible emitters")]
+        [Description("Hide light sources (e.g. area or environment light sources) that are directly visible to the camera? Reflections of light sources remain unaffected.")]
+        public bool HideDirectlyVisibleEmitters { get; set; } 
 
     }
     class ProgressivePhotonMapper
