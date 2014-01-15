@@ -15,45 +15,36 @@
 
 namespace MitsubaRender.Settings
 {
-
+    enum IntegratorType
+    {
+        Ambientoclusion,
+        DirectIlumination,
+        PathTracer,
+        VolumetricPathTracerSimple,
+        VolumetricPathTracerExtended,
+        AdjointParticleTracer,
+        VirtualPointLightRenderer,
+        PhotonMapper,
+        ProgressivePhotonMapper,
+        StochasticProgressivePhotonMapper,
+        BidirectionalPathTracer,
+        PrimarySampleSpaceMLT,
+        SampleSpaceMLT,
+        EnergyRedisributionPathTracing
+    }
+    enum SamplerType
+    {
+        IndependentSampler,
+        StraitfieldSampler,
+        LowDiscrepancySampler,
+        HammersleyQMCSampler,
+        HaltonQMCSampler,
+        SobolQMCSampler
+    };
     public static class MitsubaSettings
     {
-        static internal readonly string[] IntegratorData = new[] {
-            "Ambient oclusion",
-            "Direct ilumination", 
-            "Path tracer", 
-            "Volumetric path tracer (Simple)",
-            "Volumetric path tracer (Extended)",
-            "Adjoint particle tracer", 
-            "Virtual point light renderer", 
-            "Photon mapper",
-            "Progressive photon mapper", 
-            "Stochastic progressive photon mapper", 
-            "Bidirectional path tracer", 
-            "Primary Sample Space MLT", 
-            "Sample Space MLT",
-            "Energy redisribution path tracing" };
 
-        static internal readonly string[] SamplerData = new[]
-            {
-                "Independent sampler",
-                "Straitfield sampler",
-                "Low discrepancy sampler",
-                "Hammersley QMC sampler",
-                "Halton QMC sampler",
-                "Sobol QMC sampler"
 
-            };
-
-        static internal readonly string[] ReconstructionData = new[]
-            {
-                "Box filter",
-                "Tent filter",
-                "Gaussian filter",
-                "Mitchell-Netravali filter",
-                "Catmull-Rom filter",
-                "Lanczos Sinc filter"
-            };
 
         //TODO settings
         public static string WorkingDirectory;

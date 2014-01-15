@@ -15,6 +15,47 @@
 
 namespace MitsubaRender.Integrators
 {
+   internal static class IntegratorsDataSource
+   {
+       static internal readonly string[] IntegratorData = new[] {
+            "Ambient oclusion",
+            "Direct ilumination", 
+            "Path tracer", 
+            "Volumetric path tracer (Simple)",
+            "Volumetric path tracer (Extended)",
+            "Adjoint particle tracer", 
+            "Virtual point light renderer", 
+            "Photon mapper",
+            "Progressive photon mapper", 
+            "Stochastic progressive photon mapper", 
+            "Bidirectional path tracer", 
+            "Primary Sample Space MLT", 
+            "Sample Space MLT",
+            "Energy redisribution path tracing" };
+
+       static internal readonly string[] SamplerData = new[]
+            {
+                "Independent sampler",
+                "Straitfield sampler",
+                "Low discrepancy sampler",
+                "Hammersley QMC sampler",
+                "Halton QMC sampler",
+                "Sobol QMC sampler"
+
+            };
+
+       static internal readonly string[] ReconstructionData = new[]
+            {
+                "Box filter",
+                "Tent filter",
+                "Gaussian filter",
+                "Mitchell-Netravali filter",
+                "Catmull-Rom filter",
+                "Lanczos Sinc filter"
+            };
+   }
+    
+    
     internal static class IntegratorObjectInstances
     {
         public static AmbientOclusion AmbientOclusion;
@@ -26,7 +67,7 @@ namespace MitsubaRender.Integrators
         public static VirtualPointLightRenderer VirtualPointLightRenderer;
         public static PhotonMapper PhotonMapper;
         public static ProgressivePhotonMapper ProgressivePhotonMapper;
-        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
+        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper;
         public static BidirectionalPathTracer BidirectionalPathTracer;
         public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT;
         public static SampleSpaceMLT SampleSpaceMLT;
@@ -63,7 +104,7 @@ namespace MitsubaRender.Integrators
     }
     public class VolumetricPathTracerExtended
     {
- public int MaximumDepth;
+        public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
