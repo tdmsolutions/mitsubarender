@@ -17,9 +17,12 @@ using System;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.UI;
+using Rhino;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
+using Rhino.Render.UI;
 
 namespace MitsubaRender.Materials
 {
@@ -33,6 +36,8 @@ namespace MitsubaRender.Materials
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
         private static int _count;
+
+        private MaterialCombo _distributionCombo;
 
         #region Material Parameters
 
@@ -126,7 +131,7 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void CreateUserInterface()
         {
-            var distribution_field = Fields.Add(DISTRIBUTION_FIELD, Distribution, "Distribution");
+            //var distribution_field = Fields.Add(DISTRIBUTION_FIELD, Distribution, "Distribution");
             var alpha_float_field = Fields.Add(ALPHA_FLOAT_FIELD, Alpha.FirstParameter, "Alpha Float");
             var alpha_texture_field = Fields.AddTextured(ALPHA_TEXTURE_FIELD, false, "Alpha Texture");
             var alphaU_float_field = Fields.Add(ALPHAU_FLOAT_FIELD, AlphaU.FirstParameter, "AlphaU Float");
@@ -136,7 +141,7 @@ namespace MitsubaRender.Materials
             var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
             var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
 
-            BindParameterToField(DISTRIBUTION_FIELD, distribution_field, ChangeContexts.UI);
+            //BindParameterToField(DISTRIBUTION_FIELD, distribution_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, alpha_texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHAU_FLOAT_FIELD, alphaU_float_field, ChangeContexts.UI);
@@ -148,14 +153,26 @@ namespace MitsubaRender.Materials
         }
 
         /// <summary>
+        /// This method creates a new section named "Parameters" in the material selector of the Rhino user interface.
+        /// </summary>
+        protected override void OnAddUserInterfaceSections()
+        {
+            var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
+            _distributionCombo = (MaterialCombo)section.Window;
+            _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+            base.OnAddUserInterfaceSections();
+        }
+
+        /// <summary>
         /// This method reads the values introduced by the user and established class properties with them.
         /// </summary>
         protected override void ReadDataFromUI()
         {
             //Distribution
-            string distribution;
-            Fields.TryGetValue(DISTRIBUTION_FIELD, out distribution);
-            Distribution = distribution;
+            //string distribution;
+            //Fields.TryGetValue(DISTRIBUTION_FIELD, out distribution);
+            if (_distributionCombo != null)
+                Distribution = _distributionCombo.SelectedItem;
 
             //Alpha
             bool hasTexture;

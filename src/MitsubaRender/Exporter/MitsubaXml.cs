@@ -134,6 +134,7 @@ namespace MitsubaRender.Exporter
         /// </summary>
         public bool CreateDefaultIntegrator()
         {
+            //TODO delete me
             const string type = "photonmapper";
 
             var integrator = _document.CreateElement("integrator");

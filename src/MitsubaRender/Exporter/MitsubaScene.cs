@@ -120,6 +120,8 @@ namespace MitsubaRender.Exporter
                 //TODO environment
                 ExportEmitters();
 
+                ExportIntegrator();
+
                 //if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0) ExportEnvironment(doc, docRoot);
                 //else
                 //{
@@ -214,6 +216,14 @@ namespace MitsubaRender.Exporter
             //    }
             //    idx++;
             //}
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ExportIntegrator()
+        {
+            //Pillar datos de 
         }
 
         /// <summary>

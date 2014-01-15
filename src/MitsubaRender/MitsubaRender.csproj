@@ -44,6 +44,9 @@
     <Reference Include="Ionic.Zlib">
       <HintPath>.\Ionic.Zlib.dll</HintPath>
     </Reference>
+    <Reference Include="RhinoWindows">
+      <HintPath>..\..\..\..\Program Files\Rhinoceros 5.0 (64-bit)\System\RhinoWindows.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -112,6 +115,12 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\Tools.cs" />
+    <Compile Include="UI\MaterialCombo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\MaterialCombo.Designer.cs">
+      <DependentUpon>MaterialCombo.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Commands\About\AboutDialog.resx">
@@ -126,6 +135,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\MitsubaOptions.resx">
       <DependentUpon>MitsubaOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MaterialCombo.resx">
+      <DependentUpon>MaterialCombo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
