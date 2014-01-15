@@ -74,12 +74,14 @@
     <Compile Include="Materials\Interfaces\IRough.cs" />
     <Compile Include="Materials\RoughDielectricMaterial.cs" />
     <Compile Include="Materials\RoughDiffuseMaterial.cs" />
+    <Compile Include="Materials\RoughPlasticMaterial.cs" />
+    <Compile Include="Materials\SmoothDielectricCoatingMaterial.cs" />
     <Compile Include="Materials\SmoothDielectricMaterial.cs" />
     <Compile Include="Materials\RoughConductorMaterial.cs" />
     <Compile Include="Materials\SmoothDiffuseMaterial.cs" />
     <Compile Include="Materials\MitsubaMaterial.cs" />
-    <Compile Include="Materials\MitsubaPresetMaterial.cs" />
     <Compile Include="Materials\SmoothConductorMaterial.cs" />
+    <Compile Include="Materials\SmoothPlasticMaterial.cs" />
     <Compile Include="Materials\Wrappers\MitsubaAnimation.cs" />
     <Compile Include="Materials\Wrappers\MitsubaTransform.cs" />
     <Compile Include="Materials\Wrappers\MitsubaType.cs" />

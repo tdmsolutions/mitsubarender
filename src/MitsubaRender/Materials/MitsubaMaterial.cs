@@ -24,6 +24,41 @@ namespace MitsubaRender.Materials
     /// </summary>
     public abstract class MitsubaMaterial : RenderMaterial
     {
+        #region Material constants
+
+        public const string DISTRIBUTION_FIELD = "distribution";
+        public const string ALPHA_FLOAT_FIELD = "alphaFloat";
+        public const string ALPHA_TEXTURE_FIELD = "alphaTexture";
+        public const string ALPHAU_FLOAT_FIELD = "alphaUFloat";
+        public const string ALPHAU_TEXTURE_FIELD = "alphaUTexture";
+        public const string ALPHAV_FLOAT_FIELD = "alphaVFloat";
+        public const string ALPHAV_TEXTURE_FIELD = "alphaVTexture";
+        public const string MATERIAL_FIELD = "material";
+        public const string ETA_FIELD = "eta";
+        public const string K_FIELD = "k";
+        public const string EXT_ETA_FLOAT_FIELD = "extEtaFloat";
+        public const string EXT_ETA_TEXTURE_FIELD = "extEtaTexture";
+        public const string EXT_ETA_SPECTRUM_FIELD = "extEtaSpectrum";
+        public const string REFLECTANCE_COLOR_FIELD = "reflectanceColor";
+        public const string REFLECTANCE_TEXTURE_FIELD = "reflectanceTexture";
+        public const string USE_FAST_APPROX_FIELD = "useFastApprox";
+        public const string INTIOR_FIELD = "intIOR";
+        public const string EXTIOR_FIELD = "extIOR";
+        public const string NONLINEAR_FIELD = "nonlinear";
+        public const string THICKNESS_FIELD = "thickness";
+        public const string SIGMAA_COLOR_FIELD = "sigmaAColor";
+        public const string SIGMAA_TEXTURE_FIELD = "sigmaATexture";
+
+        //Texture Slots
+        public const string ALPHA_TEXTURE_SLOT = "alphaTextureSlot";
+        public const string ALPHAU_TEXTURE_SLOT = "alphaUTextureSlot";
+        public const string ALPHAV_TEXTURE_SLOT = "alphaVTextureSlot";
+        public const string EXT_ETA_TEXTURE_SLOT = "extEtaSlot";
+        public const string REFLECTANCE_TEXTURE_SLOT = "reflectanceTextureSlot";
+        public const string SIGMAA_TEXTURE_SLOT = "reflectanceTextureSlot";
+
+        #endregion
+
         /// <summary>
         ///   The internal ID of the current material.
         /// </summary>

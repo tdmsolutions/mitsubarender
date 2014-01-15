@@ -23,96 +23,137 @@ using Rhino.Render;
 namespace MitsubaRender.Materials
 {
     /// <summary>
-    /// TODO summary RoughDiffuseMaterial
     /// </summary>
-    [Guid("2dbf06cd-e57b-43b2-b990-ce70a8d86eed")]
-    public sealed class RoughDiffuseMaterial : MitsubaMaterial, IDiffuse, IRough<float>
+    [Guid("B61557C0-0BD1-483f-A16B-B82830E69947")]
+    public sealed class RoughPlasticMaterial : MitsubaMaterial, IPlastic, IRough<float>
     {
         /// <summary>
         ///   Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
         private static uint _count;
 
-        public override string TypeName
-        {
-            get { return "Mitsuba Rough Diffuse material"; }
-        }
-
-        public override string TypeDescription
-        {
-            get { return "Mitsuba Rough Diffuse material"; } //TODO better TypeDescription
-        }
-
-        #region Material Parameters
+        #region Mitsuba parameters
 
         /// <summary>
-        /// Specifies the diffuse albedo of the material. 
-        /// Default: 0.5
+        /// Specifies the type of microfacet normal distribution used to model the surface roughness.
+        /// Default: beckmann
         /// </summary>
-        public MitsubaType<Color4f, string> Reflectance { get; set; }
+        public string Distribution { get; set; }
 
         /// <summary>
-        /// Specifies the roughness of the unresolved surface microgeometry using the root mean square (RMS) slope of the microfacets. 
-        /// Default: 0.2
+        ///   Specifies the type of microfacet normal distribution used to model the surface roughness.
+        ///   Default: beckmann
+        /// </summary>
+        public MitsubaType<Color4f, string> DiffuseReflectance { get; set; }
+
+        /// <summary>
+        ///   Specifies the roughness of the unresolved surface microgeometry. When the Beckmann distribution is used,
+        ///   this parameter is equal to the root mean square (RMS) slope of the microfacets.
+        ///   Default: 0.1
         /// </summary>
         public MitsubaType<float, string> Alpha { get; set; }
 
         /// <summary>
-        /// This parameter selects between the full version of themodel or a fast approximation that still retainsmost qualitative features. 
-        /// Default: false, i.e. use the high-quality version
+        ///   Interior index of refraction specified numerically or using a known material name.
+        ///   Default: polypropylene / 1.49
         /// </summary>
-        public bool UseFastApprox { get; set; }
+        public MitsubaType<float, string> IntIOR { get; set; }
+
+        /// <summary>
+        ///   Exterior index of refraction specified numerically or using a known material name.
+        ///   Default: air / 1.000277
+        /// </summary>
+        public MitsubaType<float, string> ExtIOR { get; set; }
+
+        /// <summary>
+        ///   Account for nonlinear color shifts due to internal scattering? See the plastic plugin for details.
+        ///   Default: Don’t account for them and preserve the texture colors, i.e. false
+        /// </summary>
+        public bool Nonlinear { get; set; }
 
         #endregion
 
         /// <summary>
-        /// 
+        /// Main ctor.
         /// </summary>
-        public RoughDiffuseMaterial()
+        public RoughPlasticMaterial()
         {
-            Reflectance = new MitsubaType<Color4f, string>();
+            Distribution = "beckmann"; //TODO delete me !
+            DiffuseReflectance = new MitsubaType<Color4f, string>();
             Alpha = new MitsubaType<float, string>();
+            IntIOR = new MitsubaType<float, string>();
+            ExtIOR = new MitsubaType<float, string>();
             CreateUserInterface();
         }
 
-        /// <summary>
-        /// This method has to be implemented in each material with 
-        /// </summary>
-        /// <returns></returns>
+        public override string TypeName
+        {
+            get { return "Mitsuba Rough Plastic Material"; }
+        }
+
+        public override string TypeDescription
+        {
+            get
+            {
+                return "This plugin implements a realistic microfacet scattering model for rendering rough " +
+                       "dielectric materials with internal scattering, such as plastic.";
+            }
+        }
+
         public override string GetMaterialId()
         {
-            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__roughdiffuse" + _count++;
+            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__roughplastic" + _count++;
             return MaterialId;
         }
 
         /// <summary>
-        /// This method creates the UI in Rhino for the current material.
+        /// 
         /// </summary>
         protected override void CreateUserInterface()
         {
-            var reflectance_field = Fields.Add(REFLECTANCE_COLOR_FIELD, Reflectance.FirstParameter, "Reflectance Color");
-            var texture_field = Fields.AddTextured(REFLECTANCE_TEXTURE_FIELD, false, "Reflectance Texture");
+            var distribution_field = Fields.Add(DISTRIBUTION_FIELD, Distribution, "Distribution"); //TODO combobox
+            var reflectance_field = Fields.Add(REFLECTANCE_COLOR_FIELD, DiffuseReflectance.FirstParameter, "Diffuse Reflectance Color");
+            var texture_field = Fields.AddTextured(REFLECTANCE_TEXTURE_FIELD, false, "Diffuse Reflectance Texture");
             var alpha_float_field = Fields.Add(ALPHA_FLOAT_FIELD, Alpha.FirstParameter, "Alpha Float");
             var alpha_texture_field = Fields.AddTextured(ALPHA_TEXTURE_FIELD, false, "Alpha Texture");
-            var use_fast_approx_field = Fields.Add(USE_FAST_APPROX_FIELD, UseFastApprox, "Use fast approximation");
-            
+            var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
+            var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
+            var nonlinear_field = Fields.Add(NONLINEAR_FIELD, Nonlinear, "Nonlinear");
+
+            BindParameterToField(DISTRIBUTION_FIELD, distribution_field, ChangeContexts.UI);
             BindParameterToField(REFLECTANCE_COLOR_FIELD, reflectance_field, ChangeContexts.UI);
             BindParameterToField(REFLECTANCE_TEXTURE_FIELD, REFLECTANCE_TEXTURE_SLOT, texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, alpha_texture_field, ChangeContexts.UI);
-            BindParameterToField(USE_FAST_APPROX_FIELD, use_fast_approx_field, ChangeContexts.UI);
+            BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
+            BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
+            BindParameterToField(NONLINEAR_FIELD, nonlinear_field, ChangeContexts.UI);
         }
 
         /// <summary>
-        /// This method reads the values introduced by the user and established class properties with them.
+        /// 
         /// </summary>
         protected override void ReadDataFromUI()
         {
+            //Distribution
+            string distribution;
+            Fields.TryGetValue(DISTRIBUTION_FIELD, out distribution);
+            Distribution = distribution;
+
+            //Exterior Index of Refraction
+            float extIOR;
+            Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
+            ExtIOR.FirstParameter = extIOR;
+
+            //Interior Index of Refraction
+            float intIOR;
+            if (Fields.TryGetValue(INTIOR_FIELD, out intIOR)) IntIOR.FirstParameter = intIOR;
+
+            //Diffuse Refectance
             bool hasTexture;
             var textureParam = GetChildSlotParameter(REFLECTANCE_TEXTURE_FIELD, REFLECTANCE_TEXTURE_SLOT);
             Fields.TryGetValue(REFLECTANCE_TEXTURE_FIELD, out hasTexture);
 
-            //Reflectance
             if (hasTexture && textureParam != null)
             {
                 //We have texture
@@ -122,7 +163,7 @@ namespace MitsubaRender.Materials
                     if (tx.Fields.ContainsField("filename"))
                     {
                         var fields = tx.Fields.GetField("filename");
-                        Reflectance.SecondParameter = fields.ValueAsObject().ToString();
+                        DiffuseReflectance.SecondParameter = fields.ValueAsObject().ToString();
                     }
                     else
                     {
@@ -131,19 +172,19 @@ namespace MitsubaRender.Materials
                         {
                             var texSim = new SimulatedTexture();
                             text.SimulateTexture(ref texSim, false);
-                            Reflectance.SecondParameter = texSim.Filename;
+                            DiffuseReflectance.SecondParameter = texSim.Filename;
                         }
                     }
                 }
-                else Reflectance.SecondParameter = string.Empty;
+                else DiffuseReflectance.SecondParameter = string.Empty;
             }
             else
             {
                 //We have color
                 Color4f color;
                 Fields.TryGetValue(REFLECTANCE_COLOR_FIELD, out color);
-                Reflectance.FirstParameter = color;
-                Reflectance.SecondParameter = string.Empty;
+                DiffuseReflectance.FirstParameter = color;
+                DiffuseReflectance.SecondParameter = string.Empty;
             }
 
             //Alpha
@@ -178,25 +219,22 @@ namespace MitsubaRender.Materials
                 float alpha;
                 Fields.TryGetValue(ALPHA_FLOAT_FIELD, out alpha);
                 Alpha.FirstParameter = alpha;
-                Reflectance.SecondParameter = string.Empty;
             }
 
-            //Use fast approximation?
-            bool useFastApprox;
-            Fields.TryGetValue(USE_FAST_APPROX_FIELD, out useFastApprox);
-            UseFastApprox = useFastApprox;
+            //Nonlinear
+            bool nonLinear;
+            if (Fields.TryGetValue(NONLINEAR_FIELD, out nonLinear)) Nonlinear = nonLinear;
         }
 
         /// <summary>
-        /// This method simulates the selected material in the Rhino viewport.
+        /// 
         /// </summary>
-        /// <param name="simulation">Set the properties of the input basic material to provide the simulation for this material.</param>
-        /// <param name="isForDataOnly">Called when only asking for a hash - don't write any textures to the disk - 
-        /// just provide the filenames they will get.</param>
+        /// <param name="simulation"></param>
+        /// <param name="isForDataOnly"></param>
         public override void SimulateMaterial(ref Material simulation, bool isForDataOnly)
         {
             ReadDataFromUI();
-            //TODO simulate RoughDiffuse
+            //TODO simulate RoughPlasticMaterial in Rhino !
         }
     }
 }

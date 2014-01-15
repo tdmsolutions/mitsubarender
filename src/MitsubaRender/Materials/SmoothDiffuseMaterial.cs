@@ -29,14 +29,6 @@ namespace MitsubaRender.Materials
     [Guid("90f1187e-06c6-4f3d-bfc9-62e64bc632aa")]
     public sealed class SmoothDiffuseMaterial : MitsubaMaterial, IDiffuse
     {
-        #region Field constants
-
-        private const string REFLECTANCE_COLOR_FIELD = "reflectanceColor";
-        private const string REFLECTANCE_TEXTURE_FIELD = "reflectanceTexture";
-        private const string REFLECTANCE_TEXTURE_SLOT = "reflectanceTextureSlot";
-
-        #endregion
-
         /// <summary>
         ///   Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>

@@ -21,18 +21,11 @@ namespace MitsubaRender.Materials
 {
     /// <summary>
     /// TODO SmoothDielectricMaterial summary
-    /// TODO this class it is NOT using the second parameter (strings) !!
+    /// TODO this class is NOT using the second parameter (strings) !!
     /// </summary>
     [Guid("b7d7e743-edce-429a-a5ce-326cb37a3cc4")]
     public sealed class SmoothDielectricMaterial : MitsubaMaterial, IDielectric
     {
-        #region Field constants
-
-        private const string INTIOR_FIELD = "intIOR";
-        private const string EXTIOR_FIELD = "extIOR";
-
-        #endregion
-
         /// <summary>
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
@@ -107,10 +100,12 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void ReadDataFromUI()
         {
+            //Exterior Index of Refraction
             float extIOR;
             Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
             ExtIOR.FirstParameter = extIOR;
 
+            //Interior Index of Refraction
             float intIOR;
             if (Fields.TryGetValue(INTIOR_FIELD, out intIOR))
                 IntIOR.FirstParameter = intIOR;

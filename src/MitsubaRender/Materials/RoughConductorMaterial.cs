@@ -27,28 +27,6 @@ namespace MitsubaRender.Materials
     [Guid("D9698F8B-59D1-48fd-88C9-82B19DF1CCC2")]
     public sealed class RoughConductorMaterial : MitsubaMaterial, IRough<float>, IConductor
     {
-        #region Field constants
-
-        private const string DISTRIBUTION_FIELD = "distribution";
-        private const string ALPHA_FLOAT_FIELD = "alphaFloat";
-        private const string ALPHA_TEXTURE_FIELD = "alphaTexture";
-        private const string ALPHAU_FLOAT_FIELD = "alphaUFloat";
-        private const string ALPHAU_TEXTURE_FIELD = "alphaUTexture";
-        private const string ALPHAV_FLOAT_FIELD = "alphaVFloat";
-        private const string ALPHAV_TEXTURE_FIELD = "alphaVTexture";
-        private const string MATERIAL_FIELD = "material";
-        private const string ETA_FIELD = "eta";
-        private const string K_FIELD = "k";
-        private const string EXT_ETA_FLOAT_FIELD = "extEtaFloat";
-        private const string EXT_ETA_TEXTURE_FIELD = "extEtaTexture";
-        
-        private const string ALPHA_TEXTURE_SLOT = "alphaTextureSlot";
-        private const string ALPHAU_TEXTURE_SLOT = "alphaUTextureSlot";
-        private const string ALPHAV_TEXTURE_SLOT = "alphaVTextureSlot";
-        private const string EXT_ETA_TEXTURE_SLOT = "extEtaSlot";
-
-        #endregion
-
         /// <summary>
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
@@ -110,6 +88,7 @@ namespace MitsubaRender.Materials
         /// </summary>
         public RoughConductorMaterial()
         {
+            Distribution = "beckmann"; //TODO delete me, comboBox rules!
             Alpha = new MitsubaType<float, string>();
             AlphaU = new MitsubaType<float, string>();
             AlphaV = new MitsubaType<float, string>();
@@ -165,16 +144,20 @@ namespace MitsubaRender.Materials
 
             BindParameterToField(DISTRIBUTION_FIELD, distribution_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
-            BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, alpha_texture_field, ChangeContexts.UI);
+            BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, 
+                alpha_texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHAU_FLOAT_FIELD, alphaU_float_field, ChangeContexts.UI);
-            BindParameterToField(ALPHAU_TEXTURE_FIELD, ALPHAU_TEXTURE_SLOT, alphaU_texture_field, ChangeContexts.UI);
+            BindParameterToField(ALPHAU_TEXTURE_FIELD, ALPHAU_TEXTURE_SLOT, 
+                alphaU_texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHAV_FLOAT_FIELD, alphaV_float_field, ChangeContexts.UI);
-            BindParameterToField(ALPHAV_TEXTURE_FIELD, ALPHAV_TEXTURE_SLOT, alphaV_texture_field, ChangeContexts.UI);
+            BindParameterToField(ALPHAV_TEXTURE_FIELD, ALPHAV_TEXTURE_SLOT, 
+                alphaV_texture_field, ChangeContexts.UI);
             BindParameterToField(MATERIAL_FIELD, material_field, ChangeContexts.UI);
             BindParameterToField(ETA_FIELD, eta_field, ChangeContexts.UI);
             BindParameterToField(K_FIELD, k_field, ChangeContexts.UI);
             BindParameterToField(EXT_ETA_FLOAT_FIELD, extEta_float_field, ChangeContexts.UI);
-            BindParameterToField(EXT_ETA_TEXTURE_FIELD, EXT_ETA_TEXTURE_SLOT, extEta_texture_field, ChangeContexts.UI);
+            BindParameterToField(EXT_ETA_TEXTURE_FIELD, EXT_ETA_TEXTURE_SLOT, 
+                extEta_texture_field, ChangeContexts.UI);
         }
 
         /// <summary>

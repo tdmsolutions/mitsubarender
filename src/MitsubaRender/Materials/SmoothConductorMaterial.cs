@@ -26,16 +26,6 @@ namespace MitsubaRender.Materials
     [Guid("92a6d732-06c3-4950-a15d-53338bf1ad84")]
     public sealed class SmoothConductorMaterial : MitsubaMaterial, IConductor
     {
-        #region Field constants
-
-        private const string MATERIAL_FIELD = "material";
-        private const string ETA_FIELD = "eta";
-        private const string K_FIELD = "k";
-        private const string EXT_ETA_SPECTRUM_FIELD = "extEtaSpectrum";
-        private const string EXT_ETA_FLOAT_FIELD = "extEtaFloat";
-        
-        #endregion
-
         /// <summary>
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
