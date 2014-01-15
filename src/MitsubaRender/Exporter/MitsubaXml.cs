@@ -22,6 +22,7 @@ using System.Xml;
 using MitsubaRender.Emitters;
 using MitsubaRender.Materials;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.Settings;
 using MitsubaRender.Tools;
 using Rhino;
 using Rhino.DocObjects;
@@ -134,6 +135,7 @@ namespace MitsubaRender.Exporter
         /// </summary>
         public bool CreateDefaultIntegrator()
         {
+            //TODO delete me
             const string type = "photonmapper";
 
             var integrator = _document.CreateElement("integrator");
@@ -696,6 +698,18 @@ namespace MitsubaRender.Exporter
                 element.AppendChild(AddElement(emitter.ToWorld)); //MitsubaTransform
                 element.AppendChild(AddElement("spectrum", "intensity", emitter.Intensity + ""));
                 element.AppendChild(AddElement("float", "cutoffAngle", emitter.CutOffAngle + ""));
+                return element;
+            }
+        }
+
+        internal class CreateIntegrator
+        {
+            public static XmlElement AmbientOcclusion(AmbientOclusion integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "ao");
+                element.AppendChild(AddElement("integer", "shadingSamples", integrator.ShadingSamples + ""));
+                element.AppendChild(AddElement("float", "rayLength", integrator.OcclusionRayLength + ""));
                 return element;
             }
         }
