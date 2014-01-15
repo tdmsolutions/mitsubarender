@@ -224,6 +224,8 @@ namespace MitsubaRender.Exporter
         private void ExportIntegrator()
         {
             //Pillar datos de 
+            //_mitsubaXml.ExportIntegrator(Integrator);
+            
         }
 
         /// <summary>

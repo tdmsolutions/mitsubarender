@@ -47,7 +47,7 @@ namespace MitsubaRender.UI
         /// <summary>
         /// 
         /// </summary>
-        public string SelectedItem { get; private set; }
+        public string SelectedItem { get; set; }
 
         public MaterialCombo()
         {
@@ -69,7 +69,7 @@ namespace MitsubaRender.UI
 
         private void comboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            SelectedItem = comboBox.SelectedText;
+            SelectedItem = comboBox.SelectedItem.ToString();
         }
     }
 }

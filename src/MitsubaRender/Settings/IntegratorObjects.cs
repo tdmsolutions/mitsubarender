@@ -1,4 +1,19 @@
-﻿namespace MitsubaRender.Settings
+﻿// This file is part of MitsubaRenderPlugin project.
+//  
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3 of the License, or (at your
+// option) any later version. This program is distributed in the hope that
+// it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details. 
+// 
+// You should have received a copy of the GNU General Public License
+// along with MitsubaRenderPlugin.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// Copyright 2014 TDM Solutions SL
+
+namespace MitsubaRender.Settings
 {
     internal static class IntegratorObjectInstances
     {
@@ -11,20 +26,20 @@
         public static VirtualPointLightRenderer VirtualPointLightRenderer;
         public static PhotonMapper PhotonMapper;
         public static ProgressivePhotonMapper ProgressivePhotonMapper;
-        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
+        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper;
         public static BidirectionalPathTracer BidirectionalPathTracer;
         public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT;
         public static SampleSpaceMLT SampleSpaceMLT;
         public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing;
     }
 
-    class AmbientOclusion
+    internal class AmbientOclusion
     {
         public int ShadingSamples;
         public float OcclusionRayLength;
     }
 
-    class DirectIlumination
+    internal class DirectIlumination
     {
         public int EmitterSmaples;
         public int BSDFSamples;
@@ -32,41 +47,46 @@
         public bool HideDirectlyVisibleEmitters;
     }
 
-    class PathTracer
+    internal class PathTracer
     {
         public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-    class VolumetricPathTracerSimple
+
+    internal class VolumetricPathTracerSimple
     {
         public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
+
     public class VolumetricPathTracerExtended
     {
- public int MaximumDepth;
+        public int MaximumDepth;
         public int RussianRouletteSartingDepth;
         public bool StrictSurfaceNormals;
         public bool HideDirectlyVisibleEmitters;
     }
-    class AdjointParticleTracer
+
+    internal class AdjointParticleTracer
     {
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public int MaximumDepth;
         public bool BruteForce;
     }
-    class VirtualPointLightRenderer
+
+    internal class VirtualPointLightRenderer
     {
         public int Shadow;
         public int MaximumDepth;
         public float ClampingFactor;
     }
-    class PhotonMapper
+
+    internal class PhotonMapper
     {
         public int DirectSamples;
         public int GlossySamples;
@@ -78,30 +98,33 @@
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public bool HideDirectlyVisibleEmitters;
-
     }
-    class ProgressivePhotonMapper
+
+    internal class ProgressivePhotonMapper
     {
         public int SamplesPerIteration;
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public float SizeReductionParameter;
     }
-    class StochasticProgressivePhotonMapper
+
+    internal class StochasticProgressivePhotonMapper
     {
         public int PhotonsPerIteration;
         public int WorkUnitGranularity;
         public int RussianRouletteSartingDepth;
         public float SizeReductionParameter;
     }
-    class BidirectionalPathTracer
+
+    internal class BidirectionalPathTracer
     {
         public int MaximumDepth;
         public bool CreateLightImage;
         public bool UseDirectSamplingMethods;
         public int RussianRouletteSartingDepth;
     }
-    class PrimarySampleSpaceMLT
+
+    internal class PrimarySampleSpaceMLT
     {
         public bool Bidirectional;
         public int MaximumDepth;
@@ -111,7 +134,8 @@
         public float LargeStepProbability;
         public int RussianRouletteSartingDepth;
     }
-    class SampleSpaceMLT
+
+    internal class SampleSpaceMLT
     {
         public int MaximumDepth;
         public int DirectSamples;
@@ -123,7 +147,8 @@
         public bool MultiChainPerturbation;
         public bool ManifoldPerturbation;
     }
-    class EnergyRedisributionPathTracing
+
+    internal class EnergyRedisributionPathTracing
     {
         public int MaximumDepth;
         public int AverageNumberOfChains;
