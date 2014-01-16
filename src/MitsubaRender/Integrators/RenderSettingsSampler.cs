@@ -53,8 +53,7 @@ namespace MitsubaRender.Integrators
         public int SamplesPerPixel { get; set; }
 
         [DisplayName(@"Effective dimension")]
-        [Description(
-            "Effective dimension, up to which stratified samples are provided. The number here is to be interpreted as the number of subsequent 1D or 2D sample requests that can be satisfied using good samples. Higher high values increase both storage and computational costs."
+        [Description("Effective dimension, up to which stratified samples are provided. The number here is to be interpreted as the number of subsequent 1D or 2D sample requests that can be satisfied using good samples. Higher high values increase both storage and computational costs."
             )]
         public int EffectiveDimension { get; set; }
     }
