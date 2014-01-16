@@ -151,7 +151,12 @@
   <ItemGroup>
     <None Include="Resources\About_Icon_Mitsuba.gif" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\matpreview.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mitsubaproject.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

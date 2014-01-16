@@ -105,7 +105,7 @@ namespace MitsubaRender.Exporter
             var sceneFile = Path.Combine(BasePath, FileName);
             try
             {
-                _mitsubaXml.CreateDefaultIntegrator();
+                _mitsubaXml.CreateIntegratorXml();
                 ExportAllMaterials();
 
                 //ExportAllLights();
@@ -223,9 +223,10 @@ namespace MitsubaRender.Exporter
         /// </summary>
         private void ExportIntegrator()
         {
-            //Pillar datos de 
-            //_mitsubaXml.ExportIntegrator(Integrator);
             
+            //Pillar datos de 
+            _mitsubaXml.CreateIntegratorXml();
+
         }
 
         /// <summary>

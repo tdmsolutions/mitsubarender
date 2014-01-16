@@ -99,5 +99,31 @@ namespace MitsubaRender.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///
+        ///&lt;scene version=&quot;0.4.0&quot;&gt;
+        ///	&lt;integrator type=&quot;path&quot;/&gt;
+        ///
+        ///	&lt;shape type=&quot;serialized&quot;&gt;
+        ///		&lt;string name=&quot;filename&quot; value=&quot;matpreview.serialized&quot;/&gt;
+        ///		&lt;integer name=&quot;shapeIndex&quot; value=&quot;2&quot;/&gt;
+        ///		&lt;transform name=&quot;toWorld&quot;&gt;
+        ///			&lt;matrix value=&quot;0.614046 0.614047 0 -1.78814e-07 -0.614047 0.614046 0 2.08616e-07 0 0 0.868393 1.02569 0 0 0 1&quot;/&gt;
+        ///			&lt;translate z=&quot;0.01&quot;/&gt;
+        ///		&lt;/transform&gt;
+        ///
+        ///		[MATERIAL]
+        ///	&lt;/shape&gt;
+        ///
+        ///	&lt;sensor type=&quot;perspective&quot; id=&quot;Camera-camera&quot;&gt;
+        ///		&lt;string name=&quot;fovAxis&quot; value=&quot;smal [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string mitsubaproject {
+            get {
+                return ResourceManager.GetString("mitsubaproject", resourceCulture);
+            }
+        }
     }
 }

@@ -92,12 +92,12 @@ namespace MitsubaRender.Settings
     }
     public static class MitsubaSettings
     {
-
-
-
         //TODO settings
         public static string WorkingDirectory;
         public static string MitsubaPath;
         public static string ApplicationPath;
+        public static object Integrator;
+        public static object Sampler;
+        public static object ReconstructionFilter;
     }
 }
