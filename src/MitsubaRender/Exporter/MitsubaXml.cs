@@ -23,6 +23,7 @@ using MitsubaRender.Emitters;
 using MitsubaRender.Integrators;
 using MitsubaRender.Materials;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.Settings;
 using MitsubaRender.Tools;
 using Rhino;
 using Rhino.DocObjects;
@@ -234,19 +235,19 @@ namespace MitsubaRender.Exporter
         }
 
 
-        public void CreateSampler4()
-        {
-            XmlElement result;
+        //public void CreateSampler4()
+        //{
+        //    XmlElement result;
 
-            if (MitsubaSettings.Sampler == null)
-                result = CreateIntegrator.Create(new IntegratorPhotonMapper());
+        //    if (MitsubaSettings.Sampler == null)
+        //        result = CreateIntegrator.Create(new IntegratorPhotonMapper());
 
-            if (MitsubaSettings.Sampler is SamplerHaltonQMC)
-            {
-                var integrator = MitsubaSettings.Integrator as IntegratorAmbientOclusion;
-                result = CreateIntegrator.Create(integrator);
-            }
-        }
+        //    if (MitsubaSettings.Sampler is SamplerHaltonQMC)
+        //    {
+        //        var integrator = MitsubaSettings.Integrator as IntegratorAmbientOclusion;
+        //        result = CreateIntegrator.Create(integrator);
+        //    }
+        //}
         public static XmlElement CreateMaterialXml(MitsubaMaterial material)
         {
             XmlElement result = null;
@@ -282,31 +283,27 @@ namespace MitsubaRender.Exporter
         /// </summary>
         public void CreateMaterialXml(MitsubaMaterial material, Guid objId, bool isDuplicated)
         {
-            XmlElement result = null;
-
             if (!isDuplicated)
             {
-                var materialType = material.GetType();
+                //var materialType = material.GetType();
+                //if (materialType == typeof (SmoothDiffuseMaterial)) 
+                //    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial) material);
+                //else if (materialType == typeof (RoughConductorMaterial)) 
+                //    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
+                //else if (materialType == typeof (SmoothDielectricMaterial)) 
+                //    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
+                //else if (materialType == typeof (SmoothConductorMaterial)) 
+                //    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
+                //else if (materialType == typeof (RoughDiffuseMaterial)) 
+                //    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial) material);
+                //else if (materialType == typeof (RoughDielectricMaterial))
+                //    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial) material);
+                //else if (materialType == typeof (SmoothPlasticMaterial))
+                //    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial) material);
+                //else if (materialType == typeof (RoughPlasticMaterial))
+                //    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial) material);
 
-                if (materialType == typeof (SmoothDiffuseMaterial)) 
-                    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial) material);
-                else if (materialType == typeof (RoughConductorMaterial)) 
-                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
-                else if (materialType == typeof (SmoothDielectricMaterial)) 
-                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
-                else if (materialType == typeof (SmoothConductorMaterial)) 
-                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
-                else if (materialType == typeof (RoughDiffuseMaterial)) 
-                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial) material);
-                else if (materialType == typeof (RoughDielectricMaterial))
-                    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial) material);
-                else if (materialType == typeof (SmoothPlasticMaterial))
-                    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial) material);
-                else if (materialType == typeof (RoughPlasticMaterial))
-                    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial) material);
-                //else if (materialType == typeof (SmoothDielectricCoatingMaterial))
-                //    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
-
+                var result = CreateMaterialXml(material);
                 if (result != null) AddToXmlRoot(result);
             }
 
@@ -608,6 +605,7 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement SmoothDiffuseMaterial(SmoothDiffuseMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "diffuse");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -621,6 +619,7 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement SmoothDielectricMaterial(SmoothDielectricMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "dielectric");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -638,16 +637,15 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement RoughConductorMaterial(RoughConductorMaterial material)
             {
-
                 if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughconductor");
                 element.SetAttribute("id", material.GetMaterialId());
-
                 element.AppendChild(AddElement("string", "distribution", material.Distribution));
                 MakeMitsubaType(ref element, "alpha", material.Alpha);
                 MakeMitsubaType(ref element, "alphaU", material.AlphaU);
                 MakeMitsubaType(ref element, "alphaV", material.AlphaV);
+
                 element.AppendChild(AddElement("string", "material", material.Material));
                 element.AppendChild(AddElement("srgb", "eta", MitsubaMaterial.GetColorHex(material.Eta)));
                 element.AppendChild(AddElement("srgb", "k", MitsubaMaterial.GetColorHex(material.K)));
@@ -682,7 +680,6 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughdielectric");
                 element.SetAttribute("id", material.GetMaterialId());
-
                 element.AppendChild(AddElement("string", "distribution", material.Distribution));
                 MakeMitsubaType(ref element, "alpha", material.Alpha);
                 MakeMitsubaType(ref element, "alphaU", material.AlphaU);
@@ -703,7 +700,6 @@ namespace MitsubaRender.Exporter
             {
                 if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
-
                 element.SetAttribute("type", "plastic");
                 element.SetAttribute("id", material.GetMaterialId());
                 element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
@@ -726,7 +722,6 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughplastic");
                 element.SetAttribute("id", material.GetMaterialId());
-
                 element.AppendChild(AddElement("string", "distribution", material.Distribution));
                 MakeMitsubaType(ref element, "alpha", material.Alpha);
                 element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
@@ -745,7 +740,6 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement SmoothConductorMaterial(SmoothConductorMaterial material)
             {
-
                 if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "conductor");
@@ -787,7 +781,6 @@ namespace MitsubaRender.Exporter
             internal static XmlElement EnvironmentEmitter(string hdr_file)
             {
                 var copied = FileTools.CopyTextureToScenePath(hdr_file);
-
                 var element = _document.CreateElement("emitter");
                 element.SetAttribute("type", "envmap");
                 element.SetAttribute("id", "envmaphdr"); //TODO get better ID!
@@ -1054,27 +1047,27 @@ namespace MitsubaRender.Exporter
         {
             internal static XmlElement Create(SamplerIndependent sampler)
             {
-
+                return null;
             }
             internal static XmlElement Create(SamplerStraitfield sampler)
             {
-
+                return null;
             }
             internal static XmlElement Create(SamplerLowDiscrepancy sampler)
             {
-
+                return null;
             }
             internal static XmlElement Create(SamplerHammersleyQMC sampler)
             {
-
+                return null;
             }
             internal static XmlElement Create(SamplerHaltonQMC sampler)
             {
-
+                return null;
             }
             internal static XmlElement Create(SamplerSobolQMC sampler)
             {
-
+                return null;
             }
         }
         #endregion
