@@ -37,12 +37,13 @@ namespace MitsubaRender.Materials
         /// <summary>
         /// This field handles the comboBox for the Distribution property.
         /// </summary>
-        private static MaterialCombo _distributionCombo;
+        private MaterialCombo _distributionCombo;
 
         /// <summary>
         /// This field handles the comboBox for the Material property.
         /// </summary>
-        private static MaterialCombo _materialCombo;
+        private MaterialCombo _materialCombo;
+
 
         #region Material Parameters
 
@@ -100,12 +101,10 @@ namespace MitsubaRender.Materials
         /// </summary>
         public RoughConductorMaterial()
         {
-            //Distribution = "beckmann"; //TODO delete me, comboBox rules!
             Alpha = new MitsubaType<float, string>();
             AlphaU = new MitsubaType<float, string>();
             AlphaV = new MitsubaType<float, string>();
             ExtEta = new MitsubaType<float, string>();
-
             CreateUserInterface();
         }
 
@@ -114,30 +113,36 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void OnAddUserInterfaceSections()
         {
-            if (_distributionCombo == null)
+            var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
+            _distributionCombo = (MaterialCombo)section.Window;
+            _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+            var material_section = AddUserInterfaceSection(typeof(MaterialCombo), "Material Type", true, true);
+            _materialCombo = (MaterialCombo)material_section.Window;
+            var data = new string[StandardConductorTypes.Types.Count];
+            int i = 0;
+            foreach (var value in StandardConductorTypes.Types)
             {
-                var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
-                _distributionCombo = (MaterialCombo)section.Window;
-                _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+                data[i] = value.Value;
+                i += 1;
             }
 
-            if (_materialCombo == null)
+            _materialCombo.Data = data;
+
+            if (Material != null)
             {
-                var material_section = AddUserInterfaceSection(typeof(MaterialCombo), "Material Type", true, true);
-                _materialCombo = (MaterialCombo)material_section.Window;
-
-                var data = new string[StandardConductorTypes.Types.Count];
-                int i = 0;
-                foreach (var value in StandardConductorTypes.Types)
-                {
-                    data[i] = value.Value;
-                    i += 1;
-                }
-
-                _materialCombo.Data = data;
+                _materialCombo.SelectedItem = Material;
             }
+
+            //The comboBoxes OnChange
+            _distributionCombo.OnChange += Combo_OnChange;
+            _materialCombo.OnChange += Combo_OnChange;
 
             base.OnAddUserInterfaceSections();
+        }
+
+        private void Combo_OnChange(object sender, System.EventArgs e)
+        {
+            ReadDataFromUI();
         }
 
         /// <summary>
@@ -171,7 +176,6 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void CreateUserInterface()
         {
-            //TODO combobox in Rhino UI !!
             var alpha_float_field = Fields.Add(ALPHA_FLOAT_FIELD, Alpha.FirstParameter, "Alpha Float");
             var alpha_texture_field = Fields.AddTextured(ALPHA_TEXTURE_FIELD, false, "Alpha Texture");
             var alphaU_float_field = Fields.Add(ALPHAU_FLOAT_FIELD, AlphaU.FirstParameter, "AlphaU Float");
@@ -184,18 +188,18 @@ namespace MitsubaRender.Materials
             var extEta_texture_field = Fields.AddTextured(EXT_ETA_TEXTURE_FIELD, false, "ExtEta Texture");
 
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
-            BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, 
+            BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT,
                 alpha_texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHAU_FLOAT_FIELD, alphaU_float_field, ChangeContexts.UI);
-            BindParameterToField(ALPHAU_TEXTURE_FIELD, ALPHAU_TEXTURE_SLOT, 
+            BindParameterToField(ALPHAU_TEXTURE_FIELD, ALPHAU_TEXTURE_SLOT,
                 alphaU_texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHAV_FLOAT_FIELD, alphaV_float_field, ChangeContexts.UI);
-            BindParameterToField(ALPHAV_TEXTURE_FIELD, ALPHAV_TEXTURE_SLOT, 
+            BindParameterToField(ALPHAV_TEXTURE_FIELD, ALPHAV_TEXTURE_SLOT,
                 alphaV_texture_field, ChangeContexts.UI);
             BindParameterToField(ETA_FIELD, eta_field, ChangeContexts.UI);
             BindParameterToField(K_FIELD, k_field, ChangeContexts.UI);
             BindParameterToField(EXT_ETA_FLOAT_FIELD, extEta_float_field, ChangeContexts.UI);
-            BindParameterToField(EXT_ETA_TEXTURE_FIELD, EXT_ETA_TEXTURE_SLOT, 
+            BindParameterToField(EXT_ETA_TEXTURE_FIELD, EXT_ETA_TEXTURE_SLOT,
                 extEta_texture_field, ChangeContexts.UI);
         }
 
@@ -373,5 +377,7 @@ namespace MitsubaRender.Materials
             ReadDataFromUI();
             //TODO simulate RoughConductorMaterial
         }
+
+
     }
 }

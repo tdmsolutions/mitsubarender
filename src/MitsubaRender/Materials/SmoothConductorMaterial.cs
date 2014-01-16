@@ -37,7 +37,7 @@ namespace MitsubaRender.Materials
         /// <summary>
         /// This field handles the comboBox for the Material property.
         /// </summary>
-        private static MaterialCombo _materialCombo;
+        private MaterialCombo _materialCombo;
 
         #region Material Parameters
 
@@ -80,7 +80,6 @@ namespace MitsubaRender.Materials
         public SmoothConductorMaterial()
         {
             ExtEta = new MitsubaType<float, string>();
-            //Material = "Au"; //TODO delete me (default gold!)
             CreateUserInterface();
         }
 
@@ -167,23 +166,26 @@ namespace MitsubaRender.Materials
 
         protected override void OnAddUserInterfaceSections()
         {
-            if (_materialCombo == null)
+            var material_section = AddUserInterfaceSection(typeof(MaterialCombo), "Material Type", true, true);
+            _materialCombo = (MaterialCombo)material_section.Window;
+
+            var data = new string[StandardConductorTypes.Types.Count];
+            int i = 0;
+            foreach (var value in StandardConductorTypes.Types)
             {
-                var material_section = AddUserInterfaceSection(typeof(MaterialCombo), "Material Type", true, true);
-                _materialCombo = (MaterialCombo)material_section.Window;
-
-                var data = new string[StandardConductorTypes.Types.Count];
-                int i = 0;
-                foreach (var value in StandardConductorTypes.Types)
-                {
-                    data[i] = value.Value;
-                    i += 1;
-                }
-
-                _materialCombo.Data = data;
+                data[i] = value.Value;
+                i += 1;
             }
 
+            _materialCombo.Data = data;
+            _materialCombo.OnChange += Combo_OnChange;
+
             base.OnAddUserInterfaceSections();
+        }
+
+        private void Combo_OnChange(object sender, System.EventArgs e)
+        {
+            ReadDataFromUI();
         }
 
         public override string TypeDescription
