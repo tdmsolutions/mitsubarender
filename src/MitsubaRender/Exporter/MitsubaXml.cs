@@ -615,6 +615,8 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement RoughConductorMaterial(RoughConductorMaterial material)
             {
+
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughconductor");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -638,6 +640,7 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement RoughDiffuseMaterial(RoughDiffuseMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughdiffuse");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -654,6 +657,7 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement RoughDielectricMaterial(RoughDielectricMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughdielectric");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -675,6 +679,7 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement SmoothPlasticMaterial(SmoothPlasticMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
 
                 element.SetAttribute("type", "plastic");
@@ -695,6 +700,7 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement RoughPlasticMaterial(RoughPlasticMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "roughplastic");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -715,6 +721,8 @@ namespace MitsubaRender.Exporter
             /// <returns></returns>
             public static XmlElement SmoothConductorMaterial(SmoothConductorMaterial material)
             {
+
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "conductor");
                 element.SetAttribute("id", material.GetMaterialId());
@@ -740,6 +748,7 @@ namespace MitsubaRender.Exporter
 
             public static XmlElement SmoothDielectricCoatingMaterial(SmoothDielectricCoatingMaterial material)
             {
+                if (_document == null) _document = new XmlDocument();
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "coating");
                 element.SetAttribute("id", material.GetMaterialId());
