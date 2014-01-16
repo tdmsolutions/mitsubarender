@@ -40,7 +40,16 @@ namespace MitsubaRender.Settings
         HammersleyQMCSampler,
         HaltonQMCSampler,
         SobolQMCSampler
-    };
+    }
+    enum ReconstructionFilterType
+    {
+        BoxFilter,
+        TentFilter,
+        GaussianFilter,
+        MitchellNetravaliFilter,
+        CatmullRomFilter,
+        LanczosSincFilter
+    }
 
     internal static class IntegratorsDataSource
     {

@@ -17,7 +17,15 @@ using System.ComponentModel;
 
 namespace MitsubaRender.Integrators
 {
-   public class IntegratorGaussianFilter
+  
+     static class ReconstructionFilterObjectInstances
+    {
+         public static IntegratorGaussianFilter IntegratorGaussianFilter = new IntegratorGaussianFilter();
+         public static IntegratorMitchellNetravaliFilter IntegratorMitchellNetravaliFilter = new IntegratorMitchellNetravaliFilter();
+         public static IntegratorLanczosSincFilter IntegratorLanczosSincFilter = new IntegratorLanczosSincFilter();
+
+    }
+     class IntegratorGaussianFilter
     {
         public IntegratorGaussianFilter()
         {

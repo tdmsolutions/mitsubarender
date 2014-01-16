@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Windows.Forms;
 using MitsubaRender.Integrators;
@@ -35,8 +37,6 @@ namespace MitsubaRender.Settings
             tabControlProperties.SelectedIndex = 0;
             switch (comboBoxIntegrator.SelectedIndex)
             {
-
-
                 case (int)IntegratorType.AdjointParticleTracer:
                     propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AdjointParticleTracer;
                     break;
@@ -106,15 +106,41 @@ namespace MitsubaRender.Settings
                     propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerStraitfield;
                     break;
             }
-
-
         }
 
         private void ComboBoxReconstructionSelectedIndexChanged(object sender, EventArgs e)
         {
             tabControlProperties.SelectedIndex = 2;
+            switch (comboBoxReconstruction.SelectedIndex)
+            {
+                case (int)ReconstructionFilterType.BoxFilter:
+                    // propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.;
+                    break;
+                case (int)ReconstructionFilterType.CatmullRomFilter:
+                    //propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.
+                    break;
+                case (int)ReconstructionFilterType.GaussianFilter:
+                    propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorGaussianFilter;
+                    break;
+                case (int)ReconstructionFilterType.LanczosSincFilter:
+                    propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorLanczosSincFilter;
+                    break;
+                case (int)ReconstructionFilterType.MitchellNetravaliFilter:
+                    propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorMitchellNetravaliFilter;
+                    break;
+                case (int)ReconstructionFilterType.TentFilter:
+                    //propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.;
+                    break;
+            }
+
         }
 
-
+        private object Duplicate(object obj)
+        {
+            var stream = new MemoryStream();
+            var bin = new BinaryFormatter();
+            bin.Serialize(stream, obj);
+            return bin.Deserialize(stream);
+        }
     }
 }
