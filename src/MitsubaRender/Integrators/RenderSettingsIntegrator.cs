@@ -32,7 +32,7 @@ namespace MitsubaRender.Integrators
         public static IntegratorBidirectionalPathTracer BidirectionalPathTracer;
         public static IntegratorPrimarySampleSpaceMLT PrimarySampleSpaceMLT;
         public static IntegratorSampleSpaceMLT SampleSpaceMLT;
-        public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing;
+        public static IntegratorEnergyRedisributionPathTracing EnergyRedisributionPathTracing;
     }
     public class IntegratorAmbientOclusion
     {
@@ -451,9 +451,9 @@ namespace MitsubaRender.Integrators
         public float ProbabilityFactor { get; set; }  
 
     }
-    public class EnergyRedisributionPathTracing
+    public class IntegratorEnergyRedisributionPathTracing
     {
-        public EnergyRedisributionPathTracing()
+        public IntegratorEnergyRedisributionPathTracing()
         {
             MaximumDepth = -1;
             AverageNumberOfChains = 1;
@@ -522,6 +522,7 @@ namespace MitsubaRender.Integrators
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
         public int RussianRouletteStartingDepth { get; set; }  
     }
+    
     //This Integrator doesn't exist in mitsuba Config UI, but it's documented
     public class IntegratorAdaptativeIntegrator
     {
@@ -537,5 +538,44 @@ namespace MitsubaRender.Integrators
         [Description(" Maximum number of samples to be generated relative to the number of configured pixel samples")]
         public int MaximumSampleFactor { get; set; }
 
+    }
+    //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+    public class IntegratorIrradianceCaching
+    {
+        [DisplayName(@"Resolution")]
+        [Description("Elevational resolution of the stratified final gather hemisphere. The azimuthal resolution is two times this value")]
+        public int Resolution { get; set; }
+
+        [DisplayName(@"Quality")]
+        [Description("Quality factor (the κ parameter of Tabellion et al")]
+        public float Quality { get; set; }
+
+        [DisplayName(@"Gradients")]
+        [Description("Use irradiance gradients")]
+        public bool Gradients { get; set; }
+
+        [DisplayName(@"Neighbor Clamping")]
+        [Description("Use neighbor clamping")]
+        public bool ClampNeighbor { get; set; }
+
+        [DisplayName(@"Screen-Space Clamping")]
+        [Description("Use a screen-space clamping criterion")]
+        public bool ClampScreen { get; set; }
+
+        [DisplayName(@"Overture")]
+        [Description("Do an overture pass before starting the main rendering process? Usually a good idea.")]
+        public bool Overture { get; set; }
+
+        [DisplayName(@"Quality Adjustment")]
+        [Description("When an overture pass is used, Mitsuba subsequently reduces the quality parameter by this amount to interpolate amongst more samples, creating a visually smoother result.")]
+        public float QualityAdjustment { get; set; }
+
+        [DisplayName(@"Indirect Only")]
+        [Description("Only show the indirect illumination? This can be useful to check the interpolation quality.")]
+        public bool IndirectOnly { get; set; }
+
+        [DisplayName(@"Test")]
+        [Description("Visualize the sample placement")]
+        public bool Debug { get; set; }
     }
 }

@@ -137,78 +137,90 @@ namespace MitsubaRender.Exporter
         public void CreateIntegratorXml()
         {
             XmlElement result;
-            
-            if (MitsubaSettings.Integrator == null)
-               result = CreateIntegrator.Create(new IntegratorPhotonMapper());
 
-            if (MitsubaSettings.Integrator is IntegratorAmbientOclusion)
+            if (MitsubaSettings.Integrator == null)
+                result = CreateIntegrator.Create(new IntegratorPhotonMapper());
+
+            else if (MitsubaSettings.Integrator is IntegratorAmbientOclusion)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorAmbientOclusion;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorDirectIlumination)
+            else if (MitsubaSettings.Integrator is IntegratorDirectIlumination)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorDirectIlumination;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorPathTracer)
+            else if (MitsubaSettings.Integrator is IntegratorPathTracer)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorPathTracer;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorVolumetricPathTracerSimple)
+            else if (MitsubaSettings.Integrator is IntegratorVolumetricPathTracerSimple)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorVolumetricPathTracerSimple;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorVolumetricPathTracerExtended)
+            else if (MitsubaSettings.Integrator is IntegratorVolumetricPathTracerExtended)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorVolumetricPathTracerExtended;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorAdjointParticleTracer)
+            else if (MitsubaSettings.Integrator is IntegratorAdjointParticleTracer)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorAdjointParticleTracer;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorVirtualPointLightRenderer)
+            else if (MitsubaSettings.Integrator is IntegratorVirtualPointLightRenderer)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorVirtualPointLightRenderer;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorPhotonMapper)
+            else if (MitsubaSettings.Integrator is IntegratorPhotonMapper)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorPhotonMapper;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorProgressivePhotonMapper)
+            else if (MitsubaSettings.Integrator is IntegratorProgressivePhotonMapper)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorProgressivePhotonMapper;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorStochasticProgressivePhotonMapper)
+            else if (MitsubaSettings.Integrator is IntegratorStochasticProgressivePhotonMapper)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorStochasticProgressivePhotonMapper;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorBidirectionalPathTracer)
+            else if (MitsubaSettings.Integrator is IntegratorBidirectionalPathTracer)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorBidirectionalPathTracer;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorPrimarySampleSpaceMLT)
+            else if (MitsubaSettings.Integrator is IntegratorPrimarySampleSpaceMLT)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorPrimarySampleSpaceMLT;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is IntegratorSampleSpaceMLT)
+            else if (MitsubaSettings.Integrator is IntegratorSampleSpaceMLT)
             {
                 var integrator = MitsubaSettings.Integrator as IntegratorSampleSpaceMLT;
                 result = CreateIntegrator.Create(integrator);
             }
-            if (MitsubaSettings.Integrator is EnergyRedisributionPathTracing)
+            else if (MitsubaSettings.Integrator is IntegratorEnergyRedisributionPathTracing)
             {
-                var integrator = MitsubaSettings.Integrator as EnergyRedisributionPathTracing;
+                var integrator = MitsubaSettings.Integrator as IntegratorEnergyRedisributionPathTracing;
+                result = CreateIntegrator.Create(integrator);
+            }
+            //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+            else if (MitsubaSettings.Integrator is IntegratorAdaptativeIntegrator)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorAdaptativeIntegrator;
+                result = CreateIntegrator.Create(integrator);
+            }
+            //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+            else if (MitsubaSettings.Integrator is IntegratorIrradianceCaching)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorIrradianceCaching;
                 result = CreateIntegrator.Create(integrator);
             }
             else
@@ -221,9 +233,19 @@ namespace MitsubaRender.Exporter
         }
 
 
+        public void CreateSampler4()
+        {
+            XmlElement result;
 
-      
+            if (MitsubaSettings.Sampler == null)
+                result = CreateIntegrator.Create(new IntegratorPhotonMapper());
 
+            if (MitsubaSettings.Sampler is SamplerHaltonQMC)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorAmbientOclusion;
+                result = CreateIntegrator.Create(integrator);
+            }
+        }
         public static XmlElement CreateMaterialXml(MitsubaMaterial material)
         {
 
@@ -773,7 +795,7 @@ namespace MitsubaRender.Exporter
             /// </summary>
             /// <param name="hdr_file"></param>
             /// <returns></returns>
-            public static XmlElement EnvironmentEmitter(string hdr_file)
+            internal static XmlElement EnvironmentEmitter(string hdr_file)
             {
                 var copied = FileTools.CopyTextureToScenePath(hdr_file);
 
@@ -793,7 +815,7 @@ namespace MitsubaRender.Exporter
             /// </summary>
             /// <param name="emitter"></param>
             /// <returns></returns>
-            public static XmlElement PointLightSource(PointLightSource emitter)
+            internal static XmlElement PointLightSource(PointLightSource emitter)
             {
                 var element = _document.CreateElement("emitter");
                 element.SetAttribute("type", "point");
@@ -808,7 +830,7 @@ namespace MitsubaRender.Exporter
             /// </summary>
             /// <param name="emitter"></param>
             /// <returns></returns>
-            public static XmlElement SpotLightSource(SpotLightSource emitter)
+            internal static XmlElement SpotLightSource(SpotLightSource emitter)
             {
                 var element = _document.CreateElement("emitter");
                 element.SetAttribute("type", "spot");
@@ -871,17 +893,6 @@ namespace MitsubaRender.Exporter
                 element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
                 return element;
             }
-            //This Integrator doesn't exist in mitsuba Config UI, but it's documented
-            public static XmlElement Create(IntegratorAdaptativeIntegrator integrator)
-            {
-                var element = _document.CreateElement("integrator");
-                element.SetAttribute("type", "volpath");
-                element.AppendChild(AddElement("float", "maxError", Convert.ToString(integrator.MaximumError)));
-                element.AppendChild(AddElement("float", "pValue", Convert.ToString(integrator.PValue)));
-                element.AppendChild(AddElement("integer", "maxSampleFactor", Convert.ToString(integrator.MaximumSampleFactor)));
-                return element;
-            }
-
             public static XmlElement Create(IntegratorAdjointParticleTracer integrator)
             {
                 var element = _document.CreateElement("integrator");
@@ -996,7 +1007,7 @@ namespace MitsubaRender.Exporter
 
                 return element;
             }
-            public static XmlElement Create(EnergyRedisributionPathTracing integrator)
+            public static XmlElement Create(IntegratorEnergyRedisributionPathTracing integrator)
             {
 
                 var element = _document.CreateElement("integrator");
@@ -1019,8 +1030,66 @@ namespace MitsubaRender.Exporter
 
                 return element;
             }
+            //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+            public static XmlElement Create(IntegratorAdaptativeIntegrator integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "volpath");
+                element.AppendChild(AddElement("float", "maxError", Convert.ToString(integrator.MaximumError)));
+                element.AppendChild(AddElement("float", "pValue", Convert.ToString(integrator.PValue)));
+                element.AppendChild(AddElement("integer", "maxSampleFactor", Convert.ToString(integrator.MaximumSampleFactor)));
+                return element;
+            }
+            //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+            public static XmlElement Create(IntegratorIrradianceCaching integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "irrcache");
+                element.AppendChild(AddElement("integer", "resolution", Convert.ToString(integrator.Resolution)));
+                element.AppendChild(AddElement("float", "quality", Convert.ToString(integrator.Quality)));
+                element.AppendChild(AddElement("boolean", "gradients", Convert.ToString(integrator.Gradients)));
+                element.AppendChild(AddElement("boolean", "clampNeighbor", Convert.ToString(integrator.ClampNeighbor)));
+                element.AppendChild(AddElement("boolean", "clampScreen", Convert.ToString(integrator.ClampScreen)));
+                element.AppendChild(AddElement("boolean", "overture", Convert.ToString(integrator.Overture)));
+
+                element.AppendChild(AddElement("float", "qualityAdjustment", Convert.ToString(integrator.QualityAdjustment)));
+                element.AppendChild(AddElement("boolean", "indirectOnly", Convert.ToString(integrator.IndirectOnly)));
+                element.AppendChild(AddElement("boolean", "debug", Convert.ToString(integrator.Debug)));
+
+
+
+                return element;
+            }
+
         }
 
+        internal static class CreateSampler
+        {
+            internal static XmlElement Create(SamplerIndependent sampler)
+            {
+
+            }
+            internal static XmlElement Create(SamplerStraitfield sampler)
+            {
+
+            }
+            internal static XmlElement Create(SamplerLowDiscrepancy sampler)
+            {
+
+            }
+            internal static XmlElement Create(SamplerHammersleyQMC sampler)
+            {
+
+            }
+            internal static XmlElement Create(SamplerHaltonQMC sampler)
+            {
+
+            }
+            internal static XmlElement Create(SamplerSobolQMC sampler)
+            {
+
+            }
+        }
         #endregion
 
         //TODO implement integrator
