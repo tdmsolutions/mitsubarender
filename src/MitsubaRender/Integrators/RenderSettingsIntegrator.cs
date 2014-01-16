@@ -19,22 +19,21 @@ namespace MitsubaRender.Integrators
 {
     internal static class IntegratorObjectInstances
     {
-        public static IntegratorAmbientOclusion AmbientOclusion = new IntegratorAmbientOclusion();
-        public static IntegratorDirectIlumination DirectIlumination= new IntegratorDirectIlumination();
-        public static IntegratorPathTracer PathTracer= new IntegratorPathTracer();
-        public static IntegratorVolumetricPathTracerSimple VolumetricPathTracerSimple= new IntegratorVolumetricPathTracerSimple();
-        public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended= new IntegratorVolumetricPathTracerExtended();
-        public static IntegratorAdjointParticleTracer AdjointParticleTracer= new IntegratorAdjointParticleTracer();
-        public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer= new IntegratorVirtualPointLightRenderer();
-        public static IntegratorPhotonMapper PhotonMapper= new IntegratorPhotonMapper();
-        public static ProgressivePhotonMapper ProgressivePhotonMapper= new ProgressivePhotonMapper();
-        public static StochasticProgressivePhotonMapper StochasticProgressivePhotonMapper = new StochasticProgressivePhotonMapper();
-        public static BidirectionalPathTracer BidirectionalPathTracer= new BidirectionalPathTracer();
-        public static PrimarySampleSpaceMLT PrimarySampleSpaceMLT= new PrimarySampleSpaceMLT();
-        public static SampleSpaceMLT SampleSpaceMLT= new SampleSpaceMLT();
-        public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing= new EnergyRedisributionPathTracing();
+        public static IntegratorAmbientOclusion AmbientOclusion;
+        public static IntegratorDirectIlumination DirectIlumination;
+        public static IntegratorPathTracer PathTracer;
+        public static IntegratorVolumetricPathTracerSimple VolumetricPathTracerSimple;
+        public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended;
+        public static IntegratorAdjointParticleTracer AdjointParticleTracer;
+        public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer;
+        public static IntegratorPhotonMapper PhotonMapper;
+        public static IntegratorProgressivePhotonMapper ProgressivePhotonMapper;
+        public static IntegratorStochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
+        public static IntegratorBidirectionalPathTracer BidirectionalPathTracer;
+        public static IntegratorPrimarySampleSpaceMLT PrimarySampleSpaceMLT;
+        public static IntegratorSampleSpaceMLT SampleSpaceMLT;
+        public static EnergyRedisributionPathTracing EnergyRedisributionPathTracing;
     }
-
     public class IntegratorAmbientOclusion
     {
         public IntegratorAmbientOclusion()
@@ -167,7 +166,7 @@ namespace MitsubaRender.Integrators
         }
 
         [DisplayName(@"Work unit granularity")]
-        [Description("Specifies the work unit granularity used to parallize the particle tracing task (default: 200K samples per work unit). This should be high enough so that accumulating partially exposed images (and potentially sending them over the network) is not the bottleneck.")]
+        [Description("	Specifies the work unit granularity used to parallize the particle tracing task (default: 200K samples per work unit). This should be high enough so that accumulating partially exposed images (and potentially sending them over the network) is not the bottleneck.")]
         public int WorkUnitGranularity { get; set; }
 
         [DisplayName(@"Russian roulette starting depth")]
@@ -182,8 +181,6 @@ namespace MitsubaRender.Integrators
         [Description("If set to <tt>true</tt> the integrator does not attempt to create connections to the sensor and purely relies on hitting it via ray tracing. This is mainly intended for debugging purposes.")]
         public bool BruteForce { get; set; } 
     }
-
-
     public class IntegratorVirtualPointLightRenderer
     {
         public IntegratorVirtualPointLightRenderer()
@@ -272,62 +269,257 @@ namespace MitsubaRender.Integrators
         public bool HideDirectlyVisibleEmitters { get; set; } 
 
     }
-    class ProgressivePhotonMapper
+    public class IntegratorProgressivePhotonMapper
     {
-        public int SamplesPerIteration;
-        public int WorkUnitGranularity;
-        public int RussianRouletteSartingDepth;
-        public float SizeReductionParameter;
+        public IntegratorProgressivePhotonMapper()
+        {
+            MaximumDepth = -1;
+            InitialRadius = 0;
+            PhotonsPerIteration = 250000;
+            WorkUnitGranularity = 0;
+            RussianRouletteSartingDepth = 5;
+            SizeReductionParameter = 0.7f;
+        }
+       
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }
+        
+        [DisplayName(@"Initial radius")]
+        [Description("Initial photon query radius (<tt>0</tt> = infer based on scene size and camera resolution)")]
+        public float InitialRadius { get; set; }
+
+        [DisplayName(@"Photons per iteration")]
+        [Description("Number of photons to shoot in each iteration")]
+        public int PhotonsPerIteration { get; set; }
+
+        [DisplayName(@"Work unit granularity")]
+        [Description("Granularity of photon tracing work units (in shot particles, 0 => decide automatically)")]
+        public int WorkUnitGranularity { get; set; }
+
+        [DisplayName(@"Russian roulette starting depth")]
+        [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
+        public int RussianRouletteSartingDepth { get; set; }
+
+        [DisplayName(@"Size reduction parameter")]
+        [Description("Alpha parameter from the paper (influences the speed, at which the photon radius is reduced)")]
+        public float SizeReductionParameter { get; set; } 
     }
-    class StochasticProgressivePhotonMapper
+    public class IntegratorStochasticProgressivePhotonMapper
     {
-        public int PhotonsPerIteration;
-        public int WorkUnitGranularity;
-        public int RussianRouletteSartingDepth;
-        public float SizeReductionParameter;
+        public IntegratorStochasticProgressivePhotonMapper()
+        {
+            MaximumDepth = -1;
+            InitialRadius = 0;
+            PhotonsPerIteration = 250000;
+            WorkUnitGranularity = 0;
+            RussianRouletteSartingDepth = 5;
+            SizeReductionParameter = 0.7f;
+        }
+       
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }
+        
+        [DisplayName(@"Initial radius")]
+        [Description("Initial photon query radius (<tt>0</tt> = infer based on scene size and camera resolution)")]
+        public float InitialRadius { get; set; }
+
+        [DisplayName(@"Photons per iteration")]
+        [Description("Number of photons to shoot in each iteration")]
+        public int PhotonsPerIteration { get; set; }
+
+        [DisplayName(@"Work unit granularity")]
+        [Description("Granularity of photon tracing work units (in shot particles, 0 => decide automatically)")]
+        public int WorkUnitGranularity { get; set; }
+
+        [DisplayName(@"Russian roulette starting depth")]
+        [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
+        public int RussianRouletteSartingDepth { get; set; }
+
+        [DisplayName(@"Size reduction parameter")]
+        [Description("Alpha parameter from the paper (influences the speed, at which the photon radius is reduced)")]
+        public float SizeReductionParameter { get; set; } 
     }
-    class BidirectionalPathTracer
+    public class IntegratorBidirectionalPathTracer
     {
-        public int MaximumDepth;
-        public bool CreateLightImage;
-        public bool UseDirectSamplingMethods;
-        public int RussianRouletteSartingDepth;
+        public IntegratorBidirectionalPathTracer()
+        {
+            MaximumDepth = -1;
+            CreateLightImage = true;
+            UseDirectSamplingMethods = true;
+            RussianRouletteStartingDepth = 5;
+        }
+
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }
+       
+        [DisplayName(@"Create light image")]
+        [Description("Include sampling strategies that connect paths traced from emitters directly to the camera? (i.e. what the adjoint particle tracer does) This improves the effectiveness of bidirectional path tracing but severely increases the local and remote communication overhead, since large <em>light images</em> must be transferred between threads or over the network. See the main documentation for a more detailed explanation.")]
+        public bool CreateLightImage { get; set; }
+
+        [DisplayName(@"Use direct sampling methods depth")]
+        [Description("Enable direct sampling strategies? This is a generalization of direct illumination sampling that works with both emitters and sensors. Usually a good idea.")]
+        public bool UseDirectSamplingMethods { get; set; } 
+
+        [DisplayName(@"Russian roulette starting depth")]
+        [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
+        public int RussianRouletteStartingDepth { get; set; } 
     }
-    class PrimarySampleSpaceMLT
+    public class IntegratorPrimarySampleSpaceMLT
     {
-        public bool Bidirectional;
-        public int MaximumDepth;
-        public int DirectSamples;
-        public bool TwoStageMLT;
-        public int LuminanceSamples;
-        public float LargeStepProbability;
-        public int RussianRouletteSartingDepth;
+        public IntegratorPrimarySampleSpaceMLT()
+        {
+            Bidirectional = true;
+            MaximumDepth = -1;
+            DirectSamples = 16;
+            TwoStageMLT = false;
+            LuminanceSamples = 100000;
+            LargeStepProbability = 0.3f;
+            RussianRouletteSartingDepth = 5;
+        }
+
+        [DisplayName(@"Bidirectional")]
+        [Description("If set to <tt>true</tt>, the MLT algorithm runs on top of a bidirectional path tracer with multiple importance sampling. Otherwise, the implementation reverts to a unidirectional path tracer.")]
+        public bool Bidirectional { get; set; }
+
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }
+
+        [DisplayName(@"Direct samples")]
+        [Description(" By default, this plugin renders the direct illumination component separately using an optimized direct illumination sampling strategy that uses low-discrepancy number sequences for superior performance (in other words, it is <em>not</em> rendered by PSSMLT). This parameter specifies the number of samples allocated to that method. To force PSSMLT to be responsible for the direct illumination component as well, set this parameter to <tt>-1</tt>.")]
+        public int DirectSamples { get; set; }
+
+        [DisplayName(@"Two-stage MLT")]
+        [Description(" Use two-stage MLT? Please see the documentation for details.")]
+        public bool TwoStageMLT { get; set; }
+
+        [DisplayName(@"Luminance Samples")]
+        [Description("MLT-type algorithms create output images that are only <em>relative</em> The algorithm can e.g. determine that a certain pixel is approximately twice as bright as another one, but the absolute scale is unknown. To recover it, this plugin computes the average luminance arriving at the sensor by generating a number of samples.")]
+        public int LuminanceSamples { get; set; }
+
+        [DisplayName(@"Large step probability")]
+        [Description("Rate at which the implementation tries to replace the current path with a completely new one. Usually, there is little need to change this.")]
+        public float LargeStepProbability { get; set; }
+
+        [DisplayName(@"Russian roulette starting depth")]
+        [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
+        public int RussianRouletteSartingDepth { get; set; }  
     }
-    class SampleSpaceMLT
+    public class IntegratorSampleSpaceMLT
     {
-        public int MaximumDepth;
-        public int DirectSamples;
-        public bool TwoStageMLT;
-        public int LuminanceSamples;
-        public bool BidirectionalMutation;
-        public bool LensPerturbation;
-        public bool CausticPerturbation;
-        public bool MultiChainPerturbation;
-        public bool ManifoldPerturbation;
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }  
+
+        [DisplayName(@"Direct samples")]
+        [Description("By default, this plugin renders the direct illumination component separately using an optimized direct illumination sampling strategy that uses low-discrepancy number sequences for superior performance (in other words, it is <em>not</em> rendered by PSSMLT). This parameter specifies the number of samples allocated to that method. To force PSSMLT to be responsible for the direct illumination component as well, set this parameter to <tt>-1</tt>")]
+        public int DirectSamples { get; set; }  
+
+        [DisplayName(@"Two-stage MLT")]
+        [Description(" Use two-stage MLT? Please see the documentation for details.")]
+        public bool TwoStageMLT { get; set; }  
+       
+        [DisplayName(@"Luminance Samples")]
+        [Description("MLT-type algorithms create output images that are only <em>relative</em> The algorithm can e.g. determine that a certain pixel is approximately twice as bright as another one, but the absolute scale is unknown. To recover it, this plugin computes the average luminance arriving at the sensor by generating a number of samples.")]
+        public int LuminanceSamples { get; set; }  
+
+        [DisplayName(@"Bidirectional mutation")]
+        [Description("Selectively enable/disable the bidirectional mutation")]
+        public bool BidirectionalMutation { get; set; }  
+
+        [DisplayName(@"Lens pertubation")]
+        [Description("Selectively enable/disable the lens perturbation")]
+        public bool LensPerturbation { get; set; }  
+
+        [DisplayName(@"Caustic perturbation")]
+        [Description("Selectively enable/disable the caustic perturbation")]
+        public bool CausticPerturbation { get; set; }  
+
+        [DisplayName(@"Multi chain pertubation")]
+        [Description("Selectively enable/disable the multi-chain perturbation")]
+        public bool MultiChainPerturbation { get; set; }  
+
+        [DisplayName(@"Manifold pertubation")]
+        [Description("Selectively enable/disable the manifold perturbation")]
+        public bool ManifoldPerturbation { get; set; }
+
+        [DisplayName(@"Probability factor")]
+        [Description("Probability factor (lambda) of the manifold perturbation")]
+        public int ProbabilityFactor { get; set; }  
+
     }
-    class EnergyRedisributionPathTracing
+    public class EnergyRedisributionPathTracing
     {
-        public int MaximumDepth;
-        public int AverageNumberOfChains;
-        public int MutationsPerChain;
-        public int DirectSamples;
-        public int LuminanceSamples;
-        public bool BidirectionalMutation;
-        public bool LensPerturbation;
-        public bool CausticPerturbation;
-        public bool MultiChainPerturbation;
-        public bool ManifoldPerturbation;
-        public int ProbabilityFactor;
-        public int RussianRouletteSartingDepth;
+        public EnergyRedisributionPathTracing()
+        {
+            MaximumDepth = -1;
+            AverageNumberOfChains = 1;
+            MaxNumberOfChains = 0;
+            MutationsPerChain = 100;
+            DirectSamples = 16;
+            LuminanceSamples = 15000;
+            BidirectionalMutation = false;
+            LensPerturbation = true;
+            CausticPerturbation = true;
+            MultiChainPerturbation = true;
+            ManifoldPerturbation = false;
+            ProbabilityFactor = 50;
+            RussianRouletteStartingDepth = 5;
+
+        }
+        [DisplayName(@"Maximum depth")]
+        [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
+        public int MaximumDepth { get; set; }
+
+        [DisplayName(@"Average number of chains")]
+        [Description("Specifies the number of Markov Chains that, on average, are started per pixel")]
+        public int AverageNumberOfChains { get; set; }
+
+        [DisplayName(@"Max. number of chains")]
+        [Description("pecifies a limit for the number of chains that will be started at a pixel. '0' disables this option.")]
+        public int MaxNumberOfChains { get; set; }
+
+        [DisplayName(@"Mutations per chain")]
+        [Description("Specifies the number of mutations to be performed in each Markov Chain")]
+        public int MutationsPerChain { get; set; }
+
+        [DisplayName(@"Direct samples")]
+        [Description("By default, this plugin renders the direct illumination component separately using an optimized direct illumination sampling strategy that uses low-discrepancy number sequences for superior performance (in other words, it is <em>not</em> rendered by PSSMLT). This parameter specifies the number of samples allocated to that method. To force PSSMLT to be responsible for the direct illumination component as well, set this parameter to <tt>-1</tt>")]
+        public int DirectSamples { get; set; }
+
+        [DisplayName(@"Luminance Samples")]
+        [Description("MLT-type algorithms create output images that are only <em>relative</em> The algorithm can e.g. determine that a certain pixel is approximately twice as bright as another one, but the absolute scale is unknown. To recover it, this plugin computes the average luminance arriving at the sensor by generating a number of samples.")]
+        public int LuminanceSamples { get; set; }
+
+        [DisplayName(@"Bidirectional mutation")]
+        [Description("Selectively enable/disable the bidirectional mutation")]
+        public bool BidirectionalMutation { get; set; }
+
+        [DisplayName(@"Lens pertubation")]
+        [Description("Selectively enable/disable the lens perturbation")]
+        public bool LensPerturbation { get; set; }
+
+        [DisplayName(@"Caustic perturbation")]
+        [Description("Selectively enable/disable the caustic perturbation")]
+        public bool CausticPerturbation { get; set; }
+
+        [DisplayName(@"Multi chain pertubation")]
+        [Description("Selectively enable/disable the multi-chain perturbation")]
+        public bool MultiChainPerturbation { get; set; }
+
+        [DisplayName(@"Manifold pertubation")]
+        [Description("Selectively enable/disable the manifold perturbation")]
+        public bool ManifoldPerturbation { get; set; }
+
+        [DisplayName(@"Probability factor")]
+        [Description("Probability factor (lambda) of the manifold perturbation")]
+        public int ProbabilityFactor { get; set; }
+
+        [DisplayName(@"Russian roulette starting depth")]
+        [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
+        public int RussianRouletteStartingDepth { get; set; }  
     }
 }

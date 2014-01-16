@@ -145,6 +145,37 @@ namespace MitsubaRender.Exporter
             return true;
         }
 
+
+        public static XmlElement CreateMaterialXml(MitsubaMaterial material)
+        {
+            
+            XmlElement result = null;
+
+                var materialType = material.GetType();
+
+                if (materialType == typeof(SmoothDiffuseMaterial))
+                    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial)material);
+                else if (materialType == typeof(RoughConductorMaterial))
+                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial)material);
+                else if (materialType == typeof(SmoothDielectricMaterial))
+                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial)material);
+                else if (materialType == typeof(SmoothConductorMaterial))
+                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial)material);
+                else if (materialType == typeof(RoughDiffuseMaterial))
+                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
+                else if (materialType == typeof(RoughDielectricMaterial))
+                    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial)material);
+                else if (materialType == typeof(SmoothPlasticMaterial))
+                    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
+                else if (materialType == typeof(RoughPlasticMaterial))
+                    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
+                else if (materialType == typeof (SmoothDielectricCoatingMaterial))
+                    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
+
+            if (result != null) return result;
+
+            return null;
+        }
         /// <summary>
         ///   This method defines the default integrator. Must be Photon mapper ?!
         /// </summary>
