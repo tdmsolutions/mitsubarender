@@ -22,7 +22,6 @@ using System.Xml;
 using MitsubaRender.Emitters;
 using MitsubaRender.Materials;
 using MitsubaRender.Materials.Wrappers;
-using MitsubaRender.Settings;
 using MitsubaRender.Tools;
 using Rhino;
 using Rhino.DocObjects;
@@ -122,8 +121,10 @@ namespace MitsubaRender.Exporter
             XmlElement result = null;
 
             var type = emitter.GetType();
-            if (type == typeof(PointLightSource)) result = CreateEmitter.PointLightSource((PointLightSource)emitter);
-            else if (type == typeof(SpotLightSource)) result = CreateEmitter.SpotLightSource((SpotLightSource)emitter);
+            if (type == typeof (PointLightSource)) 
+                result = CreateEmitter.PointLightSource((PointLightSource) emitter);
+            else if (type == typeof (SpotLightSource)) 
+                result = CreateEmitter.SpotLightSource((SpotLightSource) emitter);
 
             if (result != null) AddToXmlRoot(result);
 
@@ -145,37 +146,36 @@ namespace MitsubaRender.Exporter
             return true;
         }
 
-
         public static XmlElement CreateMaterialXml(MitsubaMaterial material)
         {
-            
             XmlElement result = null;
 
-                var materialType = material.GetType();
+            var materialType = material.GetType();
 
-                if (materialType == typeof(SmoothDiffuseMaterial))
-                    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial)material);
-                else if (materialType == typeof(RoughConductorMaterial))
-                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial)material);
-                else if (materialType == typeof(SmoothDielectricMaterial))
-                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial)material);
-                else if (materialType == typeof(SmoothConductorMaterial))
-                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial)material);
-                else if (materialType == typeof(RoughDiffuseMaterial))
-                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
-                else if (materialType == typeof(RoughDielectricMaterial))
-                    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial)material);
-                else if (materialType == typeof(SmoothPlasticMaterial))
-                    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
-                else if (materialType == typeof(RoughPlasticMaterial))
-                    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
-                else if (materialType == typeof (SmoothDielectricCoatingMaterial))
-                    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
+            if (materialType == typeof (SmoothDiffuseMaterial)) 
+                result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial) material);
+            else if (materialType == typeof (RoughConductorMaterial)) 
+                result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
+            else if (materialType == typeof (SmoothDielectricMaterial)) 
+                result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
+            else if (materialType == typeof (SmoothConductorMaterial)) 
+                result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
+            else if (materialType == typeof (RoughDiffuseMaterial)) 
+                result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial) material);
+            else if (materialType == typeof (RoughDielectricMaterial)) 
+                result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial) material);
+            else if (materialType == typeof (SmoothPlasticMaterial)) 
+                result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial) material);
+            else if (materialType == typeof (RoughPlasticMaterial)) 
+                result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial) material);
+            //else if (materialType == typeof (SmoothDielectricCoatingMaterial))
+            //    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
 
             if (result != null) return result;
 
             return null;
         }
+
         /// <summary>
         ///   This method defines the default integrator. Must be Photon mapper ?!
         /// </summary>
@@ -187,24 +187,24 @@ namespace MitsubaRender.Exporter
             {
                 var materialType = material.GetType();
 
-                if (materialType == typeof(SmoothDiffuseMaterial))
-                    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial)material);
-                else if (materialType == typeof(RoughConductorMaterial))
-                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial)material);
-                else if (materialType == typeof(SmoothDielectricMaterial))
-                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial)material);
-                else if (materialType == typeof(SmoothConductorMaterial))
-                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial)material);
-                else if (materialType == typeof(RoughDiffuseMaterial))
-                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
-                else if (materialType == typeof(RoughDielectricMaterial))
-                    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial)material);
-                else if (materialType == typeof(SmoothPlasticMaterial))
-                    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
-                else if (materialType == typeof(RoughPlasticMaterial))
-                    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
-                else if (materialType == typeof (SmoothDielectricCoatingMaterial))
-                    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
+                if (materialType == typeof (SmoothDiffuseMaterial)) 
+                    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial) material);
+                else if (materialType == typeof (RoughConductorMaterial)) 
+                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
+                else if (materialType == typeof (SmoothDielectricMaterial)) 
+                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
+                else if (materialType == typeof (SmoothConductorMaterial)) 
+                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
+                else if (materialType == typeof (RoughDiffuseMaterial)) 
+                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial) material);
+                else if (materialType == typeof (RoughDielectricMaterial))
+                    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial) material);
+                else if (materialType == typeof (SmoothPlasticMaterial))
+                    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial) material);
+                else if (materialType == typeof (RoughPlasticMaterial))
+                    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial) material);
+                //else if (materialType == typeof (SmoothDielectricCoatingMaterial))
+                //    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
 
                 if (result != null) AddToXmlRoot(result);
             }
@@ -253,7 +253,6 @@ namespace MitsubaRender.Exporter
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="transform"></param>
         /// <returns></returns>
@@ -290,8 +289,8 @@ namespace MitsubaRender.Exporter
             var sensorElement = _document.CreateElement("sensor");
             sensorElement.SetAttribute("type", perspective ? "perspective" : "orthographic");
             var toWorld = view.GetTransform(CoordinateSystem.Camera, CoordinateSystem.World);
-            toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
-            toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(-1, 0, 0)));
+            toWorld = toWorld*Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
+            toWorld = toWorld*Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(-1, 0, 0)));
             var toWorldElement = MakeProperty("toWorld", toWorld);
 
             if (perspective)
@@ -301,13 +300,13 @@ namespace MitsubaRender.Exporter
                 view.GetCameraAngle(out halfDiag, out halfVert, out halfHoriz);
                 //toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
                 sensorElement.AppendChild(MakeProperty("fovAxis", "diagonal"));
-                sensorElement.AppendChild(MakeProperty("fov", 2 * halfDiag * 180 / Math.PI));
+                sensorElement.AppendChild(MakeProperty("fov", 2*halfDiag*180/Math.PI));
                 sensorElement.AppendChild(MakeProperty("focusDistance", focusDistance));
             }
             else
             {
                 var scaleNode = _document.CreateElement("scale");
-                var scale = (right - left) / 2;
+                var scale = (right - left)/2;
                 scaleNode.SetAttribute("x", ToStringHelper(scale));
                 scaleNode.SetAttribute("y", ToStringHelper(scale));
                 toWorldElement.PrependChild(scaleNode);
@@ -387,39 +386,39 @@ namespace MitsubaRender.Exporter
             var type = value.GetType();
             string elementType;
 
-            if (type == typeof(string)) elementType = "string";
-            else if (type == typeof(int)) elementType = "integer";
-            else if (type == typeof(string)) elementType = "string";
-            else if (type == typeof(float) ||
-                     type == typeof(double)) elementType = "float";
-            else if (type == typeof(Transform)) elementType = "transform";
-            else if (type == typeof(Color)) elementType = "srgb";
+            if (type == typeof (string)) elementType = "string";
+            else if (type == typeof (int)) elementType = "integer";
+            else if (type == typeof (string)) elementType = "string";
+            else if (type == typeof (float) ||
+                     type == typeof (double)) elementType = "float";
+            else if (type == typeof (Transform)) elementType = "transform";
+            else if (type == typeof (Color)) elementType = "srgb";
             else throw new Exception("Unknown element type!");
 
             var element = _document.CreateElement(elementType);
             element.SetAttribute("name", name);
 
-            if (type == typeof(Transform))
+            if (type == typeof (Transform))
             {
                 var matrix = _document.CreateElement("matrix");
-                var trafo = (Transform)value;
+                var trafo = (Transform) value;
                 var matStr = "";
                 for (var i = 0; i < 4; ++i) for (var j = 0; j < 4; ++j) matStr += trafo[i, j].ToString(CultureInfo.InvariantCulture) + ", ";
 
                 matrix.SetAttribute("value", matStr.Substring(0, matStr.Length - 2));
                 element.AppendChild(matrix);
             }
-            else if (type == typeof(Color))
+            else if (type == typeof (Color))
             {
-                var color = (Color)value;
+                var color = (Color) value;
                 element.SetAttribute("value",
-                                     ToStringHelper(color.R / 255.0f) + ", " +
-                                     ToStringHelper(color.G / 255.0f) + ", " +
-                                     ToStringHelper(color.B / 255.0f));
+                                     ToStringHelper(color.R/255.0f) + ", " +
+                                     ToStringHelper(color.G/255.0f) + ", " +
+                                     ToStringHelper(color.B/255.0f));
             }
-            else if (type == typeof(float)) element.SetAttribute("value", ToStringHelper((float)value));
-            else if (type == typeof(double)) element.SetAttribute("value", ToStringHelper((double)value));
-            else if (type == typeof(int)) element.SetAttribute("value", ToStringHelper((int)value));
+            else if (type == typeof (float)) element.SetAttribute("value", ToStringHelper((float) value));
+            else if (type == typeof (double)) element.SetAttribute("value", ToStringHelper((double) value));
+            else if (type == typeof (int)) element.SetAttribute("value", ToStringHelper((int) value));
             else element.SetAttribute("value", value.ToString());
 
             return element;
@@ -433,7 +432,7 @@ namespace MitsubaRender.Exporter
         {
             var output = new FileStream(sceneFile, FileMode.Create);
             var sw = new StreamWriter(output);
-            var xmlWriter = new XmlTextWriter(sw) { Formatting = Formatting.Indented, Indentation = 4 };
+            var xmlWriter = new XmlTextWriter(sw) {Formatting = Formatting.Indented, Indentation = 4};
             _document.WriteTo(xmlWriter);
             sw.Close();
             output.Close();
@@ -486,7 +485,7 @@ namespace MitsubaRender.Exporter
                     var copied = FileTools.CopyTextureToScenePath(type.SecondParameter as string);
                     if (copied != null)
                     {
-                        type.SecondParameter = (S)Convert.ChangeType(copied, typeof(S));
+                        type.SecondParameter = (S) Convert.ChangeType(copied, typeof (S));
                         var texture = AddElement("texture", name, null, "bitmap");
                         texture.AppendChild(AddElement("string", "filename",
                                                        Path.GetFileName(type.SecondParameter as string)));
@@ -497,8 +496,8 @@ namespace MitsubaRender.Exporter
                 {
                     var color = type.GetColorHex();
 
-                    if (color != null) element.AppendChild(AddElement("srgb", name, color));
-                    else element.AppendChild(AddElement("float", name, type.FirstParameter + ""));
+                    element.AppendChild(color != null ? 
+                        AddElement("srgb", name, color) : AddElement("float", name, type.FirstParameter + ""));
                 }
             }
 
@@ -512,7 +511,6 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "diffuse");
                 element.SetAttribute("id", material.GetMaterialId());
                 MakeMitsubaType(ref element, "reflectance", material.Reflectance);
-
                 return element;
             }
 
@@ -525,9 +523,11 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "dielectric");
                 element.SetAttribute("id", material.GetMaterialId());
-                //TODO not using the second parameter (strings) !!
-                element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
-                element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
+                element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
+                element.AppendChild(AddElement("string", "extIOR", material.ExtIOR.SecondParameter + ""));
+                //TODO use floats ??
+                //element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
+                //element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
                 return element;
             }
 
@@ -554,7 +554,6 @@ namespace MitsubaRender.Exporter
             }
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="material"></param>
             /// <returns></returns>
@@ -570,7 +569,6 @@ namespace MitsubaRender.Exporter
             }
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="material"></param>
             /// <returns></returns>
@@ -584,14 +582,15 @@ namespace MitsubaRender.Exporter
                 MakeMitsubaType(ref element, "alpha", material.Alpha);
                 MakeMitsubaType(ref element, "alphaU", material.AlphaU);
                 MakeMitsubaType(ref element, "alphaV", material.AlphaV);
-                element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
-                element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
+                element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
+                element.AppendChild(AddElement("string", "extIOR", material.ExtIOR.SecondParameter + ""));
+                //element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
+                //element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
 
                 return element;
             }
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="material"></param>
             /// <returns></returns>
@@ -601,9 +600,10 @@ namespace MitsubaRender.Exporter
 
                 element.SetAttribute("type", "plastic");
                 element.SetAttribute("id", material.GetMaterialId());
-                //TODO not using the second parameter (strings) !!
-                element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
-                element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
+                element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
+                element.AppendChild(AddElement("string", "extIOR", material.ExtIOR.SecondParameter + ""));
+                //element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
+                //element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
                 MakeMitsubaType(ref element, "diffuseReflectance", material.DiffuseReflectance);
                 element.AppendChild(AddElement("boolean", "nonlinear", material.Nonlinear.ToString().ToLower()));
 
@@ -611,7 +611,6 @@ namespace MitsubaRender.Exporter
             }
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="material"></param>
             /// <returns></returns>
@@ -623,8 +622,10 @@ namespace MitsubaRender.Exporter
 
                 element.AppendChild(AddElement("string", "distribution", material.Distribution));
                 MakeMitsubaType(ref element, "alpha", material.Alpha);
-                element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
-                element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
+                element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
+                element.AppendChild(AddElement("string", "extIOR", material.ExtIOR.SecondParameter + ""));
+                //element.AppendChild(AddElement("float", "intIOR", material.IntIOR.FirstParameter + ""));
+                //element.AppendChild(AddElement("float", "extIOR", material.ExtIOR.FirstParameter + ""));
                 MakeMitsubaType(ref element, "diffuseReflectance", material.DiffuseReflectance);
                 element.AppendChild(AddElement("boolean", "nonlinear", material.Nonlinear.ToString().ToLower()));
 
@@ -640,36 +641,24 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("bsdf");
                 element.SetAttribute("type", "conductor");
                 element.SetAttribute("id", material.GetMaterialId());
+                if (material.Material == null) material.Material = "";
                 element.AppendChild(AddElement("string", "material", material.Material));
-
-                //TODO another conductor properties !
-                //element.AppendChild(AddElement("srgb", "eta", MitsubaMaterial.GetColorHex(material.Eta)));
-                //element.AppendChild(AddElement("srgb", "k", MitsubaMaterial.GetColorHex(material.K)));
-
-                //if (material.ExtEta.HasTextureOrName)
-                //{
-                //    //It has a material name
-                //    element.AppendChild(AddElement("string", "extEta", material.ExtEta.SecondParameter));
-                //}
-                //else
-                //{
-                //    //It has a float value
-                //    element.AppendChild(AddElement("float", "extEta", material.ExtEta.FirstParameter + ""));
-                //}
-
+                element.AppendChild(AddElement("srgb", "eta", MitsubaMaterial.GetColorHex(material.Eta)));
+                element.AppendChild(AddElement("srgb", "k", MitsubaMaterial.GetColorHex(material.K)));
+                MakeMitsubaType(ref element, "extEta", material.ExtEta);
                 return element;
             }
 
-            public static XmlElement SmoothDielectricCoatingMaterial(SmoothDielectricCoatingMaterial material)
-            {
-                var element = _document.CreateElement("bsdf");
-                element.SetAttribute("type", "coating");
-                element.SetAttribute("id", material.GetMaterialId());
+            //public static XmlElement SmoothDielectricCoatingMaterial(SmoothDielectricCoatingMaterial material)
+            //{
+            //    var element = _document.CreateElement("bsdf");
+            //    element.SetAttribute("type", "coating");
+            //    element.SetAttribute("id", material.GetMaterialId());
 
-                //TODO coating XML
+            //    //TODO coating XML
 
-                return element;
-            }
+            //    return element;
+            //}
         }
 
         #endregion
@@ -702,7 +691,6 @@ namespace MitsubaRender.Exporter
             }
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="emitter"></param>
             /// <returns></returns>
@@ -717,7 +705,6 @@ namespace MitsubaRender.Exporter
             }
 
             /// <summary>
-            /// 
             /// </summary>
             /// <param name="emitter"></param>
             /// <returns></returns>

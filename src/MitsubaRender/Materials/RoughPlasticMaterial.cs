@@ -13,9 +13,11 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System.Linq;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.UI;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
@@ -31,6 +33,21 @@ namespace MitsubaRender.Materials
         ///   Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
         private static uint _count;
+
+        /// <summary>
+        /// This field handles the comboBox for the Distribution property.
+        /// </summary>
+        private static MaterialCombo _distributionCombo;
+
+        /// <summary>
+        /// This field handles the comboBox for the IntIOR property.
+        /// </summary>
+        private static MaterialCombo _intIORCombo;
+
+        /// <summary>
+        /// This field handles the comboBox for the ExtIOR property.
+        /// </summary>
+        private static MaterialCombo _extIORCombo;
 
         #region Mitsuba parameters
 
@@ -111,23 +128,68 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void CreateUserInterface()
         {
-            var distribution_field = Fields.Add(DISTRIBUTION_FIELD, Distribution, "Distribution"); //TODO combobox
             var reflectance_field = Fields.Add(REFLECTANCE_COLOR_FIELD, DiffuseReflectance.FirstParameter, "Diffuse Reflectance Color");
             var texture_field = Fields.AddTextured(REFLECTANCE_TEXTURE_FIELD, false, "Diffuse Reflectance Texture");
             var alpha_float_field = Fields.Add(ALPHA_FLOAT_FIELD, Alpha.FirstParameter, "Alpha Float");
             var alpha_texture_field = Fields.AddTextured(ALPHA_TEXTURE_FIELD, false, "Alpha Texture");
-            var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
-            var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
+            //var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
+            //var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
             var nonlinear_field = Fields.Add(NONLINEAR_FIELD, Nonlinear, "Nonlinear");
 
-            BindParameterToField(DISTRIBUTION_FIELD, distribution_field, ChangeContexts.UI);
             BindParameterToField(REFLECTANCE_COLOR_FIELD, reflectance_field, ChangeContexts.UI);
             BindParameterToField(REFLECTANCE_TEXTURE_FIELD, REFLECTANCE_TEXTURE_SLOT, texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, alpha_texture_field, ChangeContexts.UI);
-            BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
-            BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
+            //BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
+            //BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
             BindParameterToField(NONLINEAR_FIELD, nonlinear_field, ChangeContexts.UI);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void OnAddUserInterfaceSections()
+        {
+            if (_distributionCombo == null)
+            {
+                var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
+                _distributionCombo = (MaterialCombo)section.Window;
+                _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+            }
+
+            if (_intIORCombo == null)
+            {
+                var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
+                _intIORCombo = (MaterialCombo)intIOR_section.Window;
+
+                var data = new string[StandardIORTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardIORTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _intIORCombo.Data = data;
+            }
+
+            if (_extIORCombo == null)
+            {
+                var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
+                _extIORCombo = (MaterialCombo)extIOR_section.Window;
+
+                var data = new string[StandardIORTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardIORTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _extIORCombo.Data = data;
+            }
+
+            base.OnAddUserInterfaceSections();
         }
 
         /// <summary>
@@ -136,18 +198,31 @@ namespace MitsubaRender.Materials
         protected override void ReadDataFromUI()
         {
             //Distribution
-            string distribution;
-            Fields.TryGetValue(DISTRIBUTION_FIELD, out distribution);
-            Distribution = distribution;
-
-            //Exterior Index of Refraction
-            float extIOR;
-            Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
-            ExtIOR.FirstParameter = extIOR;
+            if (_distributionCombo != null)
+                Distribution = _distributionCombo.SelectedItem;
 
             //Interior Index of Refraction
-            float intIOR;
-            if (Fields.TryGetValue(INTIOR_FIELD, out intIOR)) IntIOR.FirstParameter = intIOR;
+            if (_intIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _intIORCombo.SelectedItem).Key;
+                IntIOR.SecondParameter = myValue;
+            }
+
+            //Exterior Index of Refraction
+            if (_extIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _extIORCombo.SelectedItem).Key;
+                ExtIOR.SecondParameter = myValue;
+            }
+
+            //Exterior Index of Refraction
+            //float extIOR;
+            //Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
+            //ExtIOR.FirstParameter = extIOR;
+
+            ////Interior Index of Refraction
+            //float intIOR;
+            //if (Fields.TryGetValue(INTIOR_FIELD, out intIOR)) IntIOR.FirstParameter = intIOR;
 
             //Diffuse Refectance
             bool hasTexture;

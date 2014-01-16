@@ -79,7 +79,6 @@
     <Compile Include="Materials\RoughDielectricMaterial.cs" />
     <Compile Include="Materials\RoughDiffuseMaterial.cs" />
     <Compile Include="Materials\RoughPlasticMaterial.cs" />
-    <Compile Include="Materials\SmoothDielectricCoatingMaterial.cs" />
     <Compile Include="Materials\SmoothDielectricMaterial.cs" />
     <Compile Include="Materials\RoughConductorMaterial.cs" />
     <Compile Include="Materials\SmoothDiffuseMaterial.cs" />

@@ -13,16 +13,13 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
-using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
 using MitsubaRender.UI;
-using Rhino;
-using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
-using Rhino.Render.UI;
 
 namespace MitsubaRender.Materials
 {
@@ -41,6 +38,16 @@ namespace MitsubaRender.Materials
         /// This field handles the comboBox for the Distribution property.
         /// </summary>
         private static MaterialCombo _distributionCombo;
+
+        /// <summary>
+        /// This field handles the comboBox for the IntIOR property.
+        /// </summary>
+        private static MaterialCombo _intIORCombo;
+
+        /// <summary>
+        /// This field handles the comboBox for the ExtIOR property.
+        /// </summary>
+        private static MaterialCombo _extIORCombo;
 
         #region Material Parameters
 
@@ -139,8 +146,8 @@ namespace MitsubaRender.Materials
             var alphaU_texture_field = Fields.AddTextured(ALPHAU_TEXTURE_FIELD, false, "AlphaU Texture");
             var alphaV_float_field = Fields.Add(ALPHAV_FLOAT_FIELD, AlphaV.FirstParameter, "AlphaV Float");
             var alphaV_texture_field = Fields.AddTextured(ALPHAV_TEXTURE_FIELD, false, "AlphaV Texture");
-            var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
-            var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
+            //var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
+            //var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
 
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, alpha_texture_field, ChangeContexts.UI);
@@ -148,8 +155,8 @@ namespace MitsubaRender.Materials
             BindParameterToField(ALPHAU_TEXTURE_FIELD, ALPHAU_TEXTURE_SLOT, alphaU_texture_field, ChangeContexts.UI);
             BindParameterToField(ALPHAV_FLOAT_FIELD, alphaV_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHAV_TEXTURE_FIELD, ALPHAV_TEXTURE_SLOT, alphaV_texture_field, ChangeContexts.UI);
-            BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
-            BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
+            //BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
+            //BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
         }
 
         /// <summary>
@@ -162,6 +169,38 @@ namespace MitsubaRender.Materials
                 var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
                 _distributionCombo = (MaterialCombo)section.Window;
                 _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+            }
+
+            if (_intIORCombo == null)
+            {
+                var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
+                _intIORCombo = (MaterialCombo)intIOR_section.Window;
+
+                var data = new string[StandardIORTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardIORTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _intIORCombo.Data = data;
+            }
+
+            if (_extIORCombo == null)
+            {
+                var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
+                _extIORCombo = (MaterialCombo)extIOR_section.Window;
+
+                var data = new string[StandardIORTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardIORTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _extIORCombo.Data = data;
             }
 
             base.OnAddUserInterfaceSections();
@@ -279,15 +318,29 @@ namespace MitsubaRender.Materials
             }
 
             //Interior Index of Refraction
-            float extIOR;
-            Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
-            ExtIOR.FirstParameter = extIOR;
+            if (_intIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _intIORCombo.SelectedItem).Key;
+                IntIOR.SecondParameter = myValue;
+            }
 
             //Exterior Index of Refraction
-            float intIOR;
-            if (Fields.TryGetValue(INTIOR_FIELD, out intIOR))
-                IntIOR.FirstParameter = intIOR;
-            else IntIOR.FirstParameter = -1;
+            if (_extIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _extIORCombo.SelectedItem).Key;
+                ExtIOR.SecondParameter = myValue;
+            }
+
+            //Interior Index of Refraction
+            //float extIOR;
+            //Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
+            //ExtIOR.FirstParameter = extIOR;
+
+            //Exterior Index of Refraction
+            //float intIOR;
+            //if (Fields.TryGetValue(INTIOR_FIELD, out intIOR))
+            //    IntIOR.FirstParameter = intIOR;
+            //else IntIOR.FirstParameter = -1;
         }
 
         /// <summary>

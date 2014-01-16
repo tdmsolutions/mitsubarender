@@ -13,7 +13,7 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
-using MitsubaRender.UI;
+using System.Collections.Generic;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Render;
@@ -106,6 +106,111 @@ namespace MitsubaRender.Materials
         {
             var sysColor = color.AsSystemColor();
             return "#" + sysColor.R.ToString("X2") + sysColor.G.ToString("X2") + sysColor.B.ToString("X2");
+        }
+    }
+
+    /// <summary>
+    /// These material names can be used with the material dielectric, roughdielectric, plastic, roughplastic, as well as coating.
+    /// 
+    /// There are 23 different types.
+    /// </summary>
+    public static class StandardIORTypes
+    {
+        /// <summary>
+        /// The string values that are used in the comboBox (the TValue) and in the Mitsuba XML (TKey).
+        /// The second value of the Dictionary (TValue) can be localized.
+        /// </summary>
+        public static readonly Dictionary<string, string> Types = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Static ctor. for the values initialization
+        /// </summary>
+        static StandardIORTypes()
+        {
+            Types.Add("vacuum", "Vacuum");
+            Types.Add("helium", "Helium");
+            Types.Add("hydrogen", "Hydrogen");
+            Types.Add("air", "Air");
+            Types.Add("carbon dioxide", "Carbon dioxide");
+            Types.Add("water", "Water");
+            Types.Add("acetone", "Acetone");
+            Types.Add("ethanol", "Ethanol");
+            Types.Add("carbon tetrachloride", "Carbon tetrachloride");
+            Types.Add("glycerol", "Glycerol"); //10
+            Types.Add("benzene", "Benzene");
+            Types.Add("silicone oil", "Silicone oil");
+            Types.Add("bromine", "Bromine");
+            Types.Add("water ice", "Water ice");
+            Types.Add("fused quartz", "Fused quartz");
+            Types.Add("pyrex", "Acrylic glass");
+            Types.Add("polypropylene", "Polypropylene");
+            Types.Add("bk7", "bk7");
+            Types.Add("sodium chloride", "Sodium chloride");
+            Types.Add("amber", "Amber"); //20
+            Types.Add("pet", "Pet");
+            Types.Add("diamond", "Diamond");
+        }
+    }
+
+    /// <summary>
+    /// This table lists all supported materials that can be passed into the conductor and roughconductor plugins. 
+    /// Note that some of them are not actually conductors—this is not a problem, they can be used regardless (though only the reflection 
+    /// component and no transmission will be simulated). In most cases, there are multiple entries for each material, which represent 
+    /// measurements by different authors.
+    /// 
+    /// There are 37 different types.
+    /// </summary>
+    public static class StandardConductorTypes
+    {
+        /// <summary>
+        /// The string values that are used in the comboBox (the TValue) and in the Mitsuba XML (TKey).
+        /// The second value of the Dictionary (TValue) can be localized.
+        /// </summary>
+        public static readonly Dictionary<string, string> Types = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Static ctor. for the values initialization
+        /// </summary>
+        static StandardConductorTypes()
+        {
+            Types.Add("a-C", "Amorphous carbon");
+            Types.Add("Ag", "Silver");
+            Types.Add("Al", "Aluminium");
+            Types.Add("AlAs", "Cubic aluminium arsenide");
+            Types.Add("AlSb", "Cubic aluminium antimonide");
+            Types.Add("Au", "Gold");
+            Types.Add("Be", "Polycrystalline beryllium");
+            Types.Add("Cr", "Chromium");
+            Types.Add("CsI", "Cubic caesium iodide");
+            Types.Add("Cu", "Copper"); //10
+            Types.Add("Cu2O", "Copper (I) oxide");
+            Types.Add("CuO", "Copper (II) oxide");
+            Types.Add("d-C", "Cubic diamond");
+            Types.Add("Hg", "Mercury");
+            Types.Add("HgTe", "Mercury telluride");
+            Types.Add("Ir", "Iridium");
+            Types.Add("K", "Polycrystalline potassium");
+            Types.Add("Li", "Lithium");
+            Types.Add("MgO", "Magnesium oxide");
+            Types.Add("Mo", "Molybdenum"); //20
+            Types.Add("Na_palik", "Sodium");
+            Types.Add("Nb", "Niobium");
+            Types.Add("Ni_palik", "Nickel");
+            Types.Add("Rh", "Rhodium");
+            Types.Add("Se", "Selenium");
+            Types.Add("SiC", "Hexagonal silicon carbide");
+            Types.Add("SnTe", "Tin telluride");
+            Types.Add("Ta", "Tantalum");
+            Types.Add("Te", "Trigonal tellurium");
+            Types.Add("ThF4", "Polycryst. thorium (IV) fluoride"); //30
+            Types.Add("TiC", "Polycrystalline titanium carbide");
+            Types.Add("TiN", "Titanium nitride");
+            Types.Add("TiO2", "Tetragonal titan. dioxide");
+            Types.Add("VC", "Vanadium carbide");
+            Types.Add("V_palik", "Vanadium");
+            Types.Add("VN", "Vanadium nitride");
+            Types.Add("W", "Tungsten"); //37
+            Types.Add("none", "None (100% reflecting mirror)");
         }
     }
 }
