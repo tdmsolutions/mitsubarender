@@ -704,14 +704,14 @@ namespace MitsubaRender.Exporter
 
         internal class CreateIntegrator
         {
-            public static XmlElement AmbientOcclusion(AmbientOclusion integrator)
-            {
-                var element = _document.CreateElement("integrator");
-                element.SetAttribute("type", "ao");
-                element.AppendChild(AddElement("integer", "shadingSamples", integrator.ShadingSamples + ""));
-                element.AppendChild(AddElement("float", "rayLength", integrator.OcclusionRayLength + ""));
-                return element;
-            }
+            //public static XmlElement AmbientOcclusion(AmbientOclusion integrator)
+            //{
+            //    var element = _document.CreateElement("integrator");
+            //    element.SetAttribute("type", "ao");
+            //    element.AppendChild(AddElement("integer", "shadingSamples", integrator.ShadingSamples + ""));
+            //    element.AppendChild(AddElement("float", "rayLength", integrator.OcclusionRayLength + ""));
+            //    return element;
+            //}
         }
 
         #endregion

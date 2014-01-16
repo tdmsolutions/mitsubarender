@@ -15,8 +15,34 @@
 
 namespace MitsubaRender.Settings
 {
+    enum IntegratorType
+    {
+        Ambientoclusion,
+        DirectIlumination,
+        PathTracer,
+        VolumetricPathTracerSimple,
+        VolumetricPathTracerExtended,
+        AdjointParticleTracer,
+        VirtualPointLightRenderer,
+        PhotonMapper,
+        ProgressivePhotonMapper,
+        StochasticProgressivePhotonMapper,
+        BidirectionalPathTracer,
+        PrimarySampleSpaceMLT,
+        SampleSpaceMLT,
+        EnergyRedisributionPathTracing
+    }
+    enum SamplerType
+    {
+        IndependentSampler,
+        StraitfieldSampler,
+        LowDiscrepancySampler,
+        HammersleyQMCSampler,
+        HaltonQMCSampler,
+        SobolQMCSampler
+    };
 
-    public static class MitsubaSettings
+    internal static class IntegratorsDataSource
     {
         static internal readonly string[] IntegratorData = new[] {
             "Ambient oclusion",
@@ -54,6 +80,11 @@ namespace MitsubaRender.Settings
                 "Catmull-Rom filter",
                 "Lanczos Sinc filter"
             };
+    }
+    public static class MitsubaSettings
+    {
+
+
 
         //TODO settings
         public static string WorkingDirectory;

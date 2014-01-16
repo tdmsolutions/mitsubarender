@@ -17,6 +17,17 @@ using System.ComponentModel;
 
 namespace MitsubaRender.Integrators
 {
+    
+    public static class SamplerObjectInstances
+    {
+        public static SamplerIndependent SamplerIndependent;
+        public static SamplerStraitfield SamplerStraitfield;
+        public static SamplerLowDiscrepancy SamplerLowDiscrepancy;
+        public static SamplerHammersleyQMC SamplerHammersleyQMC;
+        public static SamplerHaltonQMC SamplerHaltonQMC;
+        public static SamplerSobolQMC SamplerSobolQMC;
+    }
+    
     public class SamplerIndependent
     {
         public SamplerIndependent()
@@ -38,9 +49,7 @@ namespace MitsubaRender.Integrators
         }
 
         [DisplayName(@"Samples per pixel")]
-        [Description(
-            "Number of samples per pixel; should be a power of two (e.g. 1, 2, 4, 8, 16, etc.), or it will be rounded up to the next one"
-            )]
+        [Description("Number of samples per pixel; should be a power of two (e.g. 1, 2, 4, 8, 16, etc.), or it will be rounded up to the next one")]
         public int SamplesPerPixel { get; set; }
 
         [DisplayName(@"Effective dimension")]

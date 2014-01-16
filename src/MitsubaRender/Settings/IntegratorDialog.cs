@@ -20,9 +20,9 @@ namespace MitsubaRender.Settings
 
         private void IntegratorDialogLoad(object sender, EventArgs e)
         {
-            comboBoxIntegrator.DataSource = MitsubaSettings.IntegratorData;
-            comboBoxSampler.DataSource = MitsubaSettings.SamplerData;
-            comboBoxReconstruction.DataSource = MitsubaSettings.ReconstructionData;
+            comboBoxIntegrator.DataSource = IntegratorsDataSource.IntegratorData;
+            comboBoxSampler.DataSource = IntegratorsDataSource.SamplerData;
+            comboBoxReconstruction.DataSource = IntegratorsDataSource.ReconstructionData;
         }
 
         private void ButtonOkClick(object sender, EventArgs e)
@@ -35,16 +35,79 @@ namespace MitsubaRender.Settings
             tabControlProperties.SelectedIndex = 0;
             switch (comboBoxIntegrator.SelectedIndex)
             {
-                case 0:
+
+
+                case (int)IntegratorType.AdjointParticleTracer:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AdjointParticleTracer;
+                    break;
+                case (int)IntegratorType.Ambientoclusion:
                     propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AmbientOclusion;
                     break;
-
+                case (int)IntegratorType.BidirectionalPathTracer:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.BidirectionalPathTracer;
+                    break;
+                case (int)IntegratorType.DirectIlumination:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.DirectIlumination;
+                    break;
+                case (int)IntegratorType.EnergyRedisributionPathTracing:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.EnergyRedisributionPathTracing;
+                    break;
+                case (int)IntegratorType.PathTracer:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PathTracer;
+                    break;
+                case (int)IntegratorType.PhotonMapper:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PhotonMapper;
+                    break;
+                case (int)IntegratorType.PrimarySampleSpaceMLT:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PrimarySampleSpaceMLT;
+                    break;
+                case (int)IntegratorType.ProgressivePhotonMapper:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.ProgressivePhotonMapper;
+                    break;
+                case (int)IntegratorType.SampleSpaceMLT:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.SampleSpaceMLT;
+                    break;
+                case (int)IntegratorType.StochasticProgressivePhotonMapper:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.StochasticProgressivePhotonMapper;
+                    break;
+                case (int)IntegratorType.VirtualPointLightRenderer:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VirtualPointLightRenderer;
+                    break;
+                case (int)IntegratorType.VolumetricPathTracerExtended:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VolumetricPathTracerExtended;
+                    break;
+                case (int)IntegratorType.VolumetricPathTracerSimple:
+                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VolumetricPathTracerSimple;
+                    break;
             }
         }
 
         private void ComboBoxSamplerSelectedIndexChanged(object sender, EventArgs e)
         {
             tabControlProperties.SelectedIndex = 1;
+            switch (comboBoxSampler.SelectedIndex)
+            {
+                case (int)SamplerType.HaltonQMCSampler:
+                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerHaltonQMC;
+                    break;
+                case (int)SamplerType.HammersleyQMCSampler:
+                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerHammersleyQMC;
+                    break;
+                case (int)SamplerType.IndependentSampler:
+                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerIndependent;
+                    break;
+                case (int)SamplerType.LowDiscrepancySampler:
+                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerLowDiscrepancy;
+                    break;
+                case (int)SamplerType.SobolQMCSampler:
+                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerSobolQMC;
+                    break;
+                case (int)SamplerType.StraitfieldSampler:
+                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerStraitfield;
+                    break;
+            }
+
+
         }
 
         private void ComboBoxReconstructionSelectedIndexChanged(object sender, EventArgs e)
