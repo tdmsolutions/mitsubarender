@@ -20,6 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using MitsubaRender.Emitters;
+using MitsubaRender.Integrators;
 using MitsubaRender.Materials;
 using MitsubaRender.Materials.Wrappers;
 using MitsubaRender.Settings;
@@ -133,44 +134,121 @@ namespace MitsubaRender.Exporter
         /// <summary>
         ///   TODO summary
         /// </summary>
-        public bool CreateDefaultIntegrator()
+        public void CreateIntegratorXml()
         {
-            //TODO delete me
-            const string type = "photonmapper";
+            XmlElement result;
+            
+            if (MitsubaSettings.Integrator == null)
+               result = CreateIntegrator.Create(new IntegratorPhotonMapper());
 
-            var integrator = _document.CreateElement("integrator");
-            integrator.SetAttribute("type", type);
-            GetRootElement().AppendChild(integrator);
+            if (MitsubaSettings.Integrator is IntegratorAmbientOclusion)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorAmbientOclusion;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorDirectIlumination)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorDirectIlumination;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorPathTracer)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorPathTracer;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorVolumetricPathTracerSimple)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorVolumetricPathTracerSimple;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorVolumetricPathTracerExtended)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorVolumetricPathTracerExtended;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorAdjointParticleTracer)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorAdjointParticleTracer;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorVirtualPointLightRenderer)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorVirtualPointLightRenderer;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorPhotonMapper)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorPhotonMapper;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorProgressivePhotonMapper)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorProgressivePhotonMapper;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorStochasticProgressivePhotonMapper)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorStochasticProgressivePhotonMapper;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorBidirectionalPathTracer)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorBidirectionalPathTracer;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorPrimarySampleSpaceMLT)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorPrimarySampleSpaceMLT;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is IntegratorSampleSpaceMLT)
+            {
+                var integrator = MitsubaSettings.Integrator as IntegratorSampleSpaceMLT;
+                result = CreateIntegrator.Create(integrator);
+            }
+            if (MitsubaSettings.Integrator is EnergyRedisributionPathTracing)
+            {
+                var integrator = MitsubaSettings.Integrator as EnergyRedisributionPathTracing;
+                result = CreateIntegrator.Create(integrator);
+            }
+            else
+            {
+                result = CreateIntegrator.Create(new IntegratorPhotonMapper());
+            }
 
-            return true;
+            if (result != null) AddToXmlRoot(result);
+
         }
 
 
+
+      
+
         public static XmlElement CreateMaterialXml(MitsubaMaterial material)
         {
-            
+
             XmlElement result = null;
 
-                var materialType = material.GetType();
+            var materialType = material.GetType();
 
-                if (materialType == typeof(SmoothDiffuseMaterial))
-                    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial)material);
-                else if (materialType == typeof(RoughConductorMaterial))
-                    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial)material);
-                else if (materialType == typeof(SmoothDielectricMaterial))
-                    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial)material);
-                else if (materialType == typeof(SmoothConductorMaterial))
-                    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial)material);
-                else if (materialType == typeof(RoughDiffuseMaterial))
-                    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
-                else if (materialType == typeof(RoughDielectricMaterial))
-                    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial)material);
-                else if (materialType == typeof(SmoothPlasticMaterial))
-                    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
-                else if (materialType == typeof(RoughPlasticMaterial))
-                    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
-                else if (materialType == typeof (SmoothDielectricCoatingMaterial))
-                    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
+            if (materialType == typeof(SmoothDiffuseMaterial))
+                result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial)material);
+            else if (materialType == typeof(RoughConductorMaterial))
+                result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial)material);
+            else if (materialType == typeof(SmoothDielectricMaterial))
+                result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial)material);
+            else if (materialType == typeof(SmoothConductorMaterial))
+                result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial)material);
+            else if (materialType == typeof(RoughDiffuseMaterial))
+                result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
+            else if (materialType == typeof(RoughDielectricMaterial))
+                result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial)material);
+            else if (materialType == typeof(SmoothPlasticMaterial))
+                result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
+            else if (materialType == typeof(RoughPlasticMaterial))
+                result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
+            else if (materialType == typeof(SmoothDielectricCoatingMaterial))
+                result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial)material);
 
             if (result != null) return result;
 
@@ -203,8 +281,8 @@ namespace MitsubaRender.Exporter
                     result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
                 else if (materialType == typeof(RoughPlasticMaterial))
                     result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
-                else if (materialType == typeof (SmoothDielectricCoatingMaterial))
-                    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
+                else if (materialType == typeof(SmoothDielectricCoatingMaterial))
+                    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial)material);
 
                 if (result != null) AddToXmlRoot(result);
             }
@@ -742,16 +820,205 @@ namespace MitsubaRender.Exporter
             }
         }
 
-        internal class CreateIntegrator
+        internal static class CreateIntegrator
         {
-            //public static XmlElement AmbientOcclusion(AmbientOclusion integrator)
-            //{
-            //    var element = _document.CreateElement("integrator");
-            //    element.SetAttribute("type", "ao");
-            //    element.AppendChild(AddElement("integer", "shadingSamples", integrator.ShadingSamples + ""));
-            //    element.AppendChild(AddElement("float", "rayLength", integrator.OcclusionRayLength + ""));
-            //    return element;
-            //}
+            public static XmlElement Create(IntegratorAmbientOclusion integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "ao");
+                element.AppendChild(AddElement("integer", "shadingSamples", Convert.ToString(integrator.ShadingSamples)));
+                element.AppendChild(AddElement("float", "rayLength", Convert.ToString(integrator.OcclusionRayLength)));
+                return element;
+            }
+
+            public static XmlElement Create(IntegratorDirectIlumination integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "direct");
+                element.AppendChild(AddElement("integer", "emitterSamples", Convert.ToString(integrator.EmitterSmaples)));
+                element.AppendChild(AddElement("integer", "bsdfSamples", Convert.ToString(integrator.BSDFSamples)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                return element;
+            }
+            public static XmlElement Create(IntegratorPathTracer integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "path");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                return element;
+            }
+            public static XmlElement Create(IntegratorVolumetricPathTracerSimple integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "volpath_simple");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                return element;
+            }
+            public static XmlElement Create(IntegratorVolumetricPathTracerExtended integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "volpath");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                return element;
+            }
+            //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+            public static XmlElement Create(IntegratorAdaptativeIntegrator integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "volpath");
+                element.AppendChild(AddElement("float", "maxError", Convert.ToString(integrator.MaximumError)));
+                element.AppendChild(AddElement("float", "pValue", Convert.ToString(integrator.PValue)));
+                element.AppendChild(AddElement("integer", "maxSampleFactor", Convert.ToString(integrator.MaximumSampleFactor)));
+                return element;
+            }
+
+            public static XmlElement Create(IntegratorAdjointParticleTracer integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "ptracer");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
+                element.AppendChild(AddElement("integer", "granularity", Convert.ToString(integrator.WorkUnitGranularity)));
+                element.AppendChild(AddElement("boolean", "bruteForce", Convert.ToString(integrator.BruteForce)));
+                return element;
+            }
+            public static XmlElement Create(IntegratorVirtualPointLightRenderer integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "ptracer");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "shadowMapResolution", Convert.ToString(integrator.ShadowMapResolution)));
+                element.AppendChild(AddElement("float", "clamping", Convert.ToString(integrator.ClampingFactor)));
+                return element;
+            }
+            public static XmlElement Create(IntegratorPhotonMapper integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "photonmapper");
+                element.AppendChild(AddElement("integer", "directSamples", Convert.ToString(integrator.DirectSamples)));
+                element.AppendChild(AddElement("integer", "glossySamples", Convert.ToString(integrator.GlossySamples)));
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "globalPhotons", Convert.ToString(integrator.GlobalPhotons)));
+                element.AppendChild(AddElement("integer", "causticPhotons", Convert.ToString(integrator.CausticPhotons)));
+                element.AppendChild(AddElement("integer", "volumePhotons", Convert.ToString(integrator.VolumePhotons)));
+                element.AppendChild(AddElement("float", "globalLookupRadius", Convert.ToString(integrator.LookupRadiusGlobal)));
+                element.AppendChild(AddElement("float", "causticLLookupRadius", Convert.ToString(integrator.LookupRadiusCaustic)));
+                element.AppendChild(AddElement("integer", "lookupSize", Convert.ToString(integrator.CausticPhotonMapLookupSize)));
+                element.AppendChild(AddElement("integer", "granularity", Convert.ToString(integrator.WorkUnitGranularity)));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteSartingDepth)));
+
+                return element;
+            }
+            public static XmlElement Create(IntegratorProgressivePhotonMapper integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "photonmapper");
+                element.AppendChild(AddElement("integer", "photonCount", Convert.ToString(integrator.PhotonsPerIteration)));
+                element.AppendChild(AddElement("float", "initialRadius", Convert.ToString(integrator.InitialRadius)));
+                element.AppendChild(AddElement("float", "alpha", Convert.ToString(integrator.SizeReductionParameter)));
+                element.AppendChild(AddElement("integer", "granularity", Convert.ToString(integrator.WorkUnitGranularity)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteSartingDepth)));
+
+                //Parameter not present in Mistuba UI Configuration
+                //element.AppendChild(AddElement("integer", "maxPasses", Convert.ToString()));
+
+                return element;
+
+            }
+            public static XmlElement Create(IntegratorStochasticProgressivePhotonMapper integrator)
+            {
+
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "sppm");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+
+                element.AppendChild(AddElement("integer", "photonCount", Convert.ToString(integrator.PhotonsPerIteration)));
+                element.AppendChild(AddElement("float", "initialRadius", Convert.ToString(integrator.InitialRadius)));
+                element.AppendChild(AddElement("float", "alpha", Convert.ToString(integrator.SizeReductionParameter)));
+                element.AppendChild(AddElement("integer", "granularity", Convert.ToString(integrator.WorkUnitGranularity)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteSartingDepth)));
+
+                //Parameter not present in Mistuba UI Configuration
+                //element.AppendChild(AddElement("integer", "maxPasses", Convert.ToString()));
+
+                return element;
+            }
+            public static XmlElement Create(IntegratorBidirectionalPathTracer integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "bdpt");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
+                element.AppendChild(AddElement("boolean", "lightImage", Convert.ToString(integrator.CreateLightImage)));
+                element.AppendChild(AddElement("boolean", "sampleDirect", Convert.ToString(integrator.UseDirectSamplingMethods)));
+                return element;
+            }
+            public static XmlElement Create(IntegratorPrimarySampleSpaceMLT integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "pssmlt");
+                element.AppendChild(AddElement("boolean", "bidirectional", Convert.ToString(integrator.Bidirectional)));
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "directSamples", Convert.ToString(integrator.DirectSamples)));
+                element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteSartingDepth)));
+                element.AppendChild(AddElement("integer", "luminanceSamples", Convert.ToString(integrator.LuminanceSamples)));
+                element.AppendChild(AddElement("boolean", "twoStage", Convert.ToString(integrator.TwoStageMLT)));
+                element.AppendChild(AddElement("float", "pLarge", Convert.ToString(integrator.LargeStepProbability)));
+
+                return element;
+            }
+            public static XmlElement Create(IntegratorSampleSpaceMLT integrator)
+            {
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "mlt");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("integer", "directSamples", Convert.ToString(integrator.DirectSamples)));
+                element.AppendChild(AddElement("integer", "luminanceSamples", Convert.ToString(integrator.LuminanceSamples)));
+                element.AppendChild(AddElement("boolean", "twoStage", Convert.ToString(integrator.TwoStageMLT)));
+                element.AppendChild(AddElement("boolean", "bidirectionalMutation", Convert.ToString(integrator.BidirectionalMutation)));
+                element.AppendChild(AddElement("boolean", "lensPerturbation", Convert.ToString(integrator.LensPerturbation)));
+                element.AppendChild(AddElement("boolean", "multiChainPerturbation", Convert.ToString(integrator.MultiChainPerturbation)));
+                element.AppendChild(AddElement("boolean", "causticPerturbation", Convert.ToString(integrator.CausticPerturbation)));
+                element.AppendChild(AddElement("boolean", "manifoldPerturbation", Convert.ToString(integrator.ManifoldPerturbation)));
+                element.AppendChild(AddElement("float", "lambda", Convert.ToString(integrator.ProbabilityFactor)));
+
+
+                return element;
+            }
+            public static XmlElement Create(EnergyRedisributionPathTracing integrator)
+            {
+
+                var element = _document.CreateElement("integrator");
+                element.SetAttribute("type", "erpt");
+                element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
+                element.AppendChild(AddElement("float", "numChains", Convert.ToString(integrator.AverageNumberOfChains)));
+                element.AppendChild(AddElement("float", "maxChains", Convert.ToString(integrator.MaxNumberOfChains)));
+                element.AppendChild(AddElement("integer", "chainLength", Convert.ToString(integrator.MutationsPerChain)));
+                element.AppendChild(AddElement("integer", "directSamples", Convert.ToString(integrator.DirectSamples)));
+
+                //this field appears on Mitsuba UI Config, but there is no key value pair in documentation
+                //element.AppendChild(AddElement("integer", "luminanceSamples", Convert.ToString(integrator.LuminanceSamples)));
+
+                element.AppendChild(AddElement("boolean", "bidirectionalMutation", Convert.ToString(integrator.BidirectionalMutation)));
+                element.AppendChild(AddElement("boolean", "lensPerturbation", Convert.ToString(integrator.LensPerturbation)));
+                element.AppendChild(AddElement("boolean", "multiChainPerturbation", Convert.ToString(integrator.MultiChainPerturbation)));
+                element.AppendChild(AddElement("boolean", "causticPerturbation", Convert.ToString(integrator.CausticPerturbation)));
+                element.AppendChild(AddElement("boolean", "manifoldPerturbation", Convert.ToString(integrator.ManifoldPerturbation)));
+                element.AppendChild(AddElement("float", "lambda", Convert.ToString(integrator.ProbabilityFactor)));
+
+                return element;
+            }
         }
 
         #endregion
