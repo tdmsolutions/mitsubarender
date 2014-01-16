@@ -100,7 +100,7 @@ namespace MitsubaRender.Materials
         /// </summary>
         public RoughConductorMaterial()
         {
-            Distribution = "beckmann"; //TODO delete me, comboBox rules!
+            //Distribution = "beckmann"; //TODO delete me, comboBox rules!
             Alpha = new MitsubaType<float, string>();
             AlphaU = new MitsubaType<float, string>();
             AlphaV = new MitsubaType<float, string>();
@@ -204,16 +204,16 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void ReadDataFromUI()
         {
-            //Distribution
-            if (_distributionCombo != null)
-                Distribution = _distributionCombo.SelectedItem;
-
             //Material
             if (_materialCombo != null)
             {
                 var myValue = StandardConductorTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
                 Material = myValue;
             }
+
+            //Distribution
+            if (_distributionCombo != null)
+                Distribution = _distributionCombo.SelectedItem;
 
             //Alpha
             bool hasTexture;
@@ -316,13 +316,6 @@ namespace MitsubaRender.Materials
                 float alphaV;
                 Fields.TryGetValue(ALPHAV_FLOAT_FIELD, out alphaV);
                 AlphaV.FirstParameter = alphaV;
-            }
-
-            //Material
-            if (_materialCombo != null)
-            {
-                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
-                Material = myValue;
             }
 
             //Eta
