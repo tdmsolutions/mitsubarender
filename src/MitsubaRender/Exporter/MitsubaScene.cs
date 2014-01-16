@@ -121,7 +121,7 @@ namespace MitsubaRender.Exporter
                 ExportEmitters();
 
                 ExportIntegrator();
-
+                ExportSampler();
                 //if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0) ExportEnvironment(doc, docRoot);
                 //else
                 //{
@@ -223,10 +223,15 @@ namespace MitsubaRender.Exporter
         /// </summary>
         private void ExportIntegrator()
         {
-            
-            //Pillar datos de 
             _mitsubaXml.CreateIntegratorXml();
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ExportSampler()
+        {
+            _mitsubaXml.CreateSamplerXml();
         }
 
         /// <summary>

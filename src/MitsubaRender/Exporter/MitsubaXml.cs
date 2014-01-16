@@ -231,23 +231,52 @@ namespace MitsubaRender.Exporter
             }
 
             if (result != null) AddToXmlRoot(result);
-
         }
 
+        public void CreateSamplerXml()
+        {
+            XmlElement result;
 
-        //public void CreateSampler4()
-        //{
-        //    XmlElement result;
+            if (MitsubaSettings.Sampler == null)
+                result = CreateSampler.Create(new SamplerIndependent());
 
-        //    if (MitsubaSettings.Sampler == null)
-        //        result = CreateIntegrator.Create(new IntegratorPhotonMapper());
+            else if (MitsubaSettings.Sampler is SamplerHaltonQMC)
+            {
+                var sampler = MitsubaSettings.Sampler as SamplerHaltonQMC;
+                result = CreateSampler.Create(sampler);
+            }
+            else if (MitsubaSettings.Sampler is SamplerHammersleyQMC)
+            {
+                var sampler = MitsubaSettings.Sampler as SamplerHammersleyQMC;
+                result = CreateSampler.Create(sampler);
+            }
+            else if (MitsubaSettings.Sampler is SamplerIndependent)
+            {
+                var sampler = MitsubaSettings.Sampler as SamplerIndependent;
+                result = CreateSampler.Create(sampler);
+            }
+            else if (MitsubaSettings.Sampler is SamplerLowDiscrepancy)
+            {
+                var sampler = MitsubaSettings.Sampler as SamplerLowDiscrepancy;
+                result = CreateSampler.Create(sampler);
+            }
+            else if (MitsubaSettings.Sampler is SamplerSobolQMC)
+            {
+                var sampler = MitsubaSettings.Sampler as SamplerSobolQMC;
+                result = CreateSampler.Create(sampler);
+            }
+            else if (MitsubaSettings.Sampler is SamplerStraitfield)
+            {
+                var sampler = MitsubaSettings.Sampler as SamplerStraitfield;
+                result = CreateSampler.Create(sampler);
+            }
+            else
+                result = CreateSampler.Create(new SamplerIndependent());
 
-        //    if (MitsubaSettings.Sampler is SamplerHaltonQMC)
-        //    {
-        //        var integrator = MitsubaSettings.Integrator as IntegratorAmbientOclusion;
-        //        result = CreateIntegrator.Create(integrator);
-        //    }
-        //}
+
+            if (result != null) AddToXmlRoot(result);
+
+        }
         public static XmlElement CreateMaterialXml(MitsubaMaterial material)
         {
             XmlElement result = null;
@@ -839,8 +868,8 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "direct");
                 element.AppendChild(AddElement("integer", "emitterSamples", Convert.ToString(integrator.EmitterSmaples)));
                 element.AppendChild(AddElement("integer", "bsdfSamples", Convert.ToString(integrator.BSDFSamples)));
-                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
-                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals).ToLower()));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorPathTracer integrator)
@@ -849,8 +878,8 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "path");
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
-                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
-                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals).ToLower()));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorVolumetricPathTracerSimple integrator)
@@ -859,8 +888,8 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "volpath_simple");
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
-                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
-                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals).ToLower()));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorVolumetricPathTracerExtended integrator)
@@ -869,8 +898,8 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "volpath");
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
-                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals)));
-                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                element.AppendChild(AddElement("boolean", "strictNormals", Convert.ToString(integrator.StrictSurfaceNormals).ToLower()));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorAdjointParticleTracer integrator)
@@ -880,7 +909,7 @@ namespace MitsubaRender.Exporter
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
                 element.AppendChild(AddElement("integer", "granularity", Convert.ToString(integrator.WorkUnitGranularity)));
-                element.AppendChild(AddElement("boolean", "bruteForce", Convert.ToString(integrator.BruteForce)));
+                element.AppendChild(AddElement("boolean", "bruteForce", Convert.ToString(integrator.BruteForce).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorVirtualPointLightRenderer integrator)
@@ -889,7 +918,7 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "ptracer");
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "shadowMapResolution", Convert.ToString(integrator.ShadowMapResolution)));
-                element.AppendChild(AddElement("float", "clamping", Convert.ToString(integrator.ClampingFactor)));
+                element.AppendChild(AddElement("float", "clamping", Convert.ToString(integrator.ClampingFactor).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorPhotonMapper integrator)
@@ -906,7 +935,7 @@ namespace MitsubaRender.Exporter
                 element.AppendChild(AddElement("float", "causticLLookupRadius", Convert.ToString(integrator.LookupRadiusCaustic)));
                 element.AppendChild(AddElement("integer", "lookupSize", Convert.ToString(integrator.CausticPhotonMapLookupSize)));
                 element.AppendChild(AddElement("integer", "granularity", Convert.ToString(integrator.WorkUnitGranularity)));
-                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters)));
+                element.AppendChild(AddElement("boolean", "hideEmitters", Convert.ToString(integrator.HideDirectlyVisibleEmitters).ToLower()));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteSartingDepth)));
 
                 return element;
@@ -933,7 +962,6 @@ namespace MitsubaRender.Exporter
                 var element = _document.CreateElement("integrator");
                 element.SetAttribute("type", "sppm");
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
-
                 element.AppendChild(AddElement("integer", "photonCount", Convert.ToString(integrator.PhotonsPerIteration)));
                 element.AppendChild(AddElement("float", "initialRadius", Convert.ToString(integrator.InitialRadius)));
                 element.AppendChild(AddElement("float", "alpha", Convert.ToString(integrator.SizeReductionParameter)));
@@ -951,20 +979,20 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "bdpt");
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteStartingDepth)));
-                element.AppendChild(AddElement("boolean", "lightImage", Convert.ToString(integrator.CreateLightImage)));
-                element.AppendChild(AddElement("boolean", "sampleDirect", Convert.ToString(integrator.UseDirectSamplingMethods)));
+                element.AppendChild(AddElement("boolean", "lightImage", Convert.ToString(integrator.CreateLightImage).ToLower()));
+                element.AppendChild(AddElement("boolean", "sampleDirect", Convert.ToString(integrator.UseDirectSamplingMethods).ToLower()));
                 return element;
             }
             public static XmlElement Create(IntegratorPrimarySampleSpaceMLT integrator)
             {
                 var element = _document.CreateElement("integrator");
                 element.SetAttribute("type", "pssmlt");
-                element.AppendChild(AddElement("boolean", "bidirectional", Convert.ToString(integrator.Bidirectional)));
+                element.AppendChild(AddElement("boolean", "bidirectional", Convert.ToString(integrator.Bidirectional).ToLower()));
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "directSamples", Convert.ToString(integrator.DirectSamples)));
                 element.AppendChild(AddElement("integer", "rrDepth", Convert.ToString(integrator.RussianRouletteSartingDepth)));
                 element.AppendChild(AddElement("integer", "luminanceSamples", Convert.ToString(integrator.LuminanceSamples)));
-                element.AppendChild(AddElement("boolean", "twoStage", Convert.ToString(integrator.TwoStageMLT)));
+                element.AppendChild(AddElement("boolean", "twoStage", Convert.ToString(integrator.TwoStageMLT).ToLower()));
                 element.AppendChild(AddElement("float", "pLarge", Convert.ToString(integrator.LargeStepProbability)));
 
                 return element;
@@ -976,12 +1004,12 @@ namespace MitsubaRender.Exporter
                 element.AppendChild(AddElement("integer", "maxDepth", Convert.ToString(integrator.MaximumDepth)));
                 element.AppendChild(AddElement("integer", "directSamples", Convert.ToString(integrator.DirectSamples)));
                 element.AppendChild(AddElement("integer", "luminanceSamples", Convert.ToString(integrator.LuminanceSamples)));
-                element.AppendChild(AddElement("boolean", "twoStage", Convert.ToString(integrator.TwoStageMLT)));
-                element.AppendChild(AddElement("boolean", "bidirectionalMutation", Convert.ToString(integrator.BidirectionalMutation)));
-                element.AppendChild(AddElement("boolean", "lensPerturbation", Convert.ToString(integrator.LensPerturbation)));
-                element.AppendChild(AddElement("boolean", "multiChainPerturbation", Convert.ToString(integrator.MultiChainPerturbation)));
-                element.AppendChild(AddElement("boolean", "causticPerturbation", Convert.ToString(integrator.CausticPerturbation)));
-                element.AppendChild(AddElement("boolean", "manifoldPerturbation", Convert.ToString(integrator.ManifoldPerturbation)));
+                element.AppendChild(AddElement("boolean", "twoStage", Convert.ToString(integrator.TwoStageMLT).ToLower()));
+                element.AppendChild(AddElement("boolean", "bidirectionalMutation", Convert.ToString(integrator.BidirectionalMutation).ToLower()));
+                element.AppendChild(AddElement("boolean", "lensPerturbation", Convert.ToString(integrator.LensPerturbation).ToLower()));
+                element.AppendChild(AddElement("boolean", "multiChainPerturbation", Convert.ToString(integrator.MultiChainPerturbation).ToLower()));
+                element.AppendChild(AddElement("boolean", "causticPerturbation", Convert.ToString(integrator.CausticPerturbation).ToLower()));
+                element.AppendChild(AddElement("boolean", "manifoldPerturbation", Convert.ToString(integrator.ManifoldPerturbation).ToLower()));
                 element.AppendChild(AddElement("float", "lambda", Convert.ToString(integrator.ProbabilityFactor)));
 
 
@@ -1001,11 +1029,11 @@ namespace MitsubaRender.Exporter
                 //this field appears on Mitsuba UI Config, but there is no key value pair in documentation
                 //element.AppendChild(AddElement("integer", "luminanceSamples", Convert.ToString(integrator.LuminanceSamples)));
 
-                element.AppendChild(AddElement("boolean", "bidirectionalMutation", Convert.ToString(integrator.BidirectionalMutation)));
-                element.AppendChild(AddElement("boolean", "lensPerturbation", Convert.ToString(integrator.LensPerturbation)));
-                element.AppendChild(AddElement("boolean", "multiChainPerturbation", Convert.ToString(integrator.MultiChainPerturbation)));
-                element.AppendChild(AddElement("boolean", "causticPerturbation", Convert.ToString(integrator.CausticPerturbation)));
-                element.AppendChild(AddElement("boolean", "manifoldPerturbation", Convert.ToString(integrator.ManifoldPerturbation)));
+                element.AppendChild(AddElement("boolean", "bidirectionalMutation", Convert.ToString(integrator.BidirectionalMutation).ToLower()));
+                element.AppendChild(AddElement("boolean", "lensPerturbation", Convert.ToString(integrator.LensPerturbation).ToLower()));
+                element.AppendChild(AddElement("boolean", "multiChainPerturbation", Convert.ToString(integrator.MultiChainPerturbation).ToLower()));
+                element.AppendChild(AddElement("boolean", "causticPerturbation", Convert.ToString(integrator.CausticPerturbation).ToLower()));
+                element.AppendChild(AddElement("boolean", "manifoldPerturbation", Convert.ToString(integrator.ManifoldPerturbation).ToLower()));
                 element.AppendChild(AddElement("float", "lambda", Convert.ToString(integrator.ProbabilityFactor)));
 
                 return element;
@@ -1028,13 +1056,13 @@ namespace MitsubaRender.Exporter
                 element.AppendChild(AddElement("integer", "resolution", Convert.ToString(integrator.Resolution)));
                 element.AppendChild(AddElement("float", "quality", Convert.ToString(integrator.Quality)));
                 element.AppendChild(AddElement("boolean", "gradients", Convert.ToString(integrator.Gradients)));
-                element.AppendChild(AddElement("boolean", "clampNeighbor", Convert.ToString(integrator.ClampNeighbor)));
-                element.AppendChild(AddElement("boolean", "clampScreen", Convert.ToString(integrator.ClampScreen)));
-                element.AppendChild(AddElement("boolean", "overture", Convert.ToString(integrator.Overture)));
+                element.AppendChild(AddElement("boolean", "clampNeighbor", Convert.ToString(integrator.ClampNeighbor).ToLower()));
+                element.AppendChild(AddElement("boolean", "clampScreen", Convert.ToString(integrator.ClampScreen).ToLower()));
+                element.AppendChild(AddElement("boolean", "overture", Convert.ToString(integrator.Overture).ToLower()));
 
                 element.AppendChild(AddElement("float", "qualityAdjustment", Convert.ToString(integrator.QualityAdjustment)));
-                element.AppendChild(AddElement("boolean", "indirectOnly", Convert.ToString(integrator.IndirectOnly)));
-                element.AppendChild(AddElement("boolean", "debug", Convert.ToString(integrator.Debug)));
+                element.AppendChild(AddElement("boolean", "indirectOnly", Convert.ToString(integrator.IndirectOnly).ToLower()));
+                element.AppendChild(AddElement("boolean", "debug", Convert.ToString(integrator.Debug).ToLower()));
 
 
 
@@ -1047,27 +1075,54 @@ namespace MitsubaRender.Exporter
         {
             internal static XmlElement Create(SamplerIndependent sampler)
             {
-                return null;
+                var element = _document.CreateElement("sampler");
+                element.SetAttribute("type", "independent");
+                element.AppendChild(AddElement("integer", "sampleCount", Convert.ToString(sampler.SamplesPerPixel)));
+                return element;
             }
             internal static XmlElement Create(SamplerStraitfield sampler)
             {
-                return null;
+                var element = _document.CreateElement("sampler");
+                element.SetAttribute("type", "stratified");
+                element.AppendChild(AddElement("integer", "sampleCount", Convert.ToString(sampler.SamplesPerPixel)));
+                element.AppendChild(AddElement("integer", "dimension", Convert.ToString(sampler.EffectiveDimension)));
+
+                return element;
             }
             internal static XmlElement Create(SamplerLowDiscrepancy sampler)
             {
-                return null;
+                var element = _document.CreateElement("sampler");
+                element.SetAttribute("type", "ldsampler");
+                element.AppendChild(AddElement("integer", "sampleCount", Convert.ToString(sampler.SamplesPerPixel)));
+                element.AppendChild(AddElement("integer", "dimension", Convert.ToString(sampler.EffectiveDimension)));
+
+                return element;
             }
             internal static XmlElement Create(SamplerHammersleyQMC sampler)
             {
-                return null;
+                var element = _document.CreateElement("sampler");
+                element.SetAttribute("type", "(hammersley");
+                element.AppendChild(AddElement("integer", "sampleCount", Convert.ToString(sampler.SamplesPerPixel)));
+                element.AppendChild(AddElement("integer", "scramble", Convert.ToString(sampler.ScrambleValue)));
+
+                return element;
             }
             internal static XmlElement Create(SamplerHaltonQMC sampler)
             {
-                return null;
+                var element = _document.CreateElement("sampler");
+                element.SetAttribute("type", "(halton");
+                element.AppendChild(AddElement("integer", "sampleCount", Convert.ToString(sampler.SamplesPerPixel)));
+                element.AppendChild(AddElement("integer", "scramble", Convert.ToString(sampler.ScrambleValue)));
+
+                return element;
             }
             internal static XmlElement Create(SamplerSobolQMC sampler)
             {
-                return null;
+                var element = _document.CreateElement("sampler");
+                element.SetAttribute("type", "sobol");
+                element.AppendChild(AddElement("integer", "sampleCount", Convert.ToString(sampler.SamplesPerPixel)));
+                element.AppendChild(AddElement("integer", "scramble", Convert.ToString(sampler.ScrambleValue)));
+                return element;
             }
         }
         #endregion
