@@ -448,7 +448,7 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Probability factor")]
         [Description("Probability factor (lambda) of the manifold perturbation")]
-        public int ProbabilityFactor { get; set; }  
+        public float ProbabilityFactor { get; set; }  
 
     }
     public class EnergyRedisributionPathTracing
@@ -476,7 +476,7 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Average number of chains")]
         [Description("Specifies the number of Markov Chains that, on average, are started per pixel")]
-        public int AverageNumberOfChains { get; set; }
+        public float AverageNumberOfChains { get; set; }
 
         [DisplayName(@"Max. number of chains")]
         [Description("pecifies a limit for the number of chains that will be started at a pixel. '0' disables this option.")]
@@ -521,5 +521,21 @@ namespace MitsubaRender.Integrators
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
         public int RussianRouletteStartingDepth { get; set; }  
+    }
+    //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+    public class IntegratorAdaptativeIntegrator
+    {
+        [DisplayName(@"Maximum Error")]
+        [Description("Maximum relative error threshold (Default: 0.05)")]
+        public float MaximumError { get; set; }
+
+        [DisplayName(@"P-Value")]
+        [Description("Required p-value to accept a sample (Default: 0.05)")]
+        public float PValue { get; set; }
+
+        [DisplayName(@"Maximum Sample Factor")]
+        [Description(" Maximum number of samples to be generated relative to the number of configured pixel samples")]
+        public int MaximumSampleFactor { get; set; }
+
     }
 }
