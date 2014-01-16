@@ -13,10 +13,13 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System.Linq;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.UI;
 using Rhino.Display;
+using Rhino.Render;
 
 namespace MitsubaRender.Materials
 {
@@ -30,6 +33,11 @@ namespace MitsubaRender.Materials
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
         public static uint _count;
+
+        /// <summary>
+        /// This field handles the comboBox for the Material property.
+        /// </summary>
+        private static MaterialCombo _materialCombo;
 
         #region Material Parameters
 
@@ -72,19 +80,9 @@ namespace MitsubaRender.Materials
         public SmoothConductorMaterial()
         {
             ExtEta = new MitsubaType<float, string>();
-            Material = "Au"; //TODO delete me (default gold!)
+            //Material = "Au"; //TODO delete me (default gold!)
             CreateUserInterface();
         }
-
-        /// <summary>
-        ///   Interior Index of Refraction.
-        /// </summary>
-        public float IntIOR { get; set; }
-
-        /// <summary>
-        ///   Exterior Index of Refraction.
-        /// </summary>
-        public float ExtIOR { get; set; }
 
         /// <summary>
         /// 
@@ -101,13 +99,11 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void CreateUserInterface()
         {
-            var material_field = Fields.Add(MATERIAL_FIELD, Material, "Material Name");
             var eta_field = Fields.Add(ETA_FIELD, Eta, "eta");
             var k_field = Fields.Add(K_FIELD, K, "k");
             var extEtaSpectrum_field = Fields.Add(EXT_ETA_SPECTRUM_FIELD, ExtEta.FirstParameter, "extEta spectrum");
             var extEtaFloat_field = Fields.Add(EXT_ETA_FLOAT_FIELD, ExtEta.SecondParameter, "extEta float");
 
-            BindParameterToField(MATERIAL_FIELD, material_field, ChangeContexts.UI);
             BindParameterToField(ETA_FIELD, eta_field, ChangeContexts.UI);
             BindParameterToField(K_FIELD, k_field, ChangeContexts.UI);
             BindParameterToField(EXT_ETA_SPECTRUM_FIELD, extEtaSpectrum_field, ChangeContexts.UI);
@@ -119,9 +115,11 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void ReadDataFromUI()
         {
-            string material;
-            Fields.TryGetValue(MATERIAL_FIELD, out material);
-            Material = material;
+            if (_materialCombo != null)
+            {
+                var myValue = StandardConductorTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
+                Material = myValue;
+            }
 
             Color4f colorEta;
             Fields.TryGetValue(ETA_FIELD, out colorEta);
@@ -131,7 +129,61 @@ namespace MitsubaRender.Materials
             Fields.TryGetValue(K_FIELD, out colorK);
             Eta = colorK;
 
-            //TODO extEtaSpectrum_field & extEtaFloat_field
+            //ExtEta
+            bool hasTexture;
+            var textureParam = GetChildSlotParameter(EXT_ETA_TEXTURE_FIELD, EXT_ETA_TEXTURE_SLOT);
+            Fields.TryGetValue(EXT_ETA_TEXTURE_FIELD, out hasTexture);
+            if (hasTexture && textureParam != null)
+            {
+                //We have texture
+                var tx = FindChild(EXT_ETA_TEXTURE_FIELD);
+                if (tx != null)
+                {
+                    if (tx.Fields.ContainsField("filename"))
+                    {
+                        var fields = tx.Fields.GetField("filename");
+                        ExtEta.SecondParameter = fields.ValueAsObject().ToString();
+                    }
+                    else
+                    {
+                        var text = tx as RenderTexture;
+                        if (text != null)
+                        {
+                            var texSim = new SimulatedTexture();
+                            text.SimulateTexture(ref texSim, false);
+                            ExtEta.SecondParameter = texSim.Filename;
+                        }
+                    }
+                }
+                else ExtEta.SecondParameter = string.Empty;
+            }
+            else
+            {
+                float extEta;
+                Fields.TryGetValue(EXT_ETA_FLOAT_FIELD, out extEta);
+                ExtEta.FirstParameter = extEta;
+            }
+        }
+
+        protected override void OnAddUserInterfaceSections()
+        {
+            if (_materialCombo == null)
+            {
+                var material_section = AddUserInterfaceSection(typeof(MaterialCombo), "Material Type", true, true);
+                _materialCombo = (MaterialCombo)material_section.Window;
+
+                var data = new string[StandardConductorTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardConductorTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _materialCombo.Data = data;
+            }
+
+            base.OnAddUserInterfaceSections();
         }
 
         public override string TypeDescription

@@ -13,9 +13,11 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System.Linq;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.UI;
 
 namespace MitsubaRender.Materials
 {
@@ -26,6 +28,16 @@ namespace MitsubaRender.Materials
     [Guid("b7d7e743-edce-429a-a5ce-326cb37a3cc4")]
     public sealed class SmoothDielectricMaterial : MitsubaMaterial, IDielectric
     {
+        /// <summary>
+        /// This field handles the comboBox for the IntIOR property.
+        /// </summary>
+        private static MaterialCombo _intIORCombo;
+
+        /// <summary>
+        /// This field handles the comboBox for the ExtIOR property.
+        /// </summary>
+        private static MaterialCombo _extIORCombo;
+
         /// <summary>
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
@@ -96,10 +108,68 @@ namespace MitsubaRender.Materials
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        protected override void OnAddUserInterfaceSections()
+        {
+            if (_intIORCombo == null)
+            {
+                var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
+                _intIORCombo = (MaterialCombo)intIOR_section.Window;
+                
+                var data = new string[StandardIORTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardIORTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _intIORCombo.Data =  data;
+            }
+
+            if (_extIORCombo == null)
+            {
+                var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
+                _extIORCombo = (MaterialCombo)extIOR_section.Window;
+
+                var data = new string[StandardIORTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardIORTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _extIORCombo.Data = data;
+
+                //Air for default exterior IOR
+                string default_value;
+                if (StandardIORTypes.Types.TryGetValue("air", out default_value))
+                    _extIORCombo.SelectedItem = default_value;
+            }
+
+            base.OnAddUserInterfaceSections();
+        }
+
+        /// <summary>
         /// This method reads the values introduced by the user and established class properties with them.
         /// </summary>
         protected override void ReadDataFromUI()
         {
+            if (_intIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _intIORCombo.SelectedItem).Key;
+                IntIOR.SecondParameter = myValue;
+            }
+
+            if (_extIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _extIORCombo.SelectedItem).Key;
+                ExtIOR.SecondParameter = myValue;
+            }
+
+            /*
             //Exterior Index of Refraction
             float extIOR;
             Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
@@ -110,6 +180,7 @@ namespace MitsubaRender.Materials
             if (Fields.TryGetValue(INTIOR_FIELD, out intIOR))
                 IntIOR.FirstParameter = intIOR;
             else IntIOR.FirstParameter = -1;
+            */
         }
 
         /// <summary>

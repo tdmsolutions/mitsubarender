@@ -13,8 +13,10 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System.Linq;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Wrappers;
+using MitsubaRender.UI;
 using Rhino.Display;
 using MitsubaRender.Materials.Interfaces;
 using Rhino.Render;
@@ -31,6 +33,16 @@ namespace MitsubaRender.Materials
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
         /// </summary>
         private static int _count;
+
+        /// <summary>
+        /// This field handles the comboBox for the Distribution property.
+        /// </summary>
+        private static MaterialCombo _distributionCombo;
+
+        /// <summary>
+        /// This field handles the comboBox for the Material property.
+        /// </summary>
+        private static MaterialCombo _materialCombo;
 
         #region Material Parameters
 
@@ -100,6 +112,37 @@ namespace MitsubaRender.Materials
         /// <summary>
         /// 
         /// </summary>
+        protected override void OnAddUserInterfaceSections()
+        {
+            if (_distributionCombo == null)
+            {
+                var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
+                _distributionCombo = (MaterialCombo)section.Window;
+                _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+            }
+
+            if (_materialCombo == null)
+            {
+                var material_section = AddUserInterfaceSection(typeof(MaterialCombo), "Material Type", true, true);
+                _materialCombo = (MaterialCombo)material_section.Window;
+
+                var data = new string[StandardConductorTypes.Types.Count];
+                int i = 0;
+                foreach (var value in StandardConductorTypes.Types)
+                {
+                    data[i] = value.Value;
+                    i += 1;
+                }
+
+                _materialCombo.Data = data;
+            }
+
+            base.OnAddUserInterfaceSections();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override string TypeName
         {
             get { return "Mitsuba Rough Conductor material"; }
@@ -119,7 +162,7 @@ namespace MitsubaRender.Materials
         /// <returns></returns>
         public override string GetMaterialId()
         {
-            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__roughdiffuse" + _count++;
+            if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__roughconductor" + _count++;
             return MaterialId;
         }
 
@@ -129,20 +172,17 @@ namespace MitsubaRender.Materials
         protected override void CreateUserInterface()
         {
             //TODO combobox in Rhino UI !!
-            var distribution_field = Fields.Add(DISTRIBUTION_FIELD, Distribution, "Distribution");
             var alpha_float_field = Fields.Add(ALPHA_FLOAT_FIELD, Alpha.FirstParameter, "Alpha Float");
             var alpha_texture_field = Fields.AddTextured(ALPHA_TEXTURE_FIELD, false, "Alpha Texture");
             var alphaU_float_field = Fields.Add(ALPHAU_FLOAT_FIELD, AlphaU.FirstParameter, "AlphaU Float");
             var alphaU_texture_field = Fields.AddTextured(ALPHAU_TEXTURE_FIELD, false, "AlphaU Texture");
             var alphaV_float_field = Fields.Add(ALPHAV_FLOAT_FIELD, AlphaV.FirstParameter, "AlphaV Float");
             var alphaV_texture_field = Fields.AddTextured(ALPHAV_TEXTURE_FIELD, false, "AlphaV Texture");
-            var material_field = Fields.Add(MATERIAL_FIELD, Material, "Material Name");
             var eta_field = Fields.Add(ETA_FIELD, Eta, "eta");
             var k_field = Fields.Add(K_FIELD, K, "k");
             var extEta_float_field = Fields.Add(EXT_ETA_FLOAT_FIELD, ExtEta.FirstParameter, "ExtEta Float");
             var extEta_texture_field = Fields.AddTextured(EXT_ETA_TEXTURE_FIELD, false, "ExtEta Texture");
 
-            BindParameterToField(DISTRIBUTION_FIELD, distribution_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_FLOAT_FIELD, alpha_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHA_TEXTURE_FIELD, ALPHA_TEXTURE_SLOT, 
                 alpha_texture_field, ChangeContexts.UI);
@@ -152,7 +192,6 @@ namespace MitsubaRender.Materials
             BindParameterToField(ALPHAV_FLOAT_FIELD, alphaV_float_field, ChangeContexts.UI);
             BindParameterToField(ALPHAV_TEXTURE_FIELD, ALPHAV_TEXTURE_SLOT, 
                 alphaV_texture_field, ChangeContexts.UI);
-            BindParameterToField(MATERIAL_FIELD, material_field, ChangeContexts.UI);
             BindParameterToField(ETA_FIELD, eta_field, ChangeContexts.UI);
             BindParameterToField(K_FIELD, k_field, ChangeContexts.UI);
             BindParameterToField(EXT_ETA_FLOAT_FIELD, extEta_float_field, ChangeContexts.UI);
@@ -166,9 +205,15 @@ namespace MitsubaRender.Materials
         protected override void ReadDataFromUI()
         {
             //Distribution
-            string distribution;
-            Fields.TryGetValue(DISTRIBUTION_FIELD, out distribution);
-            Distribution = distribution;
+            if (_distributionCombo != null)
+                Distribution = _distributionCombo.SelectedItem;
+
+            //Material
+            if (_materialCombo != null)
+            {
+                var myValue = StandardConductorTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
+                Material = myValue;
+            }
 
             //Alpha
             bool hasTexture;
@@ -274,9 +319,11 @@ namespace MitsubaRender.Materials
             }
 
             //Material
-            string material;
-            Fields.TryGetValue(MATERIAL_FIELD, out material);
-            Material = material;
+            if (_materialCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
+                Material = myValue;
+            }
 
             //Eta
             Color4f eta;
