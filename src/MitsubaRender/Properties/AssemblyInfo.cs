@@ -20,7 +20,7 @@ using Rhino.PlugIns;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Mitsuba Render")] // Plug-In title is extracted from this
-[assembly: AssemblyDescription("Open Source Render Plugin for RhinoGold and Rhino")]
+[assembly: AssemblyDescription("Open Source Render Plugin for Rhino and RhinoGold")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("www.tdmsolutions.com")]
 [assembly: AssemblyProduct("Mitsuba Render Integrator by TDM Solutions SL")]

@@ -79,5 +79,25 @@ namespace MitsubaRender.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Byte[].
+        /// </summary>
+        internal static byte[] envmap {
+            get {
+                object obj = ResourceManager.GetObject("envmap", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Byte[].
+        /// </summary>
+        internal static byte[] matpreview {
+            get {
+                object obj = ResourceManager.GetObject("matpreview", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
