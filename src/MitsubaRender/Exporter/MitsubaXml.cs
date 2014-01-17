@@ -123,10 +123,10 @@ namespace MitsubaRender.Exporter
             XmlElement result = null;
 
             var type = emitter.GetType();
-            if (type == typeof (PointLightSource)) 
-                result = CreateEmitter.PointLightSource((PointLightSource) emitter);
-            else if (type == typeof (SpotLightSource)) 
-                result = CreateEmitter.SpotLightSource((SpotLightSource) emitter);
+            if (type == typeof(PointLightSource))
+                result = CreateEmitter.PointLightSource((PointLightSource)emitter);
+            else if (type == typeof(SpotLightSource))
+                result = CreateEmitter.SpotLightSource((SpotLightSource)emitter);
 
             if (result != null) AddToXmlRoot(result);
 
@@ -283,22 +283,22 @@ namespace MitsubaRender.Exporter
 
             var materialType = material.GetType();
 
-            if (materialType == typeof (SmoothDiffuseMaterial)) 
-                result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial) material);
-            else if (materialType == typeof (RoughConductorMaterial)) 
-                result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
-            else if (materialType == typeof (SmoothDielectricMaterial)) 
-                result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
-            else if (materialType == typeof (SmoothConductorMaterial)) 
-                result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
-            else if (materialType == typeof (RoughDiffuseMaterial)) 
-                result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial) material);
-            else if (materialType == typeof (RoughDielectricMaterial)) 
-                result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial) material);
-            else if (materialType == typeof (SmoothPlasticMaterial)) 
-                result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial) material);
-            else if (materialType == typeof (RoughPlasticMaterial)) 
-                result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial) material);
+            if (materialType == typeof(SmoothDiffuseMaterial))
+                result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial)material);
+            else if (materialType == typeof(RoughConductorMaterial))
+                result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial)material);
+            else if (materialType == typeof(SmoothDielectricMaterial))
+                result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial)material);
+            else if (materialType == typeof(SmoothConductorMaterial))
+                result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial)material);
+            else if (materialType == typeof(RoughDiffuseMaterial))
+                result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial)material);
+            else if (materialType == typeof(RoughDielectricMaterial))
+                result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial)material);
+            else if (materialType == typeof(SmoothPlasticMaterial))
+                result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial)material);
+            else if (materialType == typeof(RoughPlasticMaterial))
+                result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial)material);
             //else if (materialType == typeof (SmoothDielectricCoatingMaterial))
             //    result = CreateMaterial.SmoothDielectricCoatingMaterial((SmoothDielectricCoatingMaterial) material);
 
@@ -416,8 +416,8 @@ namespace MitsubaRender.Exporter
             var sensorElement = _document.CreateElement("sensor");
             sensorElement.SetAttribute("type", perspective ? "perspective" : "orthographic");
             var toWorld = view.GetTransform(CoordinateSystem.Camera, CoordinateSystem.World);
-            toWorld = toWorld*Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
-            toWorld = toWorld*Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(-1, 0, 0)));
+            toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
+            toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(-1, 0, 0)));
             var toWorldElement = MakeProperty("toWorld", toWorld);
 
             if (perspective)
@@ -427,13 +427,13 @@ namespace MitsubaRender.Exporter
                 view.GetCameraAngle(out halfDiag, out halfVert, out halfHoriz);
                 //toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
                 sensorElement.AppendChild(MakeProperty("fovAxis", "diagonal"));
-                sensorElement.AppendChild(MakeProperty("fov", 2*halfDiag*180/Math.PI));
+                sensorElement.AppendChild(MakeProperty("fov", 2 * halfDiag * 180 / Math.PI));
                 sensorElement.AppendChild(MakeProperty("focusDistance", focusDistance));
             }
             else
             {
                 var scaleNode = _document.CreateElement("scale");
-                var scale = (right - left)/2;
+                var scale = (right - left) / 2;
                 scaleNode.SetAttribute("x", ToStringHelper(scale));
                 scaleNode.SetAttribute("y", ToStringHelper(scale));
                 toWorldElement.PrependChild(scaleNode);
@@ -513,39 +513,39 @@ namespace MitsubaRender.Exporter
             var type = value.GetType();
             string elementType;
 
-            if (type == typeof (string)) elementType = "string";
-            else if (type == typeof (int)) elementType = "integer";
-            else if (type == typeof (string)) elementType = "string";
-            else if (type == typeof (float) ||
-                     type == typeof (double)) elementType = "float";
-            else if (type == typeof (Transform)) elementType = "transform";
-            else if (type == typeof (Color)) elementType = "srgb";
+            if (type == typeof(string)) elementType = "string";
+            else if (type == typeof(int)) elementType = "integer";
+            else if (type == typeof(string)) elementType = "string";
+            else if (type == typeof(float) ||
+                     type == typeof(double)) elementType = "float";
+            else if (type == typeof(Transform)) elementType = "transform";
+            else if (type == typeof(Color)) elementType = "srgb";
             else throw new Exception("Unknown element type!");
 
             var element = _document.CreateElement(elementType);
             element.SetAttribute("name", name);
 
-            if (type == typeof (Transform))
+            if (type == typeof(Transform))
             {
                 var matrix = _document.CreateElement("matrix");
-                var trafo = (Transform) value;
+                var trafo = (Transform)value;
                 var matStr = "";
                 for (var i = 0; i < 4; ++i) for (var j = 0; j < 4; ++j) matStr += trafo[i, j].ToString(CultureInfo.InvariantCulture) + ", ";
 
                 matrix.SetAttribute("value", matStr.Substring(0, matStr.Length - 2));
                 element.AppendChild(matrix);
             }
-            else if (type == typeof (Color))
+            else if (type == typeof(Color))
             {
-                var color = (Color) value;
+                var color = (Color)value;
                 element.SetAttribute("value",
-                                     ToStringHelper(color.R/255.0f) + ", " +
-                                     ToStringHelper(color.G/255.0f) + ", " +
-                                     ToStringHelper(color.B/255.0f));
+                                     ToStringHelper(color.R / 255.0f) + ", " +
+                                     ToStringHelper(color.G / 255.0f) + ", " +
+                                     ToStringHelper(color.B / 255.0f));
             }
-            else if (type == typeof (float)) element.SetAttribute("value", ToStringHelper((float) value));
-            else if (type == typeof (double)) element.SetAttribute("value", ToStringHelper((double) value));
-            else if (type == typeof (int)) element.SetAttribute("value", ToStringHelper((int) value));
+            else if (type == typeof(float)) element.SetAttribute("value", ToStringHelper((float)value));
+            else if (type == typeof(double)) element.SetAttribute("value", ToStringHelper((double)value));
+            else if (type == typeof(int)) element.SetAttribute("value", ToStringHelper((int)value));
             else element.SetAttribute("value", value.ToString());
 
             return element;
@@ -559,7 +559,7 @@ namespace MitsubaRender.Exporter
         {
             var output = new FileStream(sceneFile, FileMode.Create);
             var sw = new StreamWriter(output);
-            var xmlWriter = new XmlTextWriter(sw) {Formatting = Formatting.Indented, Indentation = 4};
+            var xmlWriter = new XmlTextWriter(sw) { Formatting = Formatting.Indented, Indentation = 4 };
             _document.WriteTo(xmlWriter);
             sw.Close();
             output.Close();
@@ -612,7 +612,7 @@ namespace MitsubaRender.Exporter
                     var copied = FileTools.CopyTextureToScenePath(type.SecondParameter as string);
                     if (copied != null)
                     {
-                        type.SecondParameter = (S) Convert.ChangeType(copied, typeof (S));
+                        type.SecondParameter = (S)Convert.ChangeType(copied, typeof(S));
                         var texture = AddElement("texture", name, null, "bitmap");
                         texture.AppendChild(AddElement("string", "filename",
                                                        Path.GetFileName(type.SecondParameter as string)));
@@ -622,9 +622,15 @@ namespace MitsubaRender.Exporter
                 else
                 {
                     var color = type.GetColorHex();
-
-                    element.AppendChild(color != null ? 
-                        AddElement("srgb", name, color) : AddElement("float", name, type.FirstParameter + ""));
+                    if (color != null)
+                    {
+                        if (color != "#000000") AddElement("srgb", name, color);
+                    }
+                    else
+                    {
+                        var value = (float)Convert.ToDouble(type.FirstParameter);
+                        if (value > 0) AddElement("float", name, value + "");
+                    }
                 }
             }
 
@@ -674,10 +680,11 @@ namespace MitsubaRender.Exporter
                 MakeMitsubaType(ref element, "alpha", material.Alpha);
                 MakeMitsubaType(ref element, "alphaU", material.AlphaU);
                 MakeMitsubaType(ref element, "alphaV", material.AlphaV);
-
                 element.AppendChild(AddElement("string", "material", material.Material));
-                element.AppendChild(AddElement("srgb", "eta", MitsubaMaterial.GetColorHex(material.Eta)));
-                element.AppendChild(AddElement("srgb", "k", MitsubaMaterial.GetColorHex(material.K)));
+                var color = MitsubaMaterial.GetColorHex(material.Eta);
+                if (color != "#000000") element.AppendChild(AddElement("srgb", "eta", color));
+                color = MitsubaMaterial.GetColorHex(material.K);
+                if (color != "#000000") element.AppendChild(AddElement("srgb", "k", color));
                 MakeMitsubaType(ref element, "extEta", material.ExtEta);
 
                 return element;
@@ -775,8 +782,10 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("id", material.GetMaterialId());
                 if (material.Material == null) material.Material = "";
                 element.AppendChild(AddElement("string", "material", material.Material));
-                element.AppendChild(AddElement("srgb", "eta", MitsubaMaterial.GetColorHex(material.Eta)));
-                element.AppendChild(AddElement("srgb", "k", MitsubaMaterial.GetColorHex(material.K)));
+                var color = MitsubaMaterial.GetColorHex(material.Eta);
+                if (color != "#000000") element.AppendChild(AddElement("srgb", "eta", color));
+                color = MitsubaMaterial.GetColorHex(material.K);
+                if (color != "#000000") element.AppendChild(AddElement("srgb", "k", color));
                 MakeMitsubaType(ref element, "extEta", material.ExtEta);
                 return element;
             }
@@ -803,7 +812,6 @@ namespace MitsubaRender.Exporter
         internal class CreateEmitter
         {
             /// <summary>
-            ///   TODO improve this
             /// </summary>
             /// <param name="hdr_file"></param>
             /// <returns></returns>
@@ -812,10 +820,10 @@ namespace MitsubaRender.Exporter
                 var copied = FileTools.CopyTextureToScenePath(hdr_file);
                 var element = _document.CreateElement("emitter");
                 element.SetAttribute("type", "envmap");
-                element.SetAttribute("id", "envmaphdr"); //TODO get better ID!
-                element.AppendChild(AddElement("point", "filename", copied));
+                element.SetAttribute("id", "envmaphdr");
+                element.AppendChild(AddElement("string", "filename", copied));
 
-                //TODO transform
+                //TODO posible transformation ??
                 //element.AppendChild(AddElement("float", "scale", emitter.Scale + ""));
 
                 return element;

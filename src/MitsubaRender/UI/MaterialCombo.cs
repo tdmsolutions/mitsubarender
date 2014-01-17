@@ -13,6 +13,7 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Rhino.Render;
@@ -26,6 +27,8 @@ namespace MitsubaRender.UI
     [Guid("7230AC25-1955-4fd7-8A45-0BB795244DF7")]
     public partial class MaterialCombo : UserControl, IUserInterfaceSection
     {
+        public event EventHandler OnChange;
+
         /// <summary>
         /// 
         /// </summary>
@@ -70,6 +73,8 @@ namespace MitsubaRender.UI
         private void comboBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             SelectedItem = comboBox.SelectedItem.ToString();
+
+            if (OnChange != null) OnChange(this, null);
         }
     }
 }

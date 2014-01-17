@@ -31,12 +31,12 @@ namespace MitsubaRender.Materials
         /// <summary>
         /// This field handles the comboBox for the IntIOR property.
         /// </summary>
-        private static MaterialCombo _intIORCombo;
+        private MaterialCombo _intIORCombo;
 
         /// <summary>
         /// This field handles the comboBox for the ExtIOR property.
         /// </summary>
-        private static MaterialCombo _extIORCombo;
+        private MaterialCombo _extIORCombo;
 
         /// <summary>
         /// Static count of Smooth Diffuse Materials used to create unique ID's.
@@ -49,7 +49,7 @@ namespace MitsubaRender.Materials
         /// Interior Index of Refraction.
         /// </summary>
         public MitsubaType<float, string> IntIOR { get; set; } //FIXME:string NOT used!
-        
+
         /// <summary>
         /// Exterior Index of Refraction.
         /// </summary>
@@ -101,10 +101,10 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void CreateUserInterface()
         {
-            var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
-            var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
-            BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
-            BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
+            //var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
+            //var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
+            //BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
+            //BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
         }
 
         /// <summary>
@@ -112,44 +112,46 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void OnAddUserInterfaceSections()
         {
-            if (_intIORCombo == null)
-            {
-                var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
-                _intIORCombo = (MaterialCombo)intIOR_section.Window;
-                
-                var data = new string[StandardIORTypes.Types.Count];
-                int i = 0;
-                foreach (var value in StandardIORTypes.Types)
-                {
-                    data[i] = value.Value;
-                    i += 1;
-                }
+            var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
+            _intIORCombo = (MaterialCombo)intIOR_section.Window;
 
-                _intIORCombo.Data =  data;
+            var data = new string[StandardIORTypes.Types.Count];
+            int i = 0;
+            foreach (var value in StandardIORTypes.Types)
+            {
+                data[i] = value.Value;
+                i += 1;
             }
 
-            if (_extIORCombo == null)
+            _intIORCombo.Data = data;
+
+            var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
+            _extIORCombo = (MaterialCombo)extIOR_section.Window;
+
+            data = new string[StandardIORTypes.Types.Count];
+            i = 0;
+            foreach (var value in StandardIORTypes.Types)
             {
-                var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
-                _extIORCombo = (MaterialCombo)extIOR_section.Window;
-
-                var data = new string[StandardIORTypes.Types.Count];
-                int i = 0;
-                foreach (var value in StandardIORTypes.Types)
-                {
-                    data[i] = value.Value;
-                    i += 1;
-                }
-
-                _extIORCombo.Data = data;
-
-                //Air for default exterior IOR
-                string default_value;
-                if (StandardIORTypes.Types.TryGetValue("air", out default_value))
-                    _extIORCombo.SelectedItem = default_value;
+                data[i] = value.Value;
+                i += 1;
             }
+
+            _extIORCombo.Data = data;
+
+            //Air for default exterior IOR
+            string default_value;
+            if (StandardIORTypes.Types.TryGetValue("air", out default_value))
+                _extIORCombo.SelectedItem = default_value;
+
+            _intIORCombo.OnChange += Combo_OnChange;
+            _extIORCombo.OnChange += Combo_OnChange;
 
             base.OnAddUserInterfaceSections();
+        }
+
+        private void Combo_OnChange(object sender, System.EventArgs e)
+        {
+            ReadDataFromUI();
         }
 
         /// <summary>

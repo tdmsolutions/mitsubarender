@@ -64,7 +64,6 @@
   <ItemGroup>
     <Compile Include="Commands\About\MitsubaAbout.cs" />
     <Compile Include="Commands\MaterialIcon\MitsubaMaterialIcon.cs" />
-    <Compile Include="Emitters\EnvironmentEmitter.cs" />
     <Compile Include="Emitters\MitsubaEmitter.cs" />
     <Compile Include="Emitters\PointLightSource.cs" />
     <Compile Include="Emitters\SpotLightSource.cs" />

@@ -37,17 +37,17 @@ namespace MitsubaRender.Materials
         /// <summary>
         /// This field handles the comboBox for the Distribution property.
         /// </summary>
-        private static MaterialCombo _distributionCombo;
+        private MaterialCombo _distributionCombo;
 
         /// <summary>
         /// This field handles the comboBox for the IntIOR property.
         /// </summary>
-        private static MaterialCombo _intIORCombo;
+        private MaterialCombo _intIORCombo;
 
         /// <summary>
         /// This field handles the comboBox for the ExtIOR property.
         /// </summary>
-        private static MaterialCombo _extIORCombo;
+        private MaterialCombo _extIORCombo;
 
         #region Material Parameters
 
@@ -96,7 +96,7 @@ namespace MitsubaRender.Materials
         /// Main ctor.
         /// </summary>
         public RoughDielectricMaterial()
-        { 
+        {
             Alpha = new MitsubaType<float, string>();
             AlphaU = new MitsubaType<float, string>();
             AlphaV = new MitsubaType<float, string>();
@@ -119,10 +119,13 @@ namespace MitsubaRender.Materials
         public override string TypeDescription
         {
 
-            get { return "This material implements a realistic microfacet scattering model for rendering rough " +
-                         "interfaces between dielectric materials, such as a transition from air to ground glass.\n\n" +
-                         "Microfacet theory describes rough surfaces as an arrangement of unresolved and ideally specular " +
-                         "facets, whose normal directions are given by a specially chosen microfacet distribution."; }
+            get
+            {
+                return "This material implements a realistic microfacet scattering model for rendering rough " +
+                       "interfaces between dielectric materials, such as a transition from air to ground glass.\n\n" +
+                       "Microfacet theory describes rough surfaces as an arrangement of unresolved and ideally specular " +
+                       "facets, whose normal directions are given by a specially chosen microfacet distribution.";
+            }
         }
 
         /// <summary>
@@ -164,46 +167,47 @@ namespace MitsubaRender.Materials
         /// </summary>
         protected override void OnAddUserInterfaceSections()
         {
-            if (_distributionCombo == null)
+            var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
+            _distributionCombo = (MaterialCombo)section.Window;
+            _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+
+            var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
+            _intIORCombo = (MaterialCombo)intIOR_section.Window;
+
+            var data = new string[StandardIORTypes.Types.Count];
+            int i = 0;
+            foreach (var value in StandardIORTypes.Types)
             {
-                var section = AddUserInterfaceSection(typeof(MaterialCombo), "Distribution", true, true);
-                _distributionCombo = (MaterialCombo)section.Window;
-                _distributionCombo.Data = new[] { "beckmann", "ggx", "phong", "as" };
+                data[i] = value.Value;
+                i += 1;
             }
 
-            if (_intIORCombo == null)
+            _intIORCombo.Data = data;
+
+            var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
+            _extIORCombo = (MaterialCombo)extIOR_section.Window;
+
+            data = new string[StandardIORTypes.Types.Count];
+            i = 0;
+            foreach (var value in StandardIORTypes.Types)
             {
-                var intIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Interior Index of Refraction", true, true);
-                _intIORCombo = (MaterialCombo)intIOR_section.Window;
-
-                var data = new string[StandardIORTypes.Types.Count];
-                int i = 0;
-                foreach (var value in StandardIORTypes.Types)
-                {
-                    data[i] = value.Value;
-                    i += 1;
-                }
-
-                _intIORCombo.Data = data;
+                data[i] = value.Value;
+                i += 1;
             }
 
-            if (_extIORCombo == null)
-            {
-                var extIOR_section = AddUserInterfaceSection(typeof(MaterialCombo), "Exterior Index of Refraction", true, true);
-                _extIORCombo = (MaterialCombo)extIOR_section.Window;
+            _extIORCombo.Data = data;
 
-                var data = new string[StandardIORTypes.Types.Count];
-                int i = 0;
-                foreach (var value in StandardIORTypes.Types)
-                {
-                    data[i] = value.Value;
-                    i += 1;
-                }
-
-                _extIORCombo.Data = data;
-            }
-
+            //The comboBoxes OnChange
+            _distributionCombo.OnChange += Combo_OnChange;
+            _intIORCombo.OnChange += Combo_OnChange;
+            _extIORCombo.OnChange += Combo_OnChange;
+            
             base.OnAddUserInterfaceSections();
+        }
+
+        private void Combo_OnChange(object sender, System.EventArgs e)
+        {
+            ReadDataFromUI();
         }
 
         /// <summary>
@@ -213,6 +217,20 @@ namespace MitsubaRender.Materials
         {
             if (_distributionCombo != null)
                 Distribution = _distributionCombo.SelectedItem;
+
+            //Interior Index of Refraction
+            if (_extIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _intIORCombo.SelectedItem).Key;
+                IntIOR.SecondParameter = myValue;
+            }
+
+            //Exterior Index of Refraction
+            if (_intIORCombo != null)
+            {
+                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _extIORCombo.SelectedItem).Key;
+                ExtIOR.SecondParameter = myValue;
+            }
 
             //Alpha
             bool hasTexture;
@@ -315,20 +333,6 @@ namespace MitsubaRender.Materials
                 float alphaV;
                 Fields.TryGetValue(ALPHAV_FLOAT_FIELD, out alphaV);
                 AlphaV.FirstParameter = alphaV;
-            }
-
-            //Interior Index of Refraction
-            if (_intIORCombo != null)
-            {
-                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _intIORCombo.SelectedItem).Key;
-                IntIOR.SecondParameter = myValue;
-            }
-
-            //Exterior Index of Refraction
-            if (_extIORCombo != null)
-            {
-                var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _extIORCombo.SelectedItem).Key;
-                ExtIOR.SecondParameter = myValue;
             }
 
             //Interior Index of Refraction

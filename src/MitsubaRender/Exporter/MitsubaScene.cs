@@ -105,7 +105,7 @@ namespace MitsubaRender.Exporter
             var sceneFile = Path.Combine(BasePath, FileName);
             try
             {
-                _mitsubaXml.CreateIntegratorXml();
+                //_mitsubaXml.CreateIntegratorXml();
                 ExportAllMaterials();
 
                 //ExportAllLights();
@@ -121,7 +121,7 @@ namespace MitsubaRender.Exporter
                 ExportEmitters();
 
                 ExportIntegrator();
-                ExportSampler();
+                //ExportSampler();
                 //if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0) ExportEnvironment(doc, docRoot);
                 //else
                 //{
