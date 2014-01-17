@@ -14,8 +14,11 @@
 // Copyright 2014 TDM Solutions SL
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using MitsubaRender.Integrators;
 using Rhino.UI;
 
 namespace MitsubaRender.Settings
@@ -28,8 +31,9 @@ namespace MitsubaRender.Settings
             InitializeComponent();
         }
 
-        public void LoadIntegrators()
+        public void LoadPresets()
         {
+            
             //TODO: Carregar els integradors
         }
 
@@ -41,6 +45,11 @@ namespace MitsubaRender.Settings
         public void SaveIntegrators()
         {
             //TODO: Guardar els integradors
+        }
+
+        private void buttonAddIntegrator_Click(object sender, EventArgs e)
+        {
+            new IntegratorDialog("New Preset").ShowDialog();
         }
     }
 
@@ -69,7 +78,7 @@ namespace MitsubaRender.Settings
 
         public override void OnCreateParent(IntPtr hwndParent)
         {
-            _control.LoadIntegrators();
+            _control.LoadPresets();
         }
 
         public override void OnSizeParent(int cx, int cy)

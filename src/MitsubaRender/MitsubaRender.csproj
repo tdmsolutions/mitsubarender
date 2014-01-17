@@ -41,6 +41,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar2, Version=10.7.0.6, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
     <Reference Include="Ionic.Zlib">
       <HintPath>.\Ionic.Zlib.dll</HintPath>
     </Reference>
@@ -70,6 +71,11 @@
     <Compile Include="Exporter\MeshStore.cs" />
     <Compile Include="Exporter\MitsubaScene.cs" />
     <Compile Include="Exporter\MitsubaXml.cs" />
+    <Compile Include="Integrators\ISave.cs" />
+    <Compile Include="Integrators\LibraryIntegrators.cs" />
+    <Compile Include="Integrators\LibraryReconstructionFilters.cs" />
+    <Compile Include="Integrators\LibrarySamplers.cs" />
+    <Compile Include="Integrators\RenderSettingsPreset.cs" />
     <Compile Include="Materials\Interfaces\ICoating.cs" />
     <Compile Include="Materials\Interfaces\IConductor.cs" />
     <Compile Include="Materials\Interfaces\IDielectric.cs" />

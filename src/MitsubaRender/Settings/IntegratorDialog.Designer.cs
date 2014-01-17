@@ -44,9 +44,18 @@
             this.tabControlProperties = new System.Windows.Forms.TabControl();
             this.tabPageIntegrator = new System.Windows.Forms.TabPage();
             this.tabPageSampler = new System.Windows.Forms.TabPage();
-            this.TabPageReconstruction = new System.Windows.Forms.TabPage();
             this.propertyGridSampler = new System.Windows.Forms.PropertyGrid();
+            this.TabPageReconstruction = new System.Windows.Forms.TabPage();
             this.propertyGridReconstruction = new System.Windows.Forms.PropertyGrid();
+            this.buttonAddIntegrator = new System.Windows.Forms.Button();
+            this.buttonDeleteIntegrator = new System.Windows.Forms.Button();
+            this.buttonReset = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
             this.tabControlProperties.SuspendLayout();
             this.tabPageIntegrator.SuspendLayout();
             this.tabPageSampler.SuspendLayout();
@@ -166,7 +175,7 @@
             // 
             // propertyGridIntegrator
             // 
-            this.propertyGridIntegrator.Location = new System.Drawing.Point(0, 3);
+            this.propertyGridIntegrator.Location = new System.Drawing.Point(3, 2);
             this.propertyGridIntegrator.Name = "propertyGridIntegrator";
             this.propertyGridIntegrator.Size = new System.Drawing.Size(373, 191);
             this.propertyGridIntegrator.TabIndex = 11;
@@ -174,16 +183,16 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(243, 482);
+            this.button1.Location = new System.Drawing.Point(251, 491);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 26);
             this.button1.TabIndex = 13;
-            this.button1.Text = "OK";
+            this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(324, 482);
+            this.button2.Location = new System.Drawing.Point(332, 491);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 26);
             this.button2.TabIndex = 14;
@@ -195,44 +204,40 @@
             this.tabControlProperties.Controls.Add(this.tabPageIntegrator);
             this.tabControlProperties.Controls.Add(this.tabPageSampler);
             this.tabControlProperties.Controls.Add(this.TabPageReconstruction);
-            this.tabControlProperties.Location = new System.Drawing.Point(12, 123);
+            this.tabControlProperties.Location = new System.Drawing.Point(11, 123);
             this.tabControlProperties.Name = "tabControlProperties";
             this.tabControlProperties.SelectedIndex = 0;
-            this.tabControlProperties.Size = new System.Drawing.Size(387, 220);
+            this.tabControlProperties.Size = new System.Drawing.Size(387, 242);
             this.tabControlProperties.TabIndex = 15;
+            this.tabControlProperties.SelectedIndexChanged += new System.EventHandler(this.tabControlProperties_SelectedIndexChanged);
             // 
             // tabPageIntegrator
             // 
+            this.tabPageIntegrator.Controls.Add(this.button3);
+            this.tabPageIntegrator.Controls.Add(this.button4);
+            this.tabPageIntegrator.Controls.Add(this.button5);
             this.tabPageIntegrator.Controls.Add(this.propertyGridIntegrator);
             this.tabPageIntegrator.Location = new System.Drawing.Point(4, 22);
             this.tabPageIntegrator.Name = "tabPageIntegrator";
             this.tabPageIntegrator.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageIntegrator.Size = new System.Drawing.Size(379, 194);
+            this.tabPageIntegrator.Size = new System.Drawing.Size(379, 216);
             this.tabPageIntegrator.TabIndex = 0;
             this.tabPageIntegrator.Text = "Integrator";
             this.tabPageIntegrator.UseVisualStyleBackColor = true;
             // 
             // tabPageSampler
             // 
+            this.tabPageSampler.Controls.Add(this.buttonReset);
+            this.tabPageSampler.Controls.Add(this.buttonDeleteIntegrator);
+            this.tabPageSampler.Controls.Add(this.buttonAddIntegrator);
             this.tabPageSampler.Controls.Add(this.propertyGridSampler);
             this.tabPageSampler.Location = new System.Drawing.Point(4, 22);
             this.tabPageSampler.Name = "tabPageSampler";
             this.tabPageSampler.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSampler.Size = new System.Drawing.Size(379, 194);
+            this.tabPageSampler.Size = new System.Drawing.Size(379, 336);
             this.tabPageSampler.TabIndex = 1;
             this.tabPageSampler.Text = "Sampler";
             this.tabPageSampler.UseVisualStyleBackColor = true;
-            // 
-            // TabPageReconstruction
-            // 
-            this.TabPageReconstruction.Controls.Add(this.propertyGridReconstruction);
-            this.TabPageReconstruction.Location = new System.Drawing.Point(4, 22);
-            this.TabPageReconstruction.Name = "TabPageReconstruction";
-            this.TabPageReconstruction.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPageReconstruction.Size = new System.Drawing.Size(379, 194);
-            this.TabPageReconstruction.TabIndex = 2;
-            this.TabPageReconstruction.Text = "Reconstruction";
-            this.TabPageReconstruction.UseVisualStyleBackColor = true;
             // 
             // propertyGridSampler
             // 
@@ -242,6 +247,20 @@
             this.propertyGridSampler.TabIndex = 12;
             this.propertyGridSampler.ToolbarVisible = false;
             // 
+            // TabPageReconstruction
+            // 
+            this.TabPageReconstruction.Controls.Add(this.button6);
+            this.TabPageReconstruction.Controls.Add(this.button7);
+            this.TabPageReconstruction.Controls.Add(this.button8);
+            this.TabPageReconstruction.Controls.Add(this.propertyGridReconstruction);
+            this.TabPageReconstruction.Location = new System.Drawing.Point(4, 22);
+            this.TabPageReconstruction.Name = "TabPageReconstruction";
+            this.TabPageReconstruction.Padding = new System.Windows.Forms.Padding(3);
+            this.TabPageReconstruction.Size = new System.Drawing.Size(379, 336);
+            this.TabPageReconstruction.TabIndex = 2;
+            this.TabPageReconstruction.Text = "Reconstruction";
+            this.TabPageReconstruction.UseVisualStyleBackColor = true;
+            // 
             // propertyGridReconstruction
             // 
             this.propertyGridReconstruction.Location = new System.Drawing.Point(3, 2);
@@ -250,11 +269,95 @@
             this.propertyGridReconstruction.TabIndex = 12;
             this.propertyGridReconstruction.ToolbarVisible = false;
             // 
+            // buttonAddIntegrator
+            // 
+            this.buttonAddIntegrator.Location = new System.Drawing.Point(2, 193);
+            this.buttonAddIntegrator.Name = "buttonAddIntegrator";
+            this.buttonAddIntegrator.Size = new System.Drawing.Size(23, 23);
+            this.buttonAddIntegrator.TabIndex = 16;
+            this.buttonAddIntegrator.Text = "+";
+            this.buttonAddIntegrator.UseVisualStyleBackColor = true;
+            // 
+            // buttonDeleteIntegrator
+            // 
+            this.buttonDeleteIntegrator.Location = new System.Drawing.Point(29, 193);
+            this.buttonDeleteIntegrator.Name = "buttonDeleteIntegrator";
+            this.buttonDeleteIntegrator.Size = new System.Drawing.Size(23, 23);
+            this.buttonDeleteIntegrator.TabIndex = 17;
+            this.buttonDeleteIntegrator.Text = "-";
+            this.buttonDeleteIntegrator.UseVisualStyleBackColor = true;
+            // 
+            // buttonReset
+            // 
+            this.buttonReset.Location = new System.Drawing.Point(57, 193);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(48, 23);
+            this.buttonReset.TabIndex = 17;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(57, 193);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(48, 23);
+            this.button3.TabIndex = 19;
+            this.button3.Text = "Reset";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(29, 193);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(23, 23);
+            this.button4.TabIndex = 20;
+            this.button4.Text = "-";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(2, 193);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(23, 23);
+            this.button5.TabIndex = 18;
+            this.button5.Text = "+";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(57, 193);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(48, 23);
+            this.button6.TabIndex = 19;
+            this.button6.Text = "Reset";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(29, 193);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(23, 23);
+            this.button7.TabIndex = 20;
+            this.button7.Text = "-";
+            this.button7.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(2, 193);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(23, 23);
+            this.button8.TabIndex = 18;
+            this.button8.Text = "+";
+            this.button8.UseVisualStyleBackColor = true;
+            // 
             // IntegratorDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 514);
+            this.ClientSize = new System.Drawing.Size(411, 529);
             this.Controls.Add(this.tabControlProperties);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -302,5 +405,14 @@
         private System.Windows.Forms.TabPage TabPageReconstruction;
         private System.Windows.Forms.PropertyGrid propertyGridSampler;
         private System.Windows.Forms.PropertyGrid propertyGridReconstruction;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button buttonReset;
+        private System.Windows.Forms.Button buttonDeleteIntegrator;
+        private System.Windows.Forms.Button buttonAddIntegrator;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
     }
 }

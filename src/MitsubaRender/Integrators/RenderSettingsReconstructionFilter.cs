@@ -13,19 +13,25 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System;
 using System.ComponentModel;
+using System.IO;
+using MitsubaRender.Settings;
 
 namespace MitsubaRender.Integrators
 {
   
      static class ReconstructionFilterObjectInstances
     {
-         public static IntegratorGaussianFilter IntegratorGaussianFilter = new IntegratorGaussianFilter();
-         public static IntegratorMitchellNetravaliFilter IntegratorMitchellNetravaliFilter = new IntegratorMitchellNetravaliFilter();
-         public static IntegratorLanczosSincFilter IntegratorLanczosSincFilter = new IntegratorLanczosSincFilter();
+         //public static IntegratorGaussianFilter IntegratorGaussianFilter = new IntegratorGaussianFilter();
+         //public static IntegratorMitchellNetravaliFilter IntegratorMitchellNetravaliFilter = new IntegratorMitchellNetravaliFilter();
+         //public static IntegratorLanczosSincFilter IntegratorLanczosSincFilter = new IntegratorLanczosSincFilter();
+
+
+
 
     }
-     class IntegratorGaussianFilter
+     class IntegratorGaussianFilter : ISave
     {
         public IntegratorGaussianFilter()
         {
@@ -35,9 +41,26 @@ namespace MitsubaRender.Integrators
         [DisplayName(@"Standard deviation")]
         [Description("Standard deviation of the Gaussian")]
         public double StandardDeviation { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderReconstructionFiltersFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderReconstructionFiltersFolder, name) + LibraryReconstructionFilters.Extension;
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
 
-    class IntegratorMitchellNetravaliFilter
+    class IntegratorMitchellNetravaliFilter :ISave
     {
         public IntegratorMitchellNetravaliFilter()
         {
@@ -53,9 +76,26 @@ namespace MitsubaRender.Integrators
         [Description("C parameter from the paper")]
         public double CParameter { get; set; }
 
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderReconstructionFiltersFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderReconstructionFiltersFolder, name) + LibraryReconstructionFilters.Extension;
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
+
     }
 
-    class IntegratorLanczosSincFilter
+    class IntegratorLanczosSincFilter : ISave
     {
         public IntegratorLanczosSincFilter()
         {
@@ -65,6 +105,23 @@ namespace MitsubaRender.Integrators
         [DisplayName(@"Number of lobes")]
         [Description("Number of filter lobes")]
         public int NumberOfLobes { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderReconstructionFiltersFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderReconstructionFiltersFolder, name) + LibraryReconstructionFilters.Extension;
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
 
 

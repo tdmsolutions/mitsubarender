@@ -14,15 +14,18 @@ namespace MitsubaRender.Settings
 {
     public partial class IntegratorDialog : Form
     {
-
-        public IntegratorDialog()
+        private readonly String _editingPreset;
+        public IntegratorDialog(string presetName)
         {
             InitializeComponent();
+            _editingPreset = presetName;
         }
 
         private void IntegratorDialogLoad(object sender, EventArgs e)
         {
-            comboBoxIntegrator.DataSource = IntegratorsDataSource.IntegratorData;
+            Text = _editingPreset;
+
+            comboBoxIntegrator.DataSource = LibraryIntegrators.Integrators.ToArray();
             comboBoxSampler.DataSource = IntegratorsDataSource.SamplerData;
             comboBoxReconstruction.DataSource = IntegratorsDataSource.ReconstructionData;
         }
@@ -35,112 +38,130 @@ namespace MitsubaRender.Settings
         private void ComboBoxIntegratorSelectedIndexChanged(object sender, EventArgs e)
         {
             tabControlProperties.SelectedIndex = 0;
-            switch (comboBoxIntegrator.SelectedIndex)
-            {
-                case (int)IntegratorType.AdjointParticleTracer:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AdjointParticleTracer;
-                    break;
-                case (int)IntegratorType.Ambientoclusion:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AmbientOclusion;
-                    break;
-                case (int)IntegratorType.BidirectionalPathTracer:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.BidirectionalPathTracer;
-                    break;
-                case (int)IntegratorType.DirectIlumination:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.DirectIlumination;
-                    break;
-                case (int)IntegratorType.EnergyRedisributionPathTracing:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.EnergyRedisributionPathTracing;
-                    break;
-                case (int)IntegratorType.PathTracer:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PathTracer;
-                    break;
-                case (int)IntegratorType.PhotonMapper:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PhotonMapper;
-                    break;
-                case (int)IntegratorType.PrimarySampleSpaceMLT:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PrimarySampleSpaceMLT;
-                    break;
-                case (int)IntegratorType.ProgressivePhotonMapper:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.ProgressivePhotonMapper;
-                    break;
-                case (int)IntegratorType.SampleSpaceMLT:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.SampleSpaceMLT;
-                    break;
-                case (int)IntegratorType.StochasticProgressivePhotonMapper:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.StochasticProgressivePhotonMapper;
-                    break;
-                case (int)IntegratorType.VirtualPointLightRenderer:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VirtualPointLightRenderer;
-                    break;
-                case (int)IntegratorType.VolumetricPathTracerExtended:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VolumetricPathTracerExtended;
-                    break;
-                case (int)IntegratorType.VolumetricPathTracerSimple:
-                    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VolumetricPathTracerSimple;
-                    break;
-            }
+
+            var integratorName = comboBoxIntegrator.SelectedItem.ToString();
+            propertyGridIntegrator.SelectedObject = LibraryIntegrators.GetIntegrator(integratorName);
+
+            //switch (comboBoxIntegrator.SelectedIndex)
+            //{
+
+            //case (int)IntegratorType.AdjointParticleTracer:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AdjointParticleTracer;
+            //    break;
+            //case (int)IntegratorType.Ambientoclusion:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.AmbientOclusion;
+            //    break;
+            //case (int)IntegratorType.BidirectionalPathTracer:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.BidirectionalPathTracer;
+            //    break;
+            //case (int)IntegratorType.DirectIlumination:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.DirectIlumination;
+            //    break;
+            //case (int)IntegratorType.EnergyRedisributionPathTracing:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.EnergyRedisributionPathTracing;
+            //    break;
+            //case (int)IntegratorType.PathTracer:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PathTracer;
+            //    break;
+            //case (int)IntegratorType.PhotonMapper:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PhotonMapper;
+            //    break;
+            //case (int)IntegratorType.PrimarySampleSpaceMLT:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.PrimarySampleSpaceMLT;
+            //    break;
+            //case (int)IntegratorType.ProgressivePhotonMapper:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.ProgressivePhotonMapper;
+            //    break;
+            //case (int)IntegratorType.SampleSpaceMLT:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.SampleSpaceMLT;
+            //    break;
+            //case (int)IntegratorType.StochasticProgressivePhotonMapper:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.StochasticProgressivePhotonMapper;
+            //    break;
+            //case (int)IntegratorType.VirtualPointLightRenderer:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VirtualPointLightRenderer;
+            //    break;
+            //case (int)IntegratorType.VolumetricPathTracerExtended:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VolumetricPathTracerExtended;
+            //    break;
+            //case (int)IntegratorType.VolumetricPathTracerSimple:
+            //    propertyGridIntegrator.SelectedObject = IntegratorObjectInstances.VolumetricPathTracerSimple;
+            //    break;
+            //}
         }
 
         private void ComboBoxSamplerSelectedIndexChanged(object sender, EventArgs e)
         {
             tabControlProperties.SelectedIndex = 1;
-            switch (comboBoxSampler.SelectedIndex)
-            {
-                case (int)SamplerType.HaltonQMCSampler:
-                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerHaltonQMC;
-                    break;
-                case (int)SamplerType.HammersleyQMCSampler:
-                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerHammersleyQMC;
-                    break;
-                case (int)SamplerType.IndependentSampler:
-                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerIndependent;
-                    break;
-                case (int)SamplerType.LowDiscrepancySampler:
-                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerLowDiscrepancy;
-                    break;
-                case (int)SamplerType.SobolQMCSampler:
-                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerSobolQMC;
-                    break;
-                case (int)SamplerType.StraitfieldSampler:
-                    propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerStraitfield;
-                    break;
-            }
+            //switch (comboBoxSampler.SelectedIndex)
+            //{
+            //    case (int)SamplerType.HaltonQMCSampler:
+            //        propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerHaltonQMC;
+            //        break;
+            //    case (int)SamplerType.HammersleyQMCSampler:
+            //        propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerHammersleyQMC;
+            //        break;
+            //    case (int)SamplerType.IndependentSampler:
+            //        propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerIndependent;
+            //        break;
+            //    case (int)SamplerType.LowDiscrepancySampler:
+            //        propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerLowDiscrepancy;
+            //        break;
+            //    case (int)SamplerType.SobolQMCSampler:
+            //        propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerSobolQMC;
+            //        break;
+            //    case (int)SamplerType.StraitfieldSampler:
+            //        propertyGridSampler.SelectedObject = SamplerObjectInstances.SamplerStraitfield;
+            //        break;
+            //}
         }
 
         private void ComboBoxReconstructionSelectedIndexChanged(object sender, EventArgs e)
         {
             tabControlProperties.SelectedIndex = 2;
-            switch (comboBoxReconstruction.SelectedIndex)
-            {
-                case (int)ReconstructionFilterType.BoxFilter:
-                    // propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.;
-                    break;
-                case (int)ReconstructionFilterType.CatmullRomFilter:
-                    //propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.
-                    break;
-                case (int)ReconstructionFilterType.GaussianFilter:
-                    propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorGaussianFilter;
-                    break;
-                case (int)ReconstructionFilterType.LanczosSincFilter:
-                    propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorLanczosSincFilter;
-                    break;
-                case (int)ReconstructionFilterType.MitchellNetravaliFilter:
-                    propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorMitchellNetravaliFilter;
-                    break;
-                case (int)ReconstructionFilterType.TentFilter:
-                    //propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.;
-                    break;
-            }
+            //switch (comboBoxReconstruction.SelectedIndex)
+            //{
+            //    case (int)ReconstructionFilterType.BoxFilter:
+            //        // propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.;
+            //        break;
+            //    case (int)ReconstructionFilterType.CatmullRomFilter:
+            //        //propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.
+            //        break;
+            //    case (int)ReconstructionFilterType.GaussianFilter:
+            //        propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorGaussianFilter;
+            //        break;
+            //    case (int)ReconstructionFilterType.LanczosSincFilter:
+            //        propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorLanczosSincFilter;
+            //        break;
+            //    case (int)ReconstructionFilterType.MitchellNetravaliFilter:
+            //        propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.IntegratorMitchellNetravaliFilter;
+            //        break;
+            //    case (int)ReconstructionFilterType.TentFilter:
+            //        //propertyGridReconstruction.SelectedObject = ReconstructionFilterObjectInstances.;
+            //        break;
+            //}
 
         }
 
-        private object Duplicate(object obj)
+
+        private void tabControlProperties_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var stream = new MemoryStream();
-            var bin = new BinaryFormatter();
-            bin.Serialize(stream, obj);
-            return bin.Deserialize(stream);
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

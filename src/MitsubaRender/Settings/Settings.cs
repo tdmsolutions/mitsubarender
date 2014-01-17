@@ -13,6 +13,10 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System;
+using System.IO;
+using MitsubaRender.Integrators;
+
 namespace MitsubaRender.Settings
 {
     enum IntegratorType
@@ -96,8 +100,57 @@ namespace MitsubaRender.Settings
         public static string WorkingDirectory;
         public static string MitsubaPath;
         public static string ApplicationPath;
+        
         public static object Integrator;
         public static object Sampler;
         public static object ReconstructionFilter;
+        
+        public static string FolderIntegratorsName = "Integrators";
+        public static string FolderSamplersName = "Samplers";
+        public static string FolderReconstructionFiltersName = "Reconstruction Filters";
+        public static string FolderRenderSettingsPresetsName = "Render Settings Presets";
+
+        public static string FolderUserFolder = Path.Combine(new []{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"TDM Solutions","Mitsuba Render"});
+        public static string FolderIntegratorsFolder = Path.Combine(new[] { FolderUserFolder, FolderIntegratorsName });
+        public static string FolderSamplersFolder = Path.Combine(new[] { FolderUserFolder, FolderSamplersName });
+        public static string FolderReconstructionFiltersFolder = Path.Combine(new[] { FolderUserFolder, FolderReconstructionFiltersName });
+        public static string FolderRenderSettingsPresetsFolder = Path.Combine(new[] { FolderUserFolder, FolderRenderSettingsPresetsName });
+       
+        public static bool GenerateDefaultIntegrators()
+        {
+            Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderIntegratorsFolder));
+            var success = true;
+
+            foreach (var integrator in  IntegratorObjectInstances.GetIntegratorDefaultInstances())
+            {
+                if (!integrator.Save())
+                    success = false;
+            }
+            return success;
+        }
+        public static bool GenerateDefaultSamplers()
+        {
+            Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderSamplersFolder));
+            var success = true;
+
+            foreach (var sampler in SamplerObjectInstances.GetSamplersDefaultInstances())
+            {
+                if (!sampler.Save())
+                    success = false;
+            }
+            return success;
+        }
+        public static bool GenerateDefaultReconstructionFilters()
+        {
+            Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderReconstructionFiltersFolder));
+            var success = true;
+
+            foreach (var sampler in SamplerObjectInstances.GetSamplersDefaultInstances())
+            {
+                if (!sampler.Save())
+                    success = false;
+            }
+            return success;
+        }
     }
 }
