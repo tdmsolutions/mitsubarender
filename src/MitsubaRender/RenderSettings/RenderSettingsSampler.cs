@@ -19,16 +19,9 @@ using System.IO;
 using MitsubaRender.Settings;
 
 namespace MitsubaRender.Integrators
-{   
+{
     public static class SamplerObjectInstances
     {
-        public static SamplerIndependent SamplerIndependent;
-        public static SamplerStraitfield SamplerStraitfield;
-        public static SamplerLowDiscrepancy SamplerLowDiscrepancy;
-        public static SamplerHammersleyQMC SamplerHammersleyQMC;
-        public static SamplerHaltonQMC SamplerHaltonQMC;
-        public static SamplerSobolQMC SamplerSobolQMC;
-       
         public static ISave[] GetSamplersDefaultInstances()
         {
             return new ISave[] { 
@@ -41,7 +34,7 @@ namespace MitsubaRender.Integrators
             };
         }
     }
-
+    [Serializable]
     public class SamplerIndependent : ISave
     {
         public SamplerIndependent()
@@ -70,6 +63,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class SamplerStraitfield : ISave
     {
         public SamplerStraitfield()
@@ -86,7 +80,7 @@ namespace MitsubaRender.Integrators
         [Description("Effective dimension, up to which stratified samples are provided. The number here is to be interpreted as the number of subsequent 1D or 2D sample requests that can be satisfied using good samples. Higher high values increase both storage and computational costs."
             )]
         public int EffectiveDimension { get; set; }
-       
+
         public bool Save(string name)
         {
             if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
@@ -104,6 +98,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class SamplerLowDiscrepancy : ISave
     {
         public SamplerLowDiscrepancy()
@@ -123,7 +118,7 @@ namespace MitsubaRender.Integrators
             "Effective dimension, up to which low discrepancy samples are provided. The number here is to be interpreted as the number of subsequent 1D or 2D sample requests that can be satisfied using good samples. Higher high values increase both storage and computational costs."
             )]
         public int EffectiveDimension { get; set; }
-       
+
         public bool Save(string name)
         {
             if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
@@ -141,6 +136,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class SamplerHammersleyQMC : ISave
     {
         public SamplerHammersleyQMC()
@@ -176,6 +172,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class SamplerHaltonQMC : ISave
     {
         public SamplerHaltonQMC()
@@ -211,6 +208,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class SamplerSobolQMC : ISave
     {
         public SamplerSobolQMC()

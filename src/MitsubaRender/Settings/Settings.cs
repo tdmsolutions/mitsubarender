@@ -16,6 +16,7 @@
 using System;
 using System.IO;
 using MitsubaRender.Integrators;
+using MitsubaRender.RenderSettings;
 
 namespace MitsubaRender.Settings
 {
@@ -145,7 +146,7 @@ namespace MitsubaRender.Settings
             Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderReconstructionFiltersFolder));
             var success = true;
 
-            foreach (var sampler in SamplerObjectInstances.GetSamplersDefaultInstances())
+            foreach (var sampler in ReconstructionFilterObjectInstances.GetReconstructionFilterDefaultInstances())
             {
                 if (!sampler.Save())
                     success = false;

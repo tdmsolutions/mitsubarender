@@ -16,24 +16,26 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using MitsubaRender.Integrators;
 using MitsubaRender.Settings;
 
-namespace MitsubaRender.Integrators
+namespace MitsubaRender.RenderSettings
 {
-  
-     static class ReconstructionFilterObjectInstances
+    static class ReconstructionFilterObjectInstances
     {
-         //public static IntegratorGaussianFilter IntegratorGaussianFilter = new IntegratorGaussianFilter();
-         //public static IntegratorMitchellNetravaliFilter IntegratorMitchellNetravaliFilter = new IntegratorMitchellNetravaliFilter();
-         //public static IntegratorLanczosSincFilter IntegratorLanczosSincFilter = new IntegratorLanczosSincFilter();
-
-
-
-
+        public static ISave[] GetReconstructionFilterDefaultInstances()
+        {
+            return new ISave[] { 
+                new ReconstructionFilterGaussianFilter(), 
+                new ReconstructionFilterMitchellNetravaliFilter(), 
+                new ReconstructionFilterLanczosSincFilter()
+            };
+        }
     }
-     class IntegratorGaussianFilter : ISave
+    [Serializable]
+    class ReconstructionFilterGaussianFilter : ISave
     {
-        public IntegratorGaussianFilter()
+        public ReconstructionFilterGaussianFilter()
         {
             StandardDeviation = 0.5;
         }
@@ -59,10 +61,10 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
-
-    class IntegratorMitchellNetravaliFilter :ISave
+    [Serializable]
+    class ReconstructionFilterMitchellNetravaliFilter : ISave
     {
-        public IntegratorMitchellNetravaliFilter()
+        public ReconstructionFilterMitchellNetravaliFilter()
         {
             BParameter = 0.33333;
             CParameter = 0.33333;
@@ -94,10 +96,10 @@ namespace MitsubaRender.Integrators
         }
 
     }
-
-    class IntegratorLanczosSincFilter : ISave
+    [Serializable]
+    class ReconstructionFilterLanczosSincFilter : ISave
     {
-        public IntegratorLanczosSincFilter()
+        public ReconstructionFilterLanczosSincFilter()
         {
             NumberOfLobes = 3;
         }
@@ -123,8 +125,4 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
-
-
-
-
 }

@@ -33,27 +33,31 @@ namespace MitsubaRender.Settings
 
         public void LoadPresets()
         {
-            
+            if (LibraryPresets.Presets != null && LibraryPresets.Presets.Any())
+            {
+                foreach (var preset in LibraryPresets.Presets)
+                {
+                    listViewIntegrators.Items.Add(preset);
+                }
+            }
             //TODO: Carregar els integradors
         }
 
-        public void SetDefaults()
+        //public void SavePresets()
+        //{
+        //    //TODO: Guardar els integradors
+        //}
+
+        private void ButtonNewPresetClick(object sender, EventArgs e)
         {
-            //TODO: Definir els integradors per defecte
+            new IntegratorDialog(String.Empty).ShowDialog();
         }
 
-        public void SaveIntegrators()
+        private void ListViewIntegratorsDoubleClick(object sender, EventArgs e)
         {
-            //TODO: Guardar els integradors
-        }
-
-        private void buttonAddIntegrator_Click(object sender, EventArgs e)
-        {
-            new IntegratorDialog("New Preset").ShowDialog();
+             new IntegratorDialog(listViewIntegrators.SelectedItems[0].ToString()).Show();
         }
     }
-
-
 
     internal class MainOptionPage : OptionsDialogPage
     {
@@ -75,7 +79,6 @@ namespace MitsubaRender.Settings
             get { return true; }
         }
 
-
         public override void OnCreateParent(IntPtr hwndParent)
         {
             _control.LoadPresets();
@@ -87,17 +90,17 @@ namespace MitsubaRender.Settings
             _control.Width = cy;
         }
 
-        public override bool OnApply()
-        {
-            _control.SaveIntegrators();
-            return base.OnApply();
-        }
+        //public override bool OnApply()
+        //{
+        //    _control.SavePresets();
+        //    return base.OnApply();
+        //}
 
-        public override void OnDefaults()
-        {
-            _control.SetDefaults();
-            base.OnDefaults();
-        }
+        //public override void OnDefaults()
+        //{
+        //    _control.SetDefaults();
+        //    base.OnDefaults();
+        //}
     }
 
 }

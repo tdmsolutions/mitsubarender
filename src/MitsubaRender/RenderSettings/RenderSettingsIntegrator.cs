@@ -21,7 +21,7 @@ using MitsubaRender.Settings;
 
 namespace MitsubaRender.Integrators
 {
-  
+
     internal static class IntegratorObjectInstances
     {
         //public const string Extension = ".Integrator";
@@ -78,6 +78,7 @@ namespace MitsubaRender.Integrators
         }
     }
 
+    [Serializable]
     public class IntegratorAmbientOclusion : ISave
     {
         public IntegratorAmbientOclusion()
@@ -112,6 +113,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorDirectIlumination : ISave
     {
         public IntegratorDirectIlumination()
@@ -156,6 +158,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorPathTracer : ISave
     {
         public IntegratorPathTracer()
@@ -200,6 +203,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorVolumetricPathTracerSimple : ISave
     {
         public IntegratorVolumetricPathTracerSimple()
@@ -244,6 +248,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorVolumetricPathTracerExtended : ISave
     {
         public IntegratorVolumetricPathTracerExtended()
@@ -289,6 +294,7 @@ namespace MitsubaRender.Integrators
         }
 
     }
+    [Serializable]
     public class IntegratorAdjointParticleTracer : ISave
     {
         public IntegratorAdjointParticleTracer()
@@ -333,6 +339,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorVirtualPointLightRenderer : ISave
     {
         public IntegratorVirtualPointLightRenderer()
@@ -372,6 +379,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorPhotonMapper : ISave
     {
         public IntegratorPhotonMapper()
@@ -457,6 +465,7 @@ namespace MitsubaRender.Integrators
         }
 
     }
+    [Serializable]
     public class IntegratorProgressivePhotonMapper : ISave
     {
         public IntegratorProgressivePhotonMapper()
@@ -511,6 +520,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorStochasticProgressivePhotonMapper : ISave
     {
         public IntegratorStochasticProgressivePhotonMapper()
@@ -565,6 +575,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorBidirectionalPathTracer : ISave
     {
         public IntegratorBidirectionalPathTracer()
@@ -609,6 +620,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorPrimarySampleSpaceMLT : ISave
     {
         public IntegratorPrimarySampleSpaceMLT()
@@ -668,6 +680,7 @@ namespace MitsubaRender.Integrators
             return Save(null);
         }
     }
+    [Serializable]
     public class IntegratorSampleSpaceMLT : ISave
     {
         [DisplayName(@"Maximum depth")]
@@ -729,6 +742,7 @@ namespace MitsubaRender.Integrators
         }
 
     }
+    [Serializable]
     public class IntegratorEnergyRedisributionPathTracing : ISave
     {
         public IntegratorEnergyRedisributionPathTracing()
@@ -821,6 +835,7 @@ namespace MitsubaRender.Integrators
     }
 
     //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+    [Serializable]
     public class IntegratorAdaptativeIntegrator : ISave
     {
         [DisplayName(@"Maximum Error")]
@@ -856,6 +871,7 @@ namespace MitsubaRender.Integrators
 
     }
     //This Integrator doesn't exist in mitsuba Config UI, but it's documented
+    [Serializable]
     public class IntegratorIrradianceCaching : ISave
     {
         [DisplayName(@"Resolution")]

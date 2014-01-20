@@ -34,40 +34,58 @@ namespace MitsubaRender.Tools
         /// Check if a folder exists, if don't, go back until UserFolder's root and create the nested directories
         /// </summary>
         /// <param name="folderName">Folder to create</param>
-        /// <returns>Number of created folders</returns>
+        /// <returns>Number of created folders or -1 if there is an error</returns>
         public static int CheckOrCreateFolder(String folderName)
         {
             var ret = 0;
             byte goBackCount = 3;
-            var currentCheckingPath = MitsubaSettings.FolderIntegratorsFolder;
-
-            if (!String.IsNullOrEmpty(currentCheckingPath))
+            var currentCheckingPath = Path.Combine(MitsubaSettings.FolderUserFolder, folderName);
+            try
             {
-                while (!Directory.Exists(currentCheckingPath) && goBackCount > 0)
+                if (!String.IsNullOrEmpty(currentCheckingPath))
                 {
-                    currentCheckingPath = Path.GetPathRoot(currentCheckingPath);
-                    goBackCount--;
+                    while (!Directory.Exists(currentCheckingPath) && goBackCount > 0)
+                    {
+                        currentCheckingPath = Path.GetDirectoryName(currentCheckingPath);
+                        goBackCount--;
+                    }
                 }
-            }
 
-            if (goBackCount == 0)
-            {
-                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TDM Solutions"));
-                ret++;
-                goBackCount++;
+                if (goBackCount == 0)
+                {
+                    Directory.CreateDirectory(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                                     "TDM Solutions"));
+                    ret++;
+                    goBackCount++;
+                }
+                if (goBackCount == 1)
+                {
+                    Directory.CreateDirectory(
+                        Path.Combine(new[]
+                            {
+                                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TDM Solutions",
+                                "Mitsuba Render"
+                            }));
+                    ret++;
+                    goBackCount++;
+                }
+                if (goBackCount == 2)
+                {
+                    Directory.CreateDirectory(
+                        Path.Combine(new[]
+                            {
+                                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TDM Solutions",
+                                "Mitsuba Render", folderName
+                            }));
+                    ret++;
+                }
+                return ret;
             }
-            if (goBackCount == 1)
+            catch
             {
-                Directory.CreateDirectory(Path.Combine(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TDM Solutions", "Mitsuba Render" }));
-                ret++;
-                goBackCount++;
+                return -1;
             }
-            if (goBackCount == 2)
-            {
-                Directory.CreateDirectory(Path.Combine(new[] { Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TDM Solutions", "Mitsuba Render", folderName }));
-                ret++;
-            }
-            return ret;
         }
         public static bool SaveObject(string path, object obj)
         {
@@ -102,8 +120,12 @@ namespace MitsubaRender.Tools
             FileStream fileStream = null;
             try
             {
-                fileStream = File.Open(path, FileMode.Open);
-                return formatter.Deserialize(fileStream);
+                fileStream = new FileStream(path, FileMode.Open);
+                var obj = formatter.Deserialize(fileStream);
+
+                fileStream.Close();
+                fileStream.Dispose();
+                return obj;
             }
             catch (Exception ex)
             {

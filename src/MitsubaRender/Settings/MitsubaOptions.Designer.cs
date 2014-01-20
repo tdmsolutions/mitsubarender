@@ -56,6 +56,7 @@
             this.listViewIntegrators.TabIndex = 1;
             this.listViewIntegrators.UseCompatibleStateImageBehavior = false;
             this.listViewIntegrators.View = System.Windows.Forms.View.Details;
+            this.listViewIntegrators.DoubleClick += new System.EventHandler(this.ListViewIntegratorsDoubleClick);
             // 
             // groupBox1
             // 
@@ -87,7 +88,7 @@
             this.buttonAddIntegrator.TabIndex = 2;
             this.buttonAddIntegrator.Text = "+";
             this.buttonAddIntegrator.UseVisualStyleBackColor = true;
-            this.buttonAddIntegrator.Click += new System.EventHandler(this.buttonAddIntegrator_Click);
+            this.buttonAddIntegrator.Click += new System.EventHandler(this.ButtonNewPresetClick);
             // 
             // MitsubaOptionsControl
             // 
