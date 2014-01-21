@@ -145,7 +145,6 @@ namespace MitsubaRender.Tools
 
     public class Objects
     {
-
         private object DuplicateObject(object obj)
         {
             var stream = new MemoryStream();
@@ -154,4 +153,5 @@ namespace MitsubaRender.Tools
             return bin.Deserialize(stream);
         }
     }
+
 }

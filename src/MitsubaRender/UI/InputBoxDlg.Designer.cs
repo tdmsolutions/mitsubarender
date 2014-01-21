@@ -91,10 +91,11 @@
             this.buttonOK.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonOK.ColorTable = DevComponents.DotNetBar.eButtonColor.Flat;
+            this.buttonOK.Image = ((System.Drawing.Image)(resources.GetObject("buttonOK.Image")));
             this.buttonOK.Location = new System.Drawing.Point(229, 32);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(22, 26);
+            this.buttonOK.Size = new System.Drawing.Size(24, 26);
             this.buttonOK.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonOK.TabIndex = 58;
             this.buttonOK.Click += new System.EventHandler(this.ButtonOkClick);
@@ -104,10 +105,11 @@
             this.buttonCancel.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonCancel.ColorTable = DevComponents.DotNetBar.eButtonColor.Flat;
-            this.buttonCancel.Location = new System.Drawing.Point(257, 32);
+            this.buttonCancel.Image = ((System.Drawing.Image)(resources.GetObject("buttonCancel.Image")));
+            this.buttonCancel.Location = new System.Drawing.Point(259, 32);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(22, 26);
+            this.buttonCancel.Size = new System.Drawing.Size(24, 26);
             this.buttonCancel.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.buttonCancel.TabIndex = 59;
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancelClick);

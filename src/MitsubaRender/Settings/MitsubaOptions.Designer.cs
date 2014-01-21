@@ -50,12 +50,15 @@
             this.listViewIntegrators.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewIntegrators.HideSelection = false;
+            this.listViewIntegrators.LabelWrap = false;
             this.listViewIntegrators.Location = new System.Drawing.Point(6, 16);
             this.listViewIntegrators.Name = "listViewIntegrators";
             this.listViewIntegrators.Size = new System.Drawing.Size(511, 326);
             this.listViewIntegrators.TabIndex = 1;
             this.listViewIntegrators.UseCompatibleStateImageBehavior = false;
             this.listViewIntegrators.View = System.Windows.Forms.View.Details;
+            this.listViewIntegrators.SelectedIndexChanged += new System.EventHandler(this.ListViewIntegratorsSelectedIndexChanged);
             this.listViewIntegrators.DoubleClick += new System.EventHandler(this.ListViewIntegratorsDoubleClick);
             // 
             // groupBox1
@@ -69,7 +72,6 @@
             this.groupBox1.Size = new System.Drawing.Size(523, 375);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Integrators";
             // 
             // buttonDeleteIntegrator
             // 
@@ -79,6 +81,7 @@
             this.buttonDeleteIntegrator.TabIndex = 3;
             this.buttonDeleteIntegrator.Text = "-";
             this.buttonDeleteIntegrator.UseVisualStyleBackColor = true;
+            this.buttonDeleteIntegrator.Click += new System.EventHandler(this.ButtonDeleteIntegratorClick);
             // 
             // buttonAddIntegrator
             // 
@@ -108,9 +111,9 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListView listViewIntegrators;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button buttonDeleteIntegrator;
         private System.Windows.Forms.Button buttonAddIntegrator;
+        internal System.Windows.Forms.ListView listViewIntegrators;
     }
 }

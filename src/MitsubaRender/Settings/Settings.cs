@@ -15,120 +15,57 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using MitsubaRender.Integrators;
 using MitsubaRender.RenderSettings;
 
 namespace MitsubaRender.Settings
 {
-    enum IntegratorType
-    {
-        Ambientoclusion,
-        DirectIlumination,
-        PathTracer,
-        VolumetricPathTracerSimple,
-        VolumetricPathTracerExtended,
-        AdjointParticleTracer,
-        VirtualPointLightRenderer,
-        PhotonMapper,
-        ProgressivePhotonMapper,
-        StochasticProgressivePhotonMapper,
-        BidirectionalPathTracer,
-        PrimarySampleSpaceMLT,
-        SampleSpaceMLT,
-        EnergyRedisributionPathTracing
-    }
-    enum SamplerType
-    {
-        IndependentSampler,
-        StraitfieldSampler,
-        LowDiscrepancySampler,
-        HammersleyQMCSampler,
-        HaltonQMCSampler,
-        SobolQMCSampler
-    }
-    enum ReconstructionFilterType
-    {
-        BoxFilter,
-        TentFilter,
-        GaussianFilter,
-        MitchellNetravaliFilter,
-        CatmullRomFilter,
-        LanczosSincFilter
-    }
 
     internal static class IntegratorsDataSource
     {
-        static internal readonly string[] IntegratorData = new[] {
-            "Ambient oclusion",
-            "Direct ilumination", 
-            "Path tracer", 
-            "Volumetric path tracer (Simple)",
-            "Volumetric path tracer (Extended)",
-            "Adjoint particle tracer", 
-            "Virtual point light renderer", 
-            "Photon mapper",
-            "Progressive photon mapper", 
-            "Stochastic progressive photon mapper", 
-            "Bidirectional path tracer", 
-            "Primary Sample Space MLT", 
-            "Sample Space MLT",
-            "Energy redisribution path tracing" };
 
-        static internal readonly string[] SamplerData = new[]
-            {
-                "Independent sampler",
-                "Straitfield sampler",
-                "Low discrepancy sampler",
-                "Hammersley QMC sampler",
-                "Halton QMC sampler",
-                "Sobol QMC sampler"
-
-            };
-
-        static internal readonly string[] ReconstructionData = new[]
-            {
-                "Box filter",
-                "Tent filter",
-                "Gaussian filter",
-                "Mitchell-Netravali filter",
-                "Catmull-Rom filter",
-                "Lanczos Sinc filter"
-            };
     }
+
     public static class MitsubaSettings
     {
-        //TODO settings
         public static string WorkingDirectory;
         public static string MitsubaPath;
         public static string ApplicationPath;
-        
-        public static object Integrator;
-        public static object Sampler;
-        public static object ReconstructionFilter;
-        
+
+        public static string DefaultRenderSettingsPresetName;
+        public static object Integrator = new IntegratorPhotonMapper();
+        public static object Sampler = new SamplerLowDiscrepancy();
+        public static object ReconstructionFilter = new ReconstructionFilterGaussianFilter();
+
+        public const string FileConfigFileName = "Config.ini";
+
+        //Folder Names
         public static string FolderIntegratorsName = "Integrators";
         public static string FolderSamplersName = "Samplers";
         public static string FolderReconstructionFiltersName = "Reconstruction Filters";
         public static string FolderRenderSettingsPresetsName = "Render Settings Presets";
 
-        public static string FolderUserFolder = Path.Combine(new []{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"TDM Solutions","Mitsuba Render"});
+        //Folders
+        public static readonly string FolderUserFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TDM Solutions", "Mitsuba Render");
         public static string FolderIntegratorsFolder = Path.Combine(new[] { FolderUserFolder, FolderIntegratorsName });
         public static string FolderSamplersFolder = Path.Combine(new[] { FolderUserFolder, FolderSamplersName });
         public static string FolderReconstructionFiltersFolder = Path.Combine(new[] { FolderUserFolder, FolderReconstructionFiltersName });
         public static string FolderRenderSettingsPresetsFolder = Path.Combine(new[] { FolderUserFolder, FolderRenderSettingsPresetsName });
-       
+
         public static bool GenerateDefaultIntegrators()
         {
             Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderIntegratorsFolder));
             var success = true;
 
-            foreach (var integrator in  IntegratorObjectInstances.GetIntegratorDefaultInstances())
+            foreach (var integrator in IntegratorObjectInstances.GetIntegratorDefaultInstances())
             {
                 if (!integrator.Save())
                     success = false;
             }
             return success;
         }
+
         public static bool GenerateDefaultSamplers()
         {
             Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderSamplersFolder));
@@ -141,6 +78,7 @@ namespace MitsubaRender.Settings
             }
             return success;
         }
+
         public static bool GenerateDefaultReconstructionFilters()
         {
             Tools.FileTools.CheckOrCreateFolder(Path.GetDirectoryName(FolderReconstructionFiltersFolder));
@@ -152,6 +90,127 @@ namespace MitsubaRender.Settings
                     success = false;
             }
             return success;
+        }
+
+        public static bool SaveSettings()
+        {
+            if (Tools.FileTools.CheckOrCreateFolder(FolderUserFolder) == -1) return false;
+            var configPath = Path.Combine(FolderUserFolder, FileConfigFileName);
+            try
+            {
+                if (File.Exists(configPath))
+                    File.Delete(configPath);
+            }
+            catch
+            {
+                return false;
+            }
+
+            var settingValues = new[]
+                {
+                    "FolderRenderSettingsPresetsFolder="+FolderRenderSettingsPresetsFolder,
+                    "FolderIntegratorsFolder="+FolderIntegratorsFolder,
+                    "FolderSamplersFolder="+FolderSamplersFolder,
+                    "FolderReconstructionFiltersFolder="+FolderReconstructionFiltersFolder,
+                    "DefaultRenderSettingsPreset="+DefaultRenderSettingsPresetName
+                };
+
+            try
+            {
+                File.WriteAllLines(configPath, settingValues);
+            }
+            catch
+            {
+                return false;
+            }
+
+
+            return true;
+        }
+        public static bool LoadSettings()
+        {
+            if (Tools.FileTools.CheckOrCreateFolder(FolderUserFolder) == -1) return false;
+            var configPath = Path.Combine(FolderUserFolder, FileConfigFileName);
+
+            if (!File.Exists(configPath)) return false;
+
+            try
+            {
+                var settings = File.ReadAllLines(configPath);
+                if (!settings.Any()) return false;
+
+                foreach (var line in settings)
+                {
+                    var splited = line.Split(new[] { '=' });
+                    if (splited.Length != 2) continue;
+                    var key = splited[0];
+                    var value = splited[1];
+                    var folderName = Path.GetDirectoryName(value);
+
+                    switch (key)
+                    {
+                        case "FolderRenderSettingsPresetsFolder":
+                            if (!String.IsNullOrEmpty(folderName))
+                            {
+                                FolderRenderSettingsPresetsFolder = value;
+                                FolderRenderSettingsPresetsName = folderName;
+                            }
+                            break;
+
+                        case "FolderIntegratorsFolder":
+
+                            if (!String.IsNullOrEmpty(folderName))
+                            {
+                                FolderIntegratorsFolder = value;
+                                FolderIntegratorsName = folderName;
+                            }
+                            break;
+
+                        case "FolderSamplersFolder":
+                            if (!String.IsNullOrEmpty(folderName))
+                            {
+                                FolderSamplersFolder = value;
+                                FolderSamplersName = folderName;
+                            }
+                            break;
+
+                        case "FolderReconstructionFiltersFolder":
+                            if (!String.IsNullOrEmpty(folderName))
+                            {
+                                FolderReconstructionFiltersFolder = value;
+                                FolderReconstructionFiltersName = folderName;
+                            }
+                            break;
+
+                        case "DefaultRenderSettingsPreset":
+                            {
+                                if (!String.IsNullOrEmpty(value))
+                                {
+                                    DefaultRenderSettingsPresetName = value;
+                                    var preset = LibraryPresets.GetPreset(value);
+                                    if (preset != null)
+                                    {
+                                        var integrator = LibraryIntegrators.GetIntegrator(preset.IntegratorName);
+                                        var sampler = LibrarySamplers.GetSampler(preset.SamplerName);
+                                        var reconstructionFilter = LibraryReconstructionFilters.GetReconstructionFilter(preset.ReconstructionFilterName);
+
+                                        if (integrator != null) Integrator = integrator;
+                                        if (sampler != null) Sampler = sampler;
+                                        if (reconstructionFilter != null) ReconstructionFilter = reconstructionFilter;
+                                    }
+                                }
+                            }
+                            break;
+                    }
+
+                }
+                return true;
+            }
+
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -16,7 +16,12 @@ namespace MitsubaRender.Settings
 {
     public partial class IntegratorDialog : Form
     {
+        #region Definitions
         private readonly String _editingPreset;
+        private Dictionary<string, ISave> _originalIntegrators;
+        private Dictionary<string, ISave> _originalSamplers;
+        private Dictionary<string, ISave> _originalReconstructionFilters;
+        #endregion
 
         //Constructor
         public IntegratorDialog(string presetName)
@@ -25,9 +30,19 @@ namespace MitsubaRender.Settings
             _editingPreset = presetName;
         }
 
+        #region Form Events
         private void IntegratorDialogLoad(object sender, EventArgs e)
         {
-            Text = _editingPreset;
+            if (String.IsNullOrEmpty(_editingPreset))
+            {
+                //TODO Localize me
+                Text = "New Mitsuba Render Settings";
+            }
+            else
+            {
+                Text = _editingPreset;
+            }
+
             LibraryIntegrators.Init();
             LibrarySamplers.Init();
             LibraryReconstructionFilters.Init();
@@ -45,6 +60,39 @@ namespace MitsubaRender.Settings
             if (LibraryIntegrators.Integrators != null) comboBoxIntegrator.DataSource = LibraryIntegrators.Integrators.ToArray();
             if (LibrarySamplers.Samplers != null) comboBoxSampler.DataSource = LibrarySamplers.Samplers.ToArray();
             if (LibraryReconstructionFilters.ReconstructionFilters != null) comboBoxReconstruction.DataSource = LibraryReconstructionFilters.ReconstructionFilters.ToArray();
+
+
+            if (!String.IsNullOrEmpty(_editingPreset))
+            {
+                var preset = LibraryPresets.GetPreset(_editingPreset);
+                comboBoxReconstruction.SelectedItem = preset.ReconstructionFilterName;
+                comboBoxSampler.SelectedItem = preset.SamplerName;
+                comboBoxIntegrator.SelectedItem = preset.IntegratorName;
+            }
+
+            tabControlProperties.SelectedIndex = 0;
+
+            SaveOriginals();
+        }
+
+        private void PropertyGridIntegratorPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            var obj = propertyGridIntegrator.SelectedObject as ISave;
+            if (obj != null)
+                obj.Save(comboBoxIntegrator.SelectedItem.ToString());
+        }
+        private void PropertyGridSamplerPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            var obj = propertyGridSampler.SelectedObject as ISave;
+            if (obj != null)
+                obj.Save(comboBoxSampler.SelectedItem.ToString());
+        }
+
+        private void PropertyGridReconstructionFilterPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            var obj = propertyGridReconstruction.SelectedObject as ISave;
+            if (obj != null)
+                obj.Save(comboBoxReconstruction.SelectedItem.ToString());
         }
 
         private void ComboBoxIntegratorSelectedIndexChanged(object sender, EventArgs e)
@@ -68,7 +116,6 @@ namespace MitsubaRender.Settings
             var filterName = comboBoxReconstruction.SelectedItem.ToString();
             propertyGridReconstruction.SelectedObject = LibraryReconstructionFilters.GetReconstructionFilter(filterName);
         }
-
 
         private void ButtonDuplicateIntegratorClick(object sender, EventArgs e)
         {
@@ -95,6 +142,7 @@ namespace MitsubaRender.Settings
                 var input = new InputBoxDlg
                     {
                         Titul = "Mistuba Render Integrator",
+                        //TODO Localize me
                         TopicText = "Please Type a Name",
                         InputText = finalName
                     };
@@ -107,13 +155,13 @@ namespace MitsubaRender.Settings
                     if (File.Exists(path))
                     {
                         //TODO Localize me
-                        if (MessageBox.Show("This file already exist, do you want to overwrite it?",
-                                            "Mistuba Render Integrator", MessageBoxButtons.YesNo) == DialogResult.No)
+                        if (MessageBox.Show("This file already exist, do you want to overwrite it?", "Mistuba Render Integrator", MessageBoxButtons.YesNo) == DialogResult.No)
                             return;
                     }
                     isaveObj.Save(finalName);
                     LibraryIntegrators.Init();
                     comboBoxIntegrator.DataSource = LibraryIntegrators.Integrators.ToArray();
+                    comboBoxIntegrator.SelectedItem = finalName;
                 }
 
 
@@ -251,7 +299,7 @@ namespace MitsubaRender.Settings
         {
             var name = comboBoxSampler.SelectedItem.ToString();
             var finalName = name;
-            var sampler = LibraryIntegrators.GetIntegrator(name);
+            var sampler = LibrarySamplers.GetSampler(name);
             var isaveObj = sampler as ISave;
 
             int num = 1;
@@ -262,7 +310,7 @@ namespace MitsubaRender.Settings
                 num++;
                 finalName = name + " (" + num + ")";
                 path = Path.Combine(MitsubaSettings.FolderSamplersFolder, finalName);
-                path += LibraryIntegrators.Extension;
+                path += LibrarySamplers.Extension;
 
             }
 
@@ -291,6 +339,7 @@ namespace MitsubaRender.Settings
                     isaveObj.Save(finalName);
                     LibrarySamplers.Init();
                     comboBoxSampler.DataSource = LibrarySamplers.Samplers.ToArray();
+                    comboBoxSampler.SelectedItem = finalName;
                 }
             }
         }
@@ -417,6 +466,7 @@ namespace MitsubaRender.Settings
                     isaveObj.Save(finalName);
                     LibraryReconstructionFilters.Init();
                     comboBoxReconstruction.DataSource = LibraryReconstructionFilters.ReconstructionFilters.ToArray();
+                    comboBoxReconstruction.SelectedItem = finalName;
                 }
             }
         }
@@ -478,35 +528,41 @@ namespace MitsubaRender.Settings
                 var sampler = new ReconstructionFilterMitchellNetravaliFilter();
                 sampler.Save(name);
             }
-           
+
 
             var filterName = comboBoxReconstruction.SelectedItem.ToString();
             propertyGridReconstruction.SelectedObject = LibraryReconstructionFilters.GetReconstructionFilter(filterName);
         }
 
-        private void PropertyGridIntegratorPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            var obj = propertyGridIntegrator.SelectedObject as ISave;
-            if (obj != null)
-                obj.Save(comboBoxIntegrator.SelectedItem.ToString());
-        }
-
         private void ButtonSaveClick(object sender, EventArgs e)
         {
+            //New Preset
             if (String.IsNullOrEmpty(_editingPreset))
             {
+                const string name = "New Render Preset";
+                var finalName = name;
+                var path = Path.Combine(MitsubaSettings.FolderRenderSettingsPresetsFolder, finalName) + LibraryPresets.Extension;
+
+                int num = 1;
+                while (File.Exists(path))
+                {
+                    num++;
+                    finalName = name + "(" + num + ")";
+                    path = Path.Combine(MitsubaSettings.FolderRenderSettingsPresetsFolder, finalName) + LibraryPresets.Extension;
+                }
+
 
                 var input = new InputBoxDlg
                     {
                         Titul = "Mistuba Render Settings Preset",
                         TopicText = "Please Type a Name",
-                        InputText = "New Render Preset"
+                        InputText = finalName
                     };
 
                 input.ShowDialog();
                 if (input.DialogResult == DialogResult.OK)
                 {
-                    var finalName = input.InputText;
+                    finalName = input.InputText;
                     //var path = Path.Combine(MitsubaSettings.FolderRenderSettingsPresetsFolder, finalName);
 
                     var presetObj = new RenderSettingsPreset()
@@ -517,17 +573,51 @@ namespace MitsubaRender.Settings
                         };
 
 
-                    presetObj.Save(finalName);
+                    if (String.IsNullOrEmpty(_editingPreset))
+                    {
+                        path = Path.Combine(MitsubaSettings.FolderRenderSettingsPresetsFolder, finalName) + LibraryPresets.Extension;
+                        if (File.Exists(path))
+                        {
+                            //TODO: Localize me
+                            var res = MessageBox.Show(String.Format("{0} already exists, do you want to overwrite it?", finalName), "Mitsuba Save Render Settings", MessageBoxButtons.YesNoCancel);
+
+                            if (res == DialogResult.No)
+                                Close();
+                            else if (res == DialogResult.Cancel)
+                                return;
+                        }
+                    }
+
+                    if (!presetObj.Save(finalName))
+                    {
+                        //TODO: Localize me
+                        MessageBox.Show(String.Format("There was problem saving {0}", finalName));
+                    }
+
                     LibraryPresets.Init();
+                    Close();
+                }
+
+
+            }
+
+            //Editing Preset
+            else
+            {
+                var presetObj = new RenderSettingsPreset()
+                {
+                    IntegratorName = comboBoxIntegrator.SelectedItem.ToString(),
+                    SamplerName = comboBoxSampler.SelectedItem.ToString(),
+                    ReconstructionFilterName = comboBoxReconstruction.SelectedItem.ToString(),
+                };
+
+                if (!presetObj.Save(_editingPreset))
+                {
+                    //TODO: Localize me
+                    MessageBox.Show(String.Format("There was problem saving {0}", _editingPreset));
                 }
 
                 Close();
-            }
-
-            else
-            {
-                //TODO: Localize me
-                MessageBox.Show("Please Type a name");
             }
 
 
@@ -535,12 +625,175 @@ namespace MitsubaRender.Settings
         }
         private void ButtonCancelClick(object sender, EventArgs e)
         {
+            RestoreOriginals();
             Close();
         }
+        #endregion
 
+        #region Methods
+        private void SaveOriginals()
+        {
 
-      
+            if (Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+            {
+                var files = Directory.GetFiles(MitsubaSettings.FolderIntegratorsFolder);
+                if (files.Any())
+                {
+                    _originalIntegrators = new Dictionary<string, ISave>();
+                    foreach (var filePath in files)
+                    {
+                        var obj = Tools.FileTools.LoadObject(filePath);
+                        var isaveObj = obj as ISave;
+                        if (isaveObj != null)
+                            _originalIntegrators.Add(filePath, isaveObj);
+                    }
+                }
+            }
 
+            if (Directory.Exists(MitsubaSettings.FolderSamplersFolder))
+            {
+                var files = Directory.GetFiles(MitsubaSettings.FolderSamplersFolder);
+                if (files.Any())
+                {
+                    _originalSamplers = new Dictionary<string, ISave>();
+                    foreach (var filePath in files)
+                    {
+                        var obj = Tools.FileTools.LoadObject(filePath);
+                        var isaveObj = obj as ISave;
+                        if (isaveObj != null)
+                            _originalSamplers.Add(filePath, isaveObj);
+                    }
+                }
+            }
 
+            if (Directory.Exists(MitsubaSettings.FolderReconstructionFiltersFolder))
+            {
+                var files = Directory.GetFiles(MitsubaSettings.FolderReconstructionFiltersFolder);
+                if (files.Any())
+                {
+                    _originalReconstructionFilters = new Dictionary<string, ISave>();
+                    foreach (var filePath in files)
+                    {
+                        var obj = Tools.FileTools.LoadObject(filePath);
+                        var isaveObj = obj as ISave;
+                        if (isaveObj != null)
+                            _originalReconstructionFilters.Add(filePath, isaveObj);
+                    }
+                }
+            }
+        }
+        private void RestoreOriginals()
+        {
+            int failRestoredFiles = 0;
+
+            //Integrators
+            if (Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+            {
+                var files = Directory.GetFiles(MitsubaSettings.FolderIntegratorsFolder);
+
+                if (files.Any())
+                {
+                    foreach (var filePath in files)
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
+                        }
+                        catch
+                        {
+                            failRestoredFiles++;
+                        }
+                    }
+                }
+
+                if (_originalIntegrators != null && _originalIntegrators.Any())
+                {
+                    foreach (var kvp in _originalIntegrators)
+                    {
+                        var path = kvp.Key;
+                        var name = Path.GetFileNameWithoutExtension(path);
+                        var iSaveObj = kvp.Value;
+
+                        if (!String.IsNullOrEmpty(name))
+                        {
+                            iSaveObj.Save(name);
+                        }
+                    }
+                }
+            }
+
+            //Samplers
+            if (Directory.Exists(MitsubaSettings.FolderSamplersFolder))
+            {
+                var files = Directory.GetFiles(MitsubaSettings.FolderSamplersFolder);
+
+                if (files.Any())
+                {
+                    foreach (var filePath in files)
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
+                        }
+                        catch
+                        {
+                            failRestoredFiles++;
+                        }
+                    }
+                }
+
+                if (_originalSamplers != null && _originalSamplers.Any())
+                {
+                    foreach (var kvp in _originalSamplers)
+                    {
+                        var path = kvp.Key;
+                        var name = Path.GetFileNameWithoutExtension(path);
+                        var iSaveObj = kvp.Value;
+
+                        if (!String.IsNullOrEmpty(name))
+                        {
+                            iSaveObj.Save(name);
+                        }
+                    }
+                }
+            }
+
+            //Reconstruction Filters
+            if (Directory.Exists(MitsubaSettings.FolderReconstructionFiltersFolder))
+            {
+                var files = Directory.GetFiles(MitsubaSettings.FolderReconstructionFiltersFolder);
+
+                if (files.Any())
+                {
+                    foreach (var filePath in files)
+                    {
+                        try
+                        {
+                            File.Delete(filePath);
+                        }
+                        catch
+                        {
+                            failRestoredFiles++;
+                        }
+                    }
+                }
+
+                if (_originalReconstructionFilters != null && _originalReconstructionFilters.Any())
+                {
+                    foreach (var kvp in _originalReconstructionFilters)
+                    {
+                        var path = kvp.Key;
+                        var name = Path.GetFileNameWithoutExtension(path);
+                        var iSaveObj = kvp.Value;
+
+                        if (!String.IsNullOrEmpty(name))
+                        {
+                            iSaveObj.Save(name);
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

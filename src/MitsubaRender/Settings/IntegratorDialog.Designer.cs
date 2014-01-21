@@ -86,7 +86,7 @@
             "Stochastic progressive photon mapper"});
             this.comboBoxIntegrator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxIntegrator.FormattingEnabled = true;
-            this.comboBoxIntegrator.Location = new System.Drawing.Point(108, 12);
+            this.comboBoxIntegrator.Location = new System.Drawing.Point(95, 12);
             this.comboBoxIntegrator.Name = "comboBoxIntegrator";
             this.comboBoxIntegrator.Size = new System.Drawing.Size(291, 21);
             this.comboBoxIntegrator.TabIndex = 1;
@@ -112,7 +112,7 @@
             "Hammersley QMC sampler",
             "Halton QMC sampler",
             "Sobol QMC sampler"});
-            this.comboBoxSampler.Location = new System.Drawing.Point(108, 39);
+            this.comboBoxSampler.Location = new System.Drawing.Point(95, 39);
             this.comboBoxSampler.Name = "comboBoxSampler";
             this.comboBoxSampler.Size = new System.Drawing.Size(291, 21);
             this.comboBoxSampler.TabIndex = 3;
@@ -129,7 +129,7 @@
             "Mitchen-Netravali filter",
             "Catmull-Rom filter",
             "Lanczos Sinc filter"});
-            this.comboBoxReconstruction.Location = new System.Drawing.Point(108, 67);
+            this.comboBoxReconstruction.Location = new System.Drawing.Point(95, 67);
             this.comboBoxReconstruction.Name = "comboBoxReconstruction";
             this.comboBoxReconstruction.Size = new System.Drawing.Size(291, 21);
             this.comboBoxReconstruction.TabIndex = 6;
@@ -308,6 +308,7 @@
             this.propertyGridSampler.Size = new System.Drawing.Size(373, 191);
             this.propertyGridSampler.TabIndex = 12;
             this.propertyGridSampler.ToolbarVisible = false;
+            this.propertyGridSampler.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGridSamplerPropertyValueChanged);
             // 
             // TabPageReconstruction
             // 
@@ -360,6 +361,7 @@
             this.propertyGridReconstruction.Size = new System.Drawing.Size(373, 191);
             this.propertyGridReconstruction.TabIndex = 12;
             this.propertyGridReconstruction.ToolbarVisible = false;
+            this.propertyGridReconstruction.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGridReconstructionFilterPropertyValueChanged);
             // 
             // IntegratorDialog
             // 
