@@ -35,14 +35,14 @@ namespace MitsubaRender.UI
         private void InputBoxDlgLoad(object sender, EventArgs e)
         {
             Text = Titul;
-            labelX1.Text = TopicText;
-            if (!String.IsNullOrEmpty(InputText)) textBoxX1.Text = InputText;
-            textBoxX1.Focus();
+            label1.Text = TopicText;
+            if (!String.IsNullOrEmpty(InputText)) textBox1.Text = InputText;
+            textBox1.Focus();
         }
 
         private void TextBoxX1TextChanged(object sender, EventArgs e)
         {
-            InputText = textBoxX1.Text;
+            InputText = textBox1.Text;
         }
 
         private void ButtonCancelClick(object sender, EventArgs e)
