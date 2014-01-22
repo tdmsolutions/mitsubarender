@@ -182,7 +182,7 @@ namespace MitsubaRender.Settings
                         comboBoxIntegrator.DataSource = LibraryIntegrators.Integrators.ToArray();
                     }
 
-                    catch (Exception ex)
+                    catch 
                     {
                         MessageBox.Show("A problem ocurred deleting the file");
                     }
@@ -199,7 +199,7 @@ namespace MitsubaRender.Settings
             {
                 File.Delete(path);
             }
-            catch (Exception ex)
+            catch 
             {
                 //TODO Localize me 
                 MessageBox.Show("A problem ocurred reseting the Integrator");
@@ -358,7 +358,7 @@ namespace MitsubaRender.Settings
                         comboBoxSampler.DataSource = LibrarySamplers.Samplers.ToArray();
                     }
 
-                    catch (Exception ex)
+                    catch 
                     {
                         MessageBox.Show("A problem ocurred deleting the file");
                     }
@@ -375,7 +375,7 @@ namespace MitsubaRender.Settings
             {
                 File.Delete(path);
             }
-            catch (Exception ex)
+            catch
             {
                 //TODO Localize me 
                 MessageBox.Show("A problem ocurred reseting the Sampler");
@@ -485,7 +485,7 @@ namespace MitsubaRender.Settings
                         comboBoxReconstruction.DataSource = LibraryReconstructionFilters.ReconstructionFilters.ToArray();
                     }
 
-                    catch (Exception ex)
+                    catch 
                     {
                         MessageBox.Show("A problem ocurred deleting the file");
                     }
@@ -502,7 +502,7 @@ namespace MitsubaRender.Settings
             {
                 File.Delete(path);
             }
-            catch (Exception ex)
+            catch 
             {
                 //TODO Localize me 
                 MessageBox.Show("A problem ocurred reseting the Sampler");

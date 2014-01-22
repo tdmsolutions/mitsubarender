@@ -94,7 +94,7 @@ namespace MitsubaRender.Settings
                     {
                         File.Delete(path);
                     }
-                    catch (Exception ex)
+                    catch 
                     {
                         //TODO Localize me
                         success = false;

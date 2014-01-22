@@ -98,7 +98,7 @@ namespace MitsubaRender.Tools
                 formatter.Serialize(stream, obj);
 
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -127,7 +127,7 @@ namespace MitsubaRender.Tools
                 fileStream.Dispose();
                 return obj;
             }
-            catch (Exception ex)
+            catch 
             {
                 return null;
             }
