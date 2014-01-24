@@ -13,28 +13,73 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using MitsubaRender.Settings;
 
 namespace MitsubaRender.Integrators
 {
+
     internal static class IntegratorObjectInstances
     {
-        public static IntegratorAmbientOclusion AmbientOclusion;
-        public static IntegratorDirectIlumination DirectIlumination;
-        public static IntegratorPathTracer PathTracer;
-        public static IntegratorVolumetricPathTracerSimple VolumetricPathTracerSimple;
-        public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended;
-        public static IntegratorAdjointParticleTracer AdjointParticleTracer;
-        public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer;
-        public static IntegratorPhotonMapper PhotonMapper;
-        public static IntegratorProgressivePhotonMapper ProgressivePhotonMapper;
-        public static IntegratorStochasticProgressivePhotonMapper StochasticProgressivePhotonMapper ;
-        public static IntegratorBidirectionalPathTracer BidirectionalPathTracer;
-        public static IntegratorPrimarySampleSpaceMLT PrimarySampleSpaceMLT;
-        public static IntegratorSampleSpaceMLT SampleSpaceMLT;
-        public static IntegratorEnergyRedisributionPathTracing EnergyRedisributionPathTracing;
+        //public const string Extension = ".Integrator";
+        //public static IntegratorAmbientOclusion AmbientOclusion;
+        //public static IntegratorDirectIlumination DirectIlumination;
+        //public static IntegratorPathTracer PathTracer;
+        //public static IntegratorVolumetricPathTracerSimple VolumetricPathTracerSimple;
+        //public static IntegratorVolumetricPathTracerExtended VolumetricPathTracerExtended;
+        //public static IntegratorAdjointParticleTracer AdjointParticleTracer;
+        //public static IntegratorVirtualPointLightRenderer VirtualPointLightRenderer;
+        //public static IntegratorPhotonMapper PhotonMapper;
+        //public static IntegratorProgressivePhotonMapper ProgressivePhotonMapper;
+        //public static IntegratorStochasticProgressivePhotonMapper StochasticProgressivePhotonMapper;
+        //public static IntegratorBidirectionalPathTracer BidirectionalPathTracer;
+        //public static IntegratorPrimarySampleSpaceMLT PrimarySampleSpaceMLT;
+        //public static IntegratorSampleSpaceMLT SampleSpaceMLT;
+        //public static IntegratorEnergyRedisributionPathTracing EnergyRedisributionPathTracing;
+
+        //public static ISave[] GetIntegratorInstances()
+        //{
+        //    return new ISave[] { 
+        //        AmbientOclusion, 
+        //        DirectIlumination, 
+        //        PathTracer,
+        //        VolumetricPathTracerSimple,
+        //        VolumetricPathTracerExtended,
+        //        AdjointParticleTracer,
+        //        VirtualPointLightRenderer,
+        //        PhotonMapper,
+        //        StochasticProgressivePhotonMapper,
+        //        BidirectionalPathTracer,
+        //        PrimarySampleSpaceMLT,
+        //        SampleSpaceMLT,
+        //        EnergyRedisributionPathTracing
+        //    };
+        //}
+        public static ISave[] GetIntegratorDefaultInstances()
+        {
+            return new ISave[] { 
+                new IntegratorAmbientOclusion(), 
+                new IntegratorDirectIlumination(), 
+                new IntegratorPathTracer(),
+                new IntegratorVolumetricPathTracerSimple(),
+                new IntegratorVolumetricPathTracerExtended(),
+                new IntegratorAdjointParticleTracer(),
+                new IntegratorVirtualPointLightRenderer(),
+                new IntegratorPhotonMapper(),
+                new IntegratorStochasticProgressivePhotonMapper(),
+                new IntegratorBidirectionalPathTracer(),
+                new IntegratorPrimarySampleSpaceMLT(),
+                new IntegratorSampleSpaceMLT(),
+                new IntegratorEnergyRedisributionPathTracing()
+            };
+        }
     }
-    public class IntegratorAmbientOclusion
+
+    [Serializable]
+    public class IntegratorAmbientOclusion : ISave
     {
         public IntegratorAmbientOclusion()
         {
@@ -49,8 +94,27 @@ namespace MitsubaRender.Integrators
         [DisplayName(@"Occlusion ray length")]
         [Description("Specifies the world-space length of the ambient occlusion rays that will be cast. Default: -1, i.e. automatic")]
         public float OcclusionRayLength { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorDirectIlumination
+    [Serializable]
+    public class IntegratorDirectIlumination : ISave
     {
         public IntegratorDirectIlumination()
         {
@@ -74,9 +138,28 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Hide directly visible emitters")]
         [Description("Hide light sources (e.g. area or environment light sources) that are directly visible to the camera? Reflections of light sources remain unaffected.")]
-        public bool HideDirectlyVisibleEmitters { get; set; } 
+        public bool HideDirectlyVisibleEmitters { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorPathTracer
+    [Serializable]
+    public class IntegratorPathTracer : ISave
     {
         public IntegratorPathTracer()
         {
@@ -92,17 +175,36 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
-        public int RussianRouletteStartingDepth { get; set; } 
+        public int RussianRouletteStartingDepth { get; set; }
 
         [DisplayName(@"Strict surface normals")]
         [Description("<p>Be strict about potential inconsistencies involving shading normals?</p><p>Triangle meshes often rely on interpolated shading normals to suppress the inherently faceted appearance of the underlying geometry. These fake normals are not without problems, however. They can lead to paradoxical situations where a light ray impinges on an object from a direction that is classified as outside according to the shading normal, and inside according to the true geometric normal.</p> <p>The <tt>strictNormals</tt> parameter specifies the intended behavior when such cases arise. The default (<tt>false</tt>, i.e. carry on) gives precedence to information given by the shading normal and considers such light paths to be valid. This can theoretically cause light leaks through boundaries, but it is not much of a problem in practice.</p> <p>When set to <tt>true</tt>, the path tracer detects inconsistencies and ignores these paths. When objects are poorly tesselated, this latter option may cause them to lose a significant amount of the incident radiation (or, in other words, they will look dark). The bidirectional integrators in Mitsuba (BDPT, PSSMLT, MLT, ..) implicitly have <tt>strictNormals</tt> activated. Hence, another use of this parameter is to match renderings created by these methods.</p>")]
-        public bool StrictSurfaceNormals { get; set; } 
+        public bool StrictSurfaceNormals { get; set; }
 
         [DisplayName(@"Hide directly visible emitters")]
         [Description("Hide light sources (e.g. area or environment light sources) that are directly visible to the camera? Reflections of light sources remain unaffected.")]
-        public bool HideDirectlyVisibleEmitters { get; set; } 
+        public bool HideDirectlyVisibleEmitters { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorVolumetricPathTracerSimple
+    [Serializable]
+    public class IntegratorVolumetricPathTracerSimple : ISave
     {
         public IntegratorVolumetricPathTracerSimple()
         {
@@ -118,17 +220,36 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
-        public int RussianRouletteStartingDepth { get; set; } 
+        public int RussianRouletteStartingDepth { get; set; }
 
         [DisplayName(@"Strict surface normals")]
         [Description("<p>Be strict about potential inconsistencies involving shading normals?</p><p>Triangle meshes often rely on interpolated shading normals to suppress the inherently faceted appearance of the underlying geometry. These fake normals are not without problems, however. They can lead to paradoxical situations where a light ray impinges on an object from a direction that is classified as outside according to the shading normal, and inside according to the true geometric normal.</p> <p>The <tt>strictNormals</tt> parameter specifies the intended behavior when such cases arise. The default (<tt>false</tt>, i.e. carry on) gives precedence to information given by the shading normal and considers such light paths to be valid. This can theoretically cause light leaks through boundaries, but it is not much of a problem in practice.</p> <p>When set to <tt>true</tt>, the path tracer detects inconsistencies and ignores these paths. When objects are poorly tesselated, this latter option may cause them to lose a significant amount of the incident radiation (or, in other words, they will look dark). The bidirectional integrators in Mitsuba (BDPT, PSSMLT, MLT, ..) implicitly have <tt>strictNormals</tt> activated. Hence, another use of this parameter is to match renderings created by these methods.</p>")]
-        public bool StrictSurfaceNormals { get; set; } 
+        public bool StrictSurfaceNormals { get; set; }
 
         [DisplayName(@"Hide directly visible emitters")]
         [Description("Hide light sources (e.g. area or environment light sources) that are directly visible to the camera? Reflections of light sources remain unaffected.")]
-        public bool HideDirectlyVisibleEmitters { get; set; } 
+        public bool HideDirectlyVisibleEmitters { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorVolumetricPathTracerExtended
+    [Serializable]
+    public class IntegratorVolumetricPathTracerExtended : ISave
     {
         public IntegratorVolumetricPathTracerExtended()
         {
@@ -144,18 +265,37 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
-        public int RussianRouletteStartingDepth { get; set; } 
+        public int RussianRouletteStartingDepth { get; set; }
 
         [DisplayName(@"Strict surface normals")]
         [Description("<p>Be strict about potential inconsistencies involving shading normals?</p><p>Triangle meshes often rely on interpolated shading normals to suppress the inherently faceted appearance of the underlying geometry. These fake normals are not without problems, however. They can lead to paradoxical situations where a light ray impinges on an object from a direction that is classified as outside according to the shading normal, and inside according to the true geometric normal.</p> <p>The <tt>strictNormals</tt> parameter specifies the intended behavior when such cases arise. The default (<tt>false</tt>, i.e. carry on) gives precedence to information given by the shading normal and considers such light paths to be valid. This can theoretically cause light leaks through boundaries, but it is not much of a problem in practice.</p> <p>When set to <tt>true</tt>, the path tracer detects inconsistencies and ignores these paths. When objects are poorly tesselated, this latter option may cause them to lose a significant amount of the incident radiation (or, in other words, they will look dark). The bidirectional integrators in Mitsuba (BDPT, PSSMLT, MLT, ..) implicitly have <tt>strictNormals</tt> activated. Hence, another use of this parameter is to match renderings created by these methods.</p>")]
-        public bool StrictSurfaceNormals { get; set; } 
+        public bool StrictSurfaceNormals { get; set; }
 
         [DisplayName(@"Hide directly visible emitters")]
         [Description("Hide light sources (e.g. area or environment light sources) that are directly visible to the camera? Reflections of light sources remain unaffected.")]
-        public bool HideDirectlyVisibleEmitters { get; set; } 
+        public bool HideDirectlyVisibleEmitters { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
 
     }
-    public class IntegratorAdjointParticleTracer
+    [Serializable]
+    public class IntegratorAdjointParticleTracer : ISave
     {
         public IntegratorAdjointParticleTracer()
         {
@@ -179,9 +319,28 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Brute force")]
         [Description("If set to <tt>true</tt> the integrator does not attempt to create connections to the sensor and purely relies on hitting it via ray tracing. This is mainly intended for debugging purposes.")]
-        public bool BruteForce { get; set; } 
+        public bool BruteForce { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorVirtualPointLightRenderer
+    [Serializable]
+    public class IntegratorVirtualPointLightRenderer : ISave
     {
         public IntegratorVirtualPointLightRenderer()
         {
@@ -196,13 +355,32 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Maximum depth")]
         [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
-        public int MaximumDepth { get; set; } 
+        public int MaximumDepth { get; set; }
 
         [DisplayName(@"Clamping factor")]
         [Description("Relative clamping factor (0=no clamping, 1=full clamping)")]
-        public float ClampingFactor { get; set; } 
+        public float ClampingFactor { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorPhotonMapper
+    [Serializable]
+    public class IntegratorPhotonMapper : ISave
     {
         public IntegratorPhotonMapper()
         {
@@ -266,10 +444,29 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Hide directly visible emitters")]
         [Description("Hide light sources (e.g. area or environment light sources) that are directly visible to the camera? Reflections of light sources remain unaffected.")]
-        public bool HideDirectlyVisibleEmitters { get; set; } 
+        public bool HideDirectlyVisibleEmitters { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
 
     }
-    public class IntegratorProgressivePhotonMapper
+    [Serializable]
+    public class IntegratorProgressivePhotonMapper : ISave
     {
         public IntegratorProgressivePhotonMapper()
         {
@@ -280,11 +477,11 @@ namespace MitsubaRender.Integrators
             RussianRouletteSartingDepth = 5;
             SizeReductionParameter = 0.7f;
         }
-       
+
         [DisplayName(@"Maximum depth")]
         [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
         public int MaximumDepth { get; set; }
-        
+
         [DisplayName(@"Initial radius")]
         [Description("Initial photon query radius (<tt>0</tt> = infer based on scene size and camera resolution)")]
         public float InitialRadius { get; set; }
@@ -303,9 +500,28 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Size reduction parameter")]
         [Description("Alpha parameter from the paper (influences the speed, at which the photon radius is reduced)")]
-        public float SizeReductionParameter { get; set; } 
+        public float SizeReductionParameter { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorStochasticProgressivePhotonMapper
+    [Serializable]
+    public class IntegratorStochasticProgressivePhotonMapper : ISave
     {
         public IntegratorStochasticProgressivePhotonMapper()
         {
@@ -316,11 +532,11 @@ namespace MitsubaRender.Integrators
             RussianRouletteSartingDepth = 5;
             SizeReductionParameter = 0.7f;
         }
-       
+
         [DisplayName(@"Maximum depth")]
         [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
         public int MaximumDepth { get; set; }
-        
+
         [DisplayName(@"Initial radius")]
         [Description("Initial photon query radius (<tt>0</tt> = infer based on scene size and camera resolution)")]
         public float InitialRadius { get; set; }
@@ -339,9 +555,28 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Size reduction parameter")]
         [Description("Alpha parameter from the paper (influences the speed, at which the photon radius is reduced)")]
-        public float SizeReductionParameter { get; set; } 
+        public float SizeReductionParameter { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorBidirectionalPathTracer
+    [Serializable]
+    public class IntegratorBidirectionalPathTracer : ISave
     {
         public IntegratorBidirectionalPathTracer()
         {
@@ -354,20 +589,39 @@ namespace MitsubaRender.Integrators
         [DisplayName(@"Maximum depth")]
         [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
         public int MaximumDepth { get; set; }
-       
+
         [DisplayName(@"Create light image")]
         [Description("Include sampling strategies that connect paths traced from emitters directly to the camera? (i.e. what the adjoint particle tracer does) This improves the effectiveness of bidirectional path tracing but severely increases the local and remote communication overhead, since large <em>light images</em> must be transferred between threads or over the network. See the main documentation for a more detailed explanation.")]
         public bool CreateLightImage { get; set; }
 
         [DisplayName(@"Use direct sampling methods depth")]
         [Description("Enable direct sampling strategies? This is a generalization of direct illumination sampling that works with both emitters and sensors. Usually a good idea.")]
-        public bool UseDirectSamplingMethods { get; set; } 
+        public bool UseDirectSamplingMethods { get; set; }
 
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
-        public int RussianRouletteStartingDepth { get; set; } 
+        public int RussianRouletteStartingDepth { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorPrimarySampleSpaceMLT
+    [Serializable]
+    public class IntegratorPrimarySampleSpaceMLT : ISave
     {
         public IntegratorPrimarySampleSpaceMLT()
         {
@@ -406,41 +660,60 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
-        public int RussianRouletteSartingDepth { get; set; }  
+        public int RussianRouletteSartingDepth { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
     }
-    public class IntegratorSampleSpaceMLT
+    [Serializable]
+    public class IntegratorSampleSpaceMLT : ISave
     {
         [DisplayName(@"Maximum depth")]
         [Description("Specifies the longest path depth in the generated output image (where <tt>-1</tt> corresponds to ∞). A value of 1 will only render directly visible light sources. 2 will lead to single-bounce (direct-only) illumination, and so on.")]
-        public int MaximumDepth { get; set; }  
+        public int MaximumDepth { get; set; }
 
         [DisplayName(@"Direct samples")]
         [Description("By default, this plugin renders the direct illumination component separately using an optimized direct illumination sampling strategy that uses low-discrepancy number sequences for superior performance (in other words, it is <em>not</em> rendered by PSSMLT). This parameter specifies the number of samples allocated to that method. To force PSSMLT to be responsible for the direct illumination component as well, set this parameter to <tt>-1</tt>")]
-        public int DirectSamples { get; set; }  
+        public int DirectSamples { get; set; }
 
         [DisplayName(@"Two-stage MLT")]
         [Description(" Use two-stage MLT? Please see the documentation for details.")]
-        public bool TwoStageMLT { get; set; }  
-       
+        public bool TwoStageMLT { get; set; }
+
         [DisplayName(@"Luminance Samples")]
         [Description("MLT-type algorithms create output images that are only <em>relative</em> The algorithm can e.g. determine that a certain pixel is approximately twice as bright as another one, but the absolute scale is unknown. To recover it, this plugin computes the average luminance arriving at the sensor by generating a number of samples.")]
-        public int LuminanceSamples { get; set; }  
+        public int LuminanceSamples { get; set; }
 
         [DisplayName(@"Bidirectional mutation")]
         [Description("Selectively enable/disable the bidirectional mutation")]
-        public bool BidirectionalMutation { get; set; }  
+        public bool BidirectionalMutation { get; set; }
 
         [DisplayName(@"Lens pertubation")]
         [Description("Selectively enable/disable the lens perturbation")]
-        public bool LensPerturbation { get; set; }  
+        public bool LensPerturbation { get; set; }
 
         [DisplayName(@"Caustic perturbation")]
         [Description("Selectively enable/disable the caustic perturbation")]
-        public bool CausticPerturbation { get; set; }  
+        public bool CausticPerturbation { get; set; }
 
         [DisplayName(@"Multi chain pertubation")]
         [Description("Selectively enable/disable the multi-chain perturbation")]
-        public bool MultiChainPerturbation { get; set; }  
+        public bool MultiChainPerturbation { get; set; }
 
         [DisplayName(@"Manifold pertubation")]
         [Description("Selectively enable/disable the manifold perturbation")]
@@ -448,10 +721,29 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Probability factor")]
         [Description("Probability factor (lambda) of the manifold perturbation")]
-        public float ProbabilityFactor { get; set; }  
+        public float ProbabilityFactor { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
 
     }
-    public class IntegratorEnergyRedisributionPathTracing
+    [Serializable]
+    public class IntegratorEnergyRedisributionPathTracing : ISave
     {
         public IntegratorEnergyRedisributionPathTracing()
         {
@@ -520,11 +812,31 @@ namespace MitsubaRender.Integrators
 
         [DisplayName(@"Russian roulette starting depth")]
         [Description("Specifies the minimum path depth, after which the implementation will start to use the russian roulette path termination criterion (set to <tt>-1</tt> to disable).")]
-        public int RussianRouletteStartingDepth { get; set; }  
+        public int RussianRouletteStartingDepth { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
+
     }
-    
+
     //This Integrator doesn't exist in mitsuba Config UI, but it's documented
-    public class IntegratorAdaptativeIntegrator
+    [Serializable]
+    public class IntegratorAdaptativeIntegrator : ISave
     {
         [DisplayName(@"Maximum Error")]
         [Description("Maximum relative error threshold (Default: 0.05)")]
@@ -538,9 +850,29 @@ namespace MitsubaRender.Integrators
         [Description(" Maximum number of samples to be generated relative to the number of configured pixel samples")]
         public int MaximumSampleFactor { get; set; }
 
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
+
+
     }
     //This Integrator doesn't exist in mitsuba Config UI, but it's documented
-    public class IntegratorIrradianceCaching
+    [Serializable]
+    public class IntegratorIrradianceCaching : ISave
     {
         [DisplayName(@"Resolution")]
         [Description("Elevational resolution of the stratified final gather hemisphere. The azimuthal resolution is two times this value")]
@@ -577,5 +909,24 @@ namespace MitsubaRender.Integrators
         [DisplayName(@"Test")]
         [Description("Visualize the sample placement")]
         public bool Debug { get; set; }
+
+        public bool Save(string name)
+        {
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                name = GetType().Name;
+
+            if (!Directory.Exists(MitsubaSettings.FolderIntegratorsFolder))
+                return false;
+
+            var filePath = Path.Combine(MitsubaSettings.FolderIntegratorsFolder, name) + LibraryIntegrators.Extension;
+
+            return Tools.FileTools.SaveObject(filePath, this);
+        }
+
+        public bool Save()
+        {
+            return Save(null);
+        }
+
     }
 }

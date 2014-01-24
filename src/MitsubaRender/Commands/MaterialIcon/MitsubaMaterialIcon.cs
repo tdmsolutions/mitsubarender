@@ -67,10 +67,13 @@ namespace MitsubaRender.Commands.MaterialIcon
             {
                 var materialName = RhinoDoc.ActiveDoc.RenderMaterials.Select(material => material.Name).ToList();
 
-                var userSelectedMaterial = Dialogs.ShowComboListBox("Materials", "Select one material", materialName);
-                foreach (var material in RhinoDoc.ActiveDoc.RenderMaterials
-                    .Where(material => material.Name == userSelectedMaterial.ToString())) 
-                            renderMaterial = material;
+                object userSelectedMaterial = Dialogs.ShowComboListBox("Materials", "Select one material", materialName);
+
+                if (userSelectedMaterial != null)
+                    foreach (RenderMaterial material in RhinoDoc.ActiveDoc.RenderMaterials.Where(material => material.Name == userSelectedMaterial.ToString()))
+                    {
+                        renderMaterial = material;
+                    }
             }
 
             if (renderMaterial == null) return Result.Failure;

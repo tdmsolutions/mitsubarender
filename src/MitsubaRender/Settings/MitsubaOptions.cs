@@ -14,8 +14,11 @@
 // Copyright 2014 TDM Solutions SL
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using MitsubaRender.Integrators;
 using Rhino.UI;
 
 namespace MitsubaRender.Settings
@@ -28,23 +31,106 @@ namespace MitsubaRender.Settings
             InitializeComponent();
         }
 
-        public void LoadIntegrators()
+        public void LoadPresets()
         {
-            //TODO: Carregar els integradors
+            listViewIntegrators.Clear();
+            listViewIntegrators.GridLines = true;
+            listViewIntegrators.FullRowSelect = true;
+            var column = listViewIntegrators.Columns.Add("Mitsuba Rendering Presets");
+            column.Width = 376;
+
+            LibraryPresets.Init();
+            if (LibraryPresets.Presets != null && LibraryPresets.Presets.Any())
+            {
+                foreach (var preset in LibraryPresets.Presets)
+                {
+                    listViewIntegrators.Items.Add(preset);
+                }
+            }
+
+            column.TextAlign = HorizontalAlignment.Center;
+
+            if (!String.IsNullOrEmpty(MitsubaSettings.DefaultRenderSettingsPresetName))
+            {
+               
+                for (int i = 0; i < listViewIntegrators.Items.Count; i++)
+                {
+                    if (listViewIntegrators.Items[i].Text == MitsubaSettings.DefaultRenderSettingsPresetName)
+                    {
+                        listViewIntegrators.Items[i].Selected = true;
+                        listViewIntegrators.Items[i].Focused = true;
+                        listViewIntegrators.FocusedItem = listViewIntegrators.Items[i];
+             
+                        break;
+                    }
+                }
+            }
         }
 
-        public void SetDefaults()
+        private void ButtonNewPresetClick(object sender, EventArgs e)
         {
-            //TODO: Definir els integradors per defecte
+            new IntegratorDialog(String.Empty).ShowDialog();
+            LoadPresets();
         }
 
-        public void SaveIntegrators()
+        private void ListViewIntegratorsDoubleClick(object sender, EventArgs e)
         {
-            //TODO: Guardar els integradors
+            new IntegratorDialog(listViewIntegrators.SelectedItems[0].Text).ShowDialog();
+        }
+
+        private void ButtonDeleteIntegratorClick(object sender, EventArgs e)
+        {
+            if (listViewIntegrators.SelectedItems.Count < 1) return;
+            bool success = true;
+
+            for (int index = 0; index < listViewIntegrators.SelectedItems.Count; index++)
+            {
+                var name = listViewIntegrators.SelectedItems[index].Text;
+                var path = Path.Combine(MitsubaSettings.FolderRenderSettingsPresetsFolder, name) + LibraryPresets.Extension;
+
+                if (File.Exists(path))
+                {
+                    try
+                    {
+                        File.Delete(path);
+                    }
+                    catch 
+                    {
+                        //TODO Localize me
+                        success = false;
+                    }
+                }
+            }
+
+            LoadPresets();
+
+            if (!success)
+                MessageBox.Show("There was a problem deleting the preset(s)");
+
+
+        }
+
+        private void ListViewIntegratorsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewIntegrators.SelectedItems.Count == 1)
+            {
+                MitsubaSettings.DefaultRenderSettingsPresetName = listViewIntegrators.SelectedItems[0].Text;
+
+                var preset = LibraryPresets.GetPreset(MitsubaSettings.DefaultRenderSettingsPresetName);
+                if (preset != null)
+                {
+                    var integrator = LibraryIntegrators.GetIntegrator(preset.IntegratorName);
+                    var sampler = LibrarySamplers.GetSampler(preset.SamplerName);
+                    var reconstructionFilter = LibraryReconstructionFilters.GetReconstructionFilter(preset.ReconstructionFilterName);
+
+                    if (integrator != null) MitsubaSettings.Integrator = integrator;
+                    if (sampler != null) MitsubaSettings.Sampler = sampler;
+                    if (reconstructionFilter != null) MitsubaSettings.ReconstructionFilter = reconstructionFilter;
+                }
+            }
+            MitsubaSettings.SaveSettings();
         }
     }
-
-
 
     internal class MainOptionPage : OptionsDialogPage
     {
@@ -66,10 +152,12 @@ namespace MitsubaRender.Settings
             get { return true; }
         }
 
-
         public override void OnCreateParent(IntPtr hwndParent)
         {
-            _control.LoadIntegrators();
+            MitsubaSettings.LoadSettings();
+            _control.LoadPresets();
+            _control.Focus();
+            _control.listViewIntegrators.Focus();
         }
 
         public override void OnSizeParent(int cx, int cy)
@@ -78,17 +166,17 @@ namespace MitsubaRender.Settings
             _control.Width = cy;
         }
 
-        public override bool OnApply()
-        {
-            _control.SaveIntegrators();
-            return base.OnApply();
-        }
+        //public override bool OnApply()
+        //{
+        //    _control.SavePresets();
+        //    return base.OnApply();
+        //}
 
-        public override void OnDefaults()
-        {
-            _control.SetDefaults();
-            base.OnDefaults();
-        }
+        //public override void OnDefaults()
+        //{
+        //    _control.SetDefaults();
+        //    base.OnDefaults();
+        //}
     }
 
 }

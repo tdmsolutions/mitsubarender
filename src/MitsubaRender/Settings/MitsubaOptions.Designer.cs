@@ -29,8 +29,10 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewIntegrators = new System.Windows.Forms.ListView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonDeleteIntegrator = new System.Windows.Forms.Button();
+            this.buttonAddIntegrator = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,27 +45,53 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Mitsuba";
             // 
-            // listView1
+            // listViewIntegrators
             // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView1.Location = new System.Drawing.Point(6, 16);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(511, 326);
-            this.listView1.TabIndex = 1;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listViewIntegrators.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewIntegrators.HideSelection = false;
+            this.listViewIntegrators.LabelWrap = false;
+            this.listViewIntegrators.Location = new System.Drawing.Point(6, 16);
+            this.listViewIntegrators.Name = "listViewIntegrators";
+            this.listViewIntegrators.Size = new System.Drawing.Size(511, 326);
+            this.listViewIntegrators.TabIndex = 1;
+            this.listViewIntegrators.UseCompatibleStateImageBehavior = false;
+            this.listViewIntegrators.View = System.Windows.Forms.View.Details;
+            this.listViewIntegrators.SelectedIndexChanged += new System.EventHandler(this.ListViewIntegratorsSelectedIndexChanged);
+            this.listViewIntegrators.DoubleClick += new System.EventHandler(this.ListViewIntegratorsDoubleClick);
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.listView1);
+            this.groupBox1.Controls.Add(this.buttonDeleteIntegrator);
+            this.groupBox1.Controls.Add(this.buttonAddIntegrator);
+            this.groupBox1.Controls.Add(this.listViewIntegrators);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(523, 375);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Integrators";
+            // 
+            // buttonDeleteIntegrator
+            // 
+            this.buttonDeleteIntegrator.Location = new System.Drawing.Point(36, 346);
+            this.buttonDeleteIntegrator.Name = "buttonDeleteIntegrator";
+            this.buttonDeleteIntegrator.Size = new System.Drawing.Size(23, 23);
+            this.buttonDeleteIntegrator.TabIndex = 3;
+            this.buttonDeleteIntegrator.Text = "-";
+            this.buttonDeleteIntegrator.UseVisualStyleBackColor = true;
+            this.buttonDeleteIntegrator.Click += new System.EventHandler(this.ButtonDeleteIntegratorClick);
+            // 
+            // buttonAddIntegrator
+            // 
+            this.buttonAddIntegrator.Location = new System.Drawing.Point(7, 346);
+            this.buttonAddIntegrator.Name = "buttonAddIntegrator";
+            this.buttonAddIntegrator.Size = new System.Drawing.Size(23, 23);
+            this.buttonAddIntegrator.TabIndex = 2;
+            this.buttonAddIntegrator.Text = "+";
+            this.buttonAddIntegrator.UseVisualStyleBackColor = true;
+            this.buttonAddIntegrator.Click += new System.EventHandler(this.ButtonNewPresetClick);
             // 
             // MitsubaOptionsControl
             // 
@@ -83,7 +111,9 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button buttonDeleteIntegrator;
+        private System.Windows.Forms.Button buttonAddIntegrator;
+        internal System.Windows.Forms.ListView listViewIntegrators;
     }
 }
