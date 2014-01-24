@@ -13,6 +13,7 @@
 // 
 // Copyright 2014 TDM Solutions SL
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -21,6 +22,7 @@ using MitsubaRender.Emitters;
 using MitsubaRender.Materials;
 using Rhino;
 using Rhino.DocObjects;
+using Rhino.Geometry;
 using Rhino.Render;
 
 namespace MitsubaRender.Exporter
@@ -105,22 +107,23 @@ namespace MitsubaRender.Exporter
             var sceneFile = Path.Combine(BasePath, FileName);
             try
             {
+                // If there are ground plane, export it
+                CreateGround();
+
                 //_mitsubaXml.CreateIntegratorXml();
                 ExportAllMaterials();
 
-                //ExportAllLights();
-                /* Export all instance defitions and references */
-                //ExportAllInstaceDefReference(doc, docRoot);
                 /* Export the remaining geometry */
                 ExportGeometry();
+
                 /* Create a sensor for the current view */
                 _mitsubaXml.ExportSensor();
-                /* Export current environment */
 
-                //TODO environment
+                /* Export current environment */
                 ExportEmitters();
 
                 ExportIntegrator();
+
                 //ExportSampler();
                 //if (RhinoDoc.ActiveDoc.RenderEnvironments.Count > 0) ExportEnvironment(doc, docRoot);
                 //else
@@ -138,6 +141,21 @@ namespace MitsubaRender.Exporter
                 RhinoApp.WriteLine("Export is done (took " + stopwatch.ElapsedMilliseconds + " ms)");
             }
             return sceneFile;
+        }
+
+        /// <summary>
+        /// This method checks if there are Ground Plane enabled and reproduces it in Mitsuba.
+        /// </summary>
+        private void CreateGround()
+        {
+            var groundPlane = RhinoDoc.ActiveDoc.GroundPlane;
+            if (groundPlane.Enabled)
+            {
+                var id = RhinoDoc.ActiveDoc.GroundPlane.MaterialInstanceId;
+                var material = RenderContent.FromId(RhinoDoc.ActiveDoc, id);
+                var mitsubaMaterial = material as MitsubaMaterial;
+                _mitsubaXml.CreateGround(mitsubaMaterial, groundPlane.Altitude);
+            }
         }
 
         #endregion
@@ -244,15 +262,21 @@ namespace MitsubaRender.Exporter
             {
                 //HDR environment
                 var texture = RenderEnvironment.CurrentEnvironment.FindChild("texture");
+
+                //The environment transform
+                var env = RhinoDoc.ActiveDoc.RenderEnvironments[0];
+                var envSim = new SimulatedEnvironment();
+                env.SimulateEnvironment(ref envSim, true);
+                //var rot = envSim.BackgroundImage.Rotation;
+                //var tran = envSim.BackgroundImage.LocalMappingTransform;
+                //var xxx = Rhino.Geometry.Transform.Rotation()
+                //MitsubaXml._toWorldTransform = new Rhino.Geometry.
+                MitsubaXml._toWorldTransform = Rhino.Geometry.Transform.Rotation(Math.PI/2, Vector3d.XAxis, Point3d.Origin);
                 if (texture != null)
                 {
                     var env_file = texture.Fields.GetField("filename").ValueAsObject();
                     _mitsubaXml.CreateEnvironmentEmitterXml(env_file.ToString());
                 }
-
-                //var env = RhinoDoc.ActiveDoc.RenderEnvironments[0];
-                //SimulatedEnvironment envSim = new SimulatedEnvironment();
-                //env.SimulateEnvironment(ref envSim, true);
             }
 
             //Lights

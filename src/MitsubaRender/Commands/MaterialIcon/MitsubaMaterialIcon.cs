@@ -1,4 +1,19 @@
-﻿using System.Diagnostics;
+﻿// This file is part of MitsubaRenderPlugin project.
+//  
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3 of the License, or (at your
+// option) any later version. This program is distributed in the hope that
+// it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+// warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details. 
+// 
+// You should have received a copy of the GNU General Public License
+// along with MitsubaRenderPlugin.  If not, see <http://www.gnu.org/licenses/>.
+// 
+// Copyright 2014 TDM Solutions SL
+
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -42,24 +57,20 @@ namespace MitsubaRender.Commands.MaterialIcon
             if (RhinoDoc.ActiveDoc.RenderMaterials.Count < 1)
             {
                 MessageBox.Show(@"Please, apply at least one material.", @"Mitsuba Render", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                                MessageBoxIcon.Error);
                 return Result.Failure;
             }
 
             RenderMaterial renderMaterial = null;
-            if (RhinoDoc.ActiveDoc.RenderMaterials.Count == 1)
-            {
-                renderMaterial = RhinoDoc.ActiveDoc.RenderMaterials[0];
-            }
+            if (RhinoDoc.ActiveDoc.RenderMaterials.Count == 1) renderMaterial = RhinoDoc.ActiveDoc.RenderMaterials[0];
             else
             {
                 var materialName = RhinoDoc.ActiveDoc.RenderMaterials.Select(material => material.Name).ToList();
 
-                object userSelectedMaterial = Dialogs.ShowComboListBox("Materials", "Select one material", materialName);
-                foreach (RenderMaterial material in RhinoDoc.ActiveDoc.RenderMaterials.Where(material => material.Name == userSelectedMaterial.ToString()))
-                {
-                    renderMaterial = material;
-                }
+                var userSelectedMaterial = Dialogs.ShowComboListBox("Materials", "Select one material", materialName);
+                foreach (var material in RhinoDoc.ActiveDoc.RenderMaterials
+                    .Where(material => material.Name == userSelectedMaterial.ToString())) 
+                            renderMaterial = material;
             }
 
             if (renderMaterial == null) return Result.Failure;
@@ -68,36 +79,31 @@ namespace MitsubaRender.Commands.MaterialIcon
             var mitsubaMaterial = renderMaterial as MitsubaMaterial;
 
             // Create the material XML
-            if (mitsubaMaterial != null)
-            {
-                materialXml = MitsubaXml.CreateMaterialXml(mitsubaMaterial);
-            }
+            if (mitsubaMaterial != null) materialXml = MitsubaXml.CreateMaterialXml(mitsubaMaterial);
             else
             {
                 MessageBox.Show(@"Please, select a Mitsuba material", @"Mitsuba Render", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                                MessageBoxIcon.Error);
                 return Result.Failure;
             }
 
             // Create the files in a temp folder
-            string tmpFolder = Path.Combine(Path.GetTempPath(), "Mitsuba");
+            var tmpFolder = Path.Combine(Path.GetTempPath(), "Mitsuba");
             if (!Directory.Exists(tmpFolder)) Directory.CreateDirectory(tmpFolder);
 
             // Copy model
-            string modelFileName = Path.Combine(tmpFolder, "matpreview.serialized");
+            var modelFileName = Path.Combine(tmpFolder, "matpreview.serialized");
             File.WriteAllBytes(modelFileName, Resources.matpreview);
 
             // Copy HDRI
-            string envFileName = Path.Combine(tmpFolder, "envmap.exr");
+            var envFileName = Path.Combine(tmpFolder, "envmap.exr");
             File.WriteAllBytes(envFileName, Resources.envmap);
 
-
             // Copy the project
-            string projectFileName = Path.Combine(tmpFolder, "mitsubaproject.xml");
-            string project = Resources.mitsubaproject;
+            var projectFileName = Path.Combine(tmpFolder, "mitsubaproject.xml");
+            var project = Resources.mitsubaproject;
             project = project.Replace("[MATERIAL]", materialXml.OuterXml);
             File.WriteAllText(projectFileName, project);
-
 
             var proc = new Process
             {

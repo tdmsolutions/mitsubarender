@@ -233,6 +233,30 @@ namespace MitsubaRender.Exporter
             if (result != null) AddToXmlRoot(result);
         }
 
+        /// <summary>
+        /// This method creates a ground in the mitsuba XML, based on the Rhino GroundPlane.
+        /// </summary>
+        public void CreateGround(MitsubaMaterial material, double altitude)
+        {
+            var element = _document.CreateElement("shape");
+            element.SetAttribute("type", "rectangle");
+            var transform = AddElement("transform", "toWorld");
+            transform.AppendChild(AddElement("scale", null,
+                new Point3d(1000, 1000, (altitude == 0) ? 0.1D : altitude)));
+            element.AppendChild(transform);
+
+            if (material != null)
+            {
+                var result = CreateMaterialXml(material);
+                if (result != null) element.AppendChild(result);
+            }
+            
+            AddToXmlRoot(element);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void CreateSamplerXml()
         {
             XmlElement result;
@@ -277,6 +301,12 @@ namespace MitsubaRender.Exporter
             if (result != null) AddToXmlRoot(result);
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="material"></param>
+        /// <returns></returns>
         public static XmlElement CreateMaterialXml(MitsubaMaterial material)
         {
             XmlElement result = null;
@@ -314,24 +344,6 @@ namespace MitsubaRender.Exporter
         {
             if (!isDuplicated)
             {
-                //var materialType = material.GetType();
-                //if (materialType == typeof (SmoothDiffuseMaterial)) 
-                //    result = CreateMaterial.SmoothDiffuseMaterial((SmoothDiffuseMaterial) material);
-                //else if (materialType == typeof (RoughConductorMaterial)) 
-                //    result = CreateMaterial.RoughConductorMaterial((RoughConductorMaterial) material);
-                //else if (materialType == typeof (SmoothDielectricMaterial)) 
-                //    result = CreateMaterial.SmoothDielectricMaterial((SmoothDielectricMaterial) material);
-                //else if (materialType == typeof (SmoothConductorMaterial)) 
-                //    result = CreateMaterial.SmoothConductorMaterial((SmoothConductorMaterial) material);
-                //else if (materialType == typeof (RoughDiffuseMaterial)) 
-                //    result = CreateMaterial.RoughDiffuseMaterial((RoughDiffuseMaterial) material);
-                //else if (materialType == typeof (RoughDielectricMaterial))
-                //    result = CreateMaterial.RoughDielectricMaterial((RoughDielectricMaterial) material);
-                //else if (materialType == typeof (SmoothPlasticMaterial))
-                //    result = CreateMaterial.SmoothPlasticMaterial((SmoothPlasticMaterial) material);
-                //else if (materialType == typeof (RoughPlasticMaterial))
-                //    result = CreateMaterial.RoughPlasticMaterial((RoughPlasticMaterial) material);
-
                 var result = CreateMaterialXml(material);
                 if (result != null) AddToXmlRoot(result);
             }
@@ -372,7 +384,7 @@ namespace MitsubaRender.Exporter
         public static XmlElement AddElement(string tag, string name, Point3d point)
         {
             var element = _document.CreateElement(tag);
-            element.SetAttribute("name", name);
+            if (name != null) element.SetAttribute("name", name);
             element.SetAttribute("x", point.X + "");
             element.SetAttribute("y", point.Y + "");
             element.SetAttribute("z", point.Z + "");
@@ -394,6 +406,12 @@ namespace MitsubaRender.Exporter
             return element;
         }
 
+
+        /************************************************************/
+        public static Transform _toWorldTransform;
+        /************************************************************/
+
+
         /// <summary>
         ///   Export an a perspective or orthographic sensor
         /// </summary>
@@ -404,8 +422,7 @@ namespace MitsubaRender.Exporter
             var perspective = view.IsPerspectiveProjection;
             var orthographic = view.IsParallelProjection;
 
-            if (!perspective &&
-                !orthographic)
+            if (!perspective && !orthographic)
             {
                 RhinoApp.WriteLine("Warning: camera type not supported -- ignoring.");
                 return false;
@@ -415,9 +432,13 @@ namespace MitsubaRender.Exporter
             view.GetFrustum(out left, out right, out bottom, out top, out near, out far);
             var sensorElement = _document.CreateElement("sensor");
             sensorElement.SetAttribute("type", perspective ? "perspective" : "orthographic");
+
             var toWorld = view.GetTransform(CoordinateSystem.Camera, CoordinateSystem.World);
             toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(0, 0, -1)));
             toWorld = toWorld * Transform.Mirror(new Plane(new Point3d(0, 0, 0), new Vector3d(-1, 0, 0)));
+
+            //Me guardo la cámara para aplicarle dicha transformacion al env.
+
             var toWorldElement = MakeProperty("toWorld", toWorld);
 
             if (perspective)
@@ -508,7 +529,7 @@ namespace MitsubaRender.Exporter
         ///   will be chosen based on the value's type.
         /// </param>
         /// <returns>The created XML element</returns>
-        public XmlElement MakeProperty(string name, object value)
+        public static XmlElement MakeProperty(string name, object value)
         {
             var type = value.GetType();
             string elementType;
@@ -624,12 +645,12 @@ namespace MitsubaRender.Exporter
                     var color = type.GetColorHex();
                     if (color != null)
                     {
-                        if (color != "#000000") AddElement("srgb", name, color);
+                        if (color != "#000000") element.AppendChild(AddElement("srgb", name, color));
                     }
                     else
                     {
                         var value = (float)Convert.ToDouble(type.FirstParameter);
-                        if (value > 0) AddElement("float", name, value + "");
+                        if (value > 0) element.AppendChild(AddElement("float", name, value + ""));
                     }
                 }
             }
@@ -822,6 +843,7 @@ namespace MitsubaRender.Exporter
                 element.SetAttribute("type", "envmap");
                 element.SetAttribute("id", "envmaphdr");
                 element.AppendChild(AddElement("string", "filename", copied));
+                element.AppendChild(MakeProperty("toWorld", _toWorldTransform));
 
                 //TODO posible transformation ??
                 //element.AppendChild(AddElement("float", "scale", emitter.Scale + ""));
