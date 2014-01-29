@@ -12,8 +12,8 @@ using Rhino.PlugIns;
 [assembly: PlugInDescription(DescriptionType.Phone, "+34 937547774")]
 [assembly: PlugInDescription(DescriptionType.Fax, "+34 937525215")]
 [assembly: PlugInDescription(DescriptionType.Organization, "TDM Solutions SL")]
-[assembly: PlugInDescription(DescriptionType.UpdateUrl, "http://tdmsolutions.github.io/mitsubarender/")]
-[assembly: PlugInDescription(DescriptionType.WebSite, "http://tdmsolutions.github.io/mitsubarender/")]
+[assembly: PlugInDescription(DescriptionType.UpdateUrl, "http://v5.rhino3d.com/group/mitsuba-renderer")]
+[assembly: PlugInDescription(DescriptionType.WebSite, "http://v5.rhino3d.com/group/mitsuba-renderer")]
 
 
 // General Information about an assembly is controlled through the following 
