@@ -2,3 +2,5 @@
 /src/*.suo
 /src/MitsubaRender/obj
 *.suo
+
+/jenkins
