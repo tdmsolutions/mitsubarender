@@ -685,11 +685,20 @@ namespace MitsubaRender.Exporter
 				var element = _document.CreateElement("bsdf");
 				element.SetAttribute("type", "roughconductor");
 				element.SetAttribute("id", material.GetMaterialId());
+
+				if (string.IsNullOrEmpty(material.Distribution))
+					material.Distribution = "beckmann"; //Default
+
 				element.AppendChild(AddElement("string", "distribution", material.Distribution));
 				MakeMitsubaType(ref element, "alpha", material.Alpha);
 				MakeMitsubaType(ref element, "alphaU", material.AlphaU);
 				MakeMitsubaType(ref element, "alphaV", material.AlphaV);
+
+				if (string.IsNullOrEmpty(material.Material))
+					material.Material = "Cu"; //Default
+
 				element.AppendChild(AddElement("string", "material", material.Material));
+
 				var color = MitsubaMaterial.GetColorHex(material.Eta);
 
 				if (color != "#000000") element.AppendChild(AddElement("srgb", "eta", color));
@@ -731,6 +740,10 @@ namespace MitsubaRender.Exporter
 				var element = _document.CreateElement("bsdf");
 				element.SetAttribute("type", "roughdielectric");
 				element.SetAttribute("id", material.GetMaterialId());
+
+				if (string.IsNullOrEmpty(material.Distribution))
+					material.Distribution = "beckmann"; //Default
+
 				element.AppendChild(AddElement("string", "distribution", material.Distribution));
 				MakeMitsubaType(ref element, "alpha", material.Alpha);
 				MakeMitsubaType(ref element, "alphaU", material.AlphaU);
@@ -775,7 +788,12 @@ namespace MitsubaRender.Exporter
 				var element = _document.CreateElement("bsdf");
 				element.SetAttribute("type", "roughplastic");
 				element.SetAttribute("id", material.GetMaterialId());
+
+				if (string.IsNullOrEmpty(material.Distribution))
+					material.Distribution = "beckmann"; //Default
+
 				element.AppendChild(AddElement("string", "distribution", material.Distribution));
+
 				MakeMitsubaType(ref element, "alpha", material.Alpha);
 				element.AppendChild(AddElement("string", "intIOR", material.IntIOR.SecondParameter + ""));
 				element.AppendChild(AddElement("string", "extIOR", material.ExtIOR.SecondParameter + ""));
@@ -799,9 +817,11 @@ namespace MitsubaRender.Exporter
 				element.SetAttribute("type", "conductor");
 				element.SetAttribute("id", material.GetMaterialId());
 
-				if (material.Material == null) material.Material = "";
+				if (string.IsNullOrEmpty(material.Material))
+					material.Material = "Cu"; //Default
 
 				element.AppendChild(AddElement("string", "material", material.Material));
+
 				var color = MitsubaMaterial.GetColorHex(material.Eta);
 
 				if (color != "#000000") element.AppendChild(AddElement("srgb", "eta", color));
