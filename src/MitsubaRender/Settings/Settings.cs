@@ -16,7 +16,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using MitsubaRender.Integrators;
 using MitsubaRender.RenderSettings;
 
 namespace MitsubaRender.Settings
@@ -182,24 +181,24 @@ namespace MitsubaRender.Settings
 							break;
 
 						case "DefaultRenderSettingsPreset": {
-							if (!String.IsNullOrEmpty(value)) {
-								DefaultRenderSettingsPresetName = value;
-								var preset = LibraryPresets.GetPreset(value);
+								if (!String.IsNullOrEmpty(value)) {
+									DefaultRenderSettingsPresetName = value;
+									var preset = LibraryPresets.GetPreset(value);
 
-								if (preset != null) {
-									var integrator = LibraryIntegrators.GetIntegrator(preset.IntegratorName);
-									var sampler = LibrarySamplers.GetSampler(preset.SamplerName);
-									var reconstructionFilter = LibraryReconstructionFilters.GetReconstructionFilter(preset.ReconstructionFilterName);
+									if (preset != null) {
+										var integrator = LibraryIntegrators.GetIntegrator(preset.IntegratorName);
+										var sampler = LibrarySamplers.GetSampler(preset.SamplerName);
+										var reconstructionFilter = LibraryReconstructionFilters.GetReconstructionFilter(preset.ReconstructionFilterName);
 
-									if (integrator != null) Integrator = integrator;
+										if (integrator != null) Integrator = integrator;
 
-									if (sampler != null) Sampler = sampler;
+										if (sampler != null) Sampler = sampler;
 
-									if (reconstructionFilter != null) ReconstructionFilter = reconstructionFilter;
+										if (reconstructionFilter != null) ReconstructionFilter = reconstructionFilter;
+									}
 								}
 							}
-						}
-						break;
+							break;
 					}
 				}
 

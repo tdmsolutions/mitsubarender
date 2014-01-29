@@ -65,8 +65,6 @@ namespace MitsubaRender
 		/// <returns>The result of the command.</returns>
 		protected override Result Render(RhinoDoc doc, RunMode mode, bool fastPreview)
 		{
-			//TODO: Rhino doc ...
-			//TODO: Crear xml(mitsuba) de todo el documento
 			var basePath = MitsubaSettings.WorkingDirectory;
 			var name = Path.GetFileNameWithoutExtension(String.IsNullOrEmpty(RhinoDoc.ActiveDoc.Path)
 			           ? Path.GetTempFileName()
@@ -79,18 +77,27 @@ namespace MitsubaRender
 			var scene = new MitsubaScene(basePath, filename);
 			var sceneFile = scene.ExportSceneFile();
 
-			//TODO: Añadirlo a un archivo temporal
-			//TODO:llamar a mitsuba con el xml como argumento
-			var proc = new Process {
-				StartInfo =
-				{
-					FileName = MitsubaSettings.MitsubaPath, Arguments = sceneFile, WorkingDirectory = basePath
-				}
-			};
-
-			proc.Start();
+			ExecuteMitsuba(sceneFile, basePath);
 
 			return Result.Success;
+		}
+
+		/// <summary>
+		/// This method calls the Mitsuba executable.
+		/// </summary>
+		/// <param name="sceneFile"></param>
+		/// <param name="basePath"></param>
+		public static void ExecuteMitsuba(string sceneFile, string basePath)
+		{
+			using (var process = new Process()) {
+				process.StartInfo = new ProcessStartInfo() {
+					FileName = MitsubaSettings.MitsubaPath,
+					Arguments = sceneFile,
+					WorkingDirectory = basePath
+				};
+
+				process.Start();
+			}
 		}
 
 		/// <summary>
