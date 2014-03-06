@@ -27,12 +27,20 @@ namespace MitsubaRender.UI
 	[Guid("7230AC25-1955-4fd7-8A45-0BB795244DF7")]
 	public partial class MaterialCombo : UserControl, IUserInterfaceSection
 	{
+		/// <summary>
+		/// Basic event.
+		/// </summary>
 		public event EventHandler OnChange;
 
 		/// <summary>
-		///
+		/// The data of the comboBox.
 		/// </summary>
 		private string[] _data;
+
+		/// <summary>
+		/// The current selected item.
+		/// </summary>
+		private string _selectedItem;
 
 		/// <summary>
 		///
@@ -49,12 +57,26 @@ namespace MitsubaRender.UI
 		}
 
 		/// <summary>
-		///
+		/// The current selected item of the custom comboBox for Rhino.
 		/// </summary>
 		public string SelectedItem
 		{
-			get;
-			set;
+			get {
+				return _selectedItem;
+			}
+
+			set {
+				_selectedItem = value;
+
+				if (!string.IsNullOrEmpty(_selectedItem)) {
+					for (int i = 0; i < _data.Length; i++) {
+						if (_data[i] == _selectedItem) {
+							comboBox.SelectedIndex = i;
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		public MaterialCombo()
@@ -75,7 +97,7 @@ namespace MitsubaRender.UI
 			//throw new NotImplementedException();
 		}
 
-		private void comboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			SelectedItem = comboBox.SelectedItem.ToString();
 

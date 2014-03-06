@@ -20,6 +20,7 @@ using MitsubaRender.Materials.Wrappers;
 using MitsubaRender.UI;
 using Rhino.Display;
 using Rhino.Render;
+using Rhino.Render.Fields;
 
 namespace MitsubaRender.Materials
 {
@@ -34,10 +35,19 @@ namespace MitsubaRender.Materials
 		/// </summary>
 		public static uint _count;
 
+		#region ComboBoxes
+
 		/// <summary>
 		/// This field handles the comboBox for the Material property.
 		/// </summary>
 		private MaterialCombo _materialCombo;
+
+		/// <summary>
+		/// The material Rhino field for its comboBox.
+		/// </summary>
+		private StringField _materialField;
+
+		#endregion
 
 		#region Material Parameters
 
@@ -106,7 +116,6 @@ namespace MitsubaRender.Materials
 		public override string GetMaterialId()
 		{
 			if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__smoothconductor" + _count++;
-
 			return MaterialId;
 		}
 
@@ -124,6 +133,10 @@ namespace MitsubaRender.Materials
 			BindParameterToField(K_FIELD, k_field, ChangeContexts.UI);
 			BindParameterToField(EXT_ETA_SPECTRUM_FIELD, extEtaSpectrum_field, ChangeContexts.UI);
 			BindParameterToField(EXT_ETA_FLOAT_FIELD, extEtaFloat_field, ChangeContexts.UI);
+
+			//The comboBoxes
+			_materialField = Fields.Add(MATERIAL_FIELD, Material);
+			BindParameterToField(MATERIAL_FIELD, _materialField, ChangeContexts.UI);
 		}
 
 		/// <summary>
@@ -135,6 +148,17 @@ namespace MitsubaRender.Materials
 			if (_materialCombo != null) {
 				var myValue = StandardConductorTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
 				Material = myValue;
+			}
+			else {
+				//If we're reading a RMTL file, take the value from this file
+				string material_key;
+				Fields.TryGetValue(MATERIAL_FIELD, out material_key);
+
+				//Set the combobox value
+				string combo_value;
+				StandardConductorTypes.Types.TryGetValue(material_key, out combo_value);
+				if (_materialCombo != null) _materialCombo.SelectedItem = combo_value;
+				Material = combo_value;
 			}
 
 			//ETA
@@ -194,6 +218,9 @@ namespace MitsubaRender.Materials
 			}
 
 			_materialCombo.Data = data;
+
+			//The deafults or current values
+			_materialCombo.SelectedItem = Material ?? _DEFAULT_MATERIAL;
 			_materialCombo.OnChange += Combo_OnChange;
 
 			base.OnAddUserInterfaceSections();
@@ -202,19 +229,22 @@ namespace MitsubaRender.Materials
 		private void Combo_OnChange(object sender, System.EventArgs e)
 		{
 			ReadDataFromUI();
+
+			//The comboBox
+			_materialField.Value = Material;
 		}
 
-		public override string TypeDescription
+		public override string TypeName
 		{
 			get {
 				return "Mitsuba Smooth Conductor material";
 			}
 		}
 
-		public override string TypeName
+		public override string TypeDescription
 		{
 			get {
-				return "This plugin implements a perfectly smooth interface to a conductingmaterial, such as a metal. " +
+				return "This material implements a perfectly smooth interface to a conductingmaterial, such as a metal. " +
 				       "For a similar model that instead describes a rough surface microstructure, take a look at " +
 				       "the separately available roughconductor material.";
 			}

@@ -18,16 +18,23 @@ using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Interfaces;
 using MitsubaRender.Materials.Wrappers;
 using MitsubaRender.UI;
+using Rhino.Render.Fields;
 
 namespace MitsubaRender.Materials
 {
 	/// <summary>
 	/// TODO SmoothDielectricMaterial summary
-	/// TODO this class is NOT using the second parameter (strings) !!
 	/// </summary>
 	[Guid("b7d7e743-edce-429a-a5ce-326cb37a3cc4")]
 	public sealed class SmoothDielectricMaterial : MitsubaMaterial, IDielectric
 	{
+		/// <summary>
+		/// Static count of Smooth Diffuse Materials used to create unique ID's.
+		/// </summary>
+		private static uint _count;
+
+		#region ComboBoxes
+
 		/// <summary>
 		/// This field handles the comboBox for the IntIOR property.
 		/// </summary>
@@ -39,9 +46,16 @@ namespace MitsubaRender.Materials
 		private MaterialCombo _extIORCombo;
 
 		/// <summary>
-		/// Static count of Smooth Diffuse Materials used to create unique ID's.
+		/// The IntIOR Rhino field for its comboBox.
 		/// </summary>
-		private static uint _count;
+		private StringField _intIORField;
+
+		/// <summary>
+		/// The ExtIOR Rhino field for its comboBox.
+		/// </summary>
+		private StringField _extIORField;
+
+		#endregion
 
 		#region Material Parameters
 
@@ -94,7 +108,7 @@ namespace MitsubaRender.Materials
 		public override string TypeDescription
 		{
 			get {
-				return "This plugin models an interface between two dielectric materials having mismatched indices of refraction " +
+				return "This material models an interface between two dielectric materials having mismatched indices of refraction " +
 				       "(for instance, water and air). Exterior and interior IOR values can be specified independently, " +
 				       "where “exterior” refers to the side that contains the surface normal.";
 			}
@@ -107,7 +121,6 @@ namespace MitsubaRender.Materials
 		public override string GetMaterialId()
 		{
 			if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__dielectric" + _count++;
-
 			return MaterialId;
 		}
 
@@ -116,10 +129,11 @@ namespace MitsubaRender.Materials
 		/// </summary>
 		protected override void CreateUserInterface()
 		{
-			//var intIOR_field = Fields.Add(INTIOR_FIELD, IntIOR.FirstParameter, "Interior Index of Refraction");
-			//var extIOR_field = Fields.Add(EXTIOR_FIELD, ExtIOR.FirstParameter, "Exterior Index of Refraction");
-			//BindParameterToField(INTIOR_FIELD, intIOR_field, ChangeContexts.UI);
-			//BindParameterToField(EXTIOR_FIELD, extIOR_field, ChangeContexts.UI);
+			//The comboBoxes
+			_intIORField = Fields.Add(INTIOR_FIELD, IntIOR.SecondParameter);
+			_extIORField = Fields.Add(EXTIOR_FIELD, ExtIOR.SecondParameter);
+			BindParameterToField(INTIOR_FIELD, _intIORField, ChangeContexts.UI);
+			BindParameterToField(EXTIOR_FIELD, _extIORField, ChangeContexts.UI);
 		}
 
 		/// <summary>
@@ -152,13 +166,8 @@ namespace MitsubaRender.Materials
 			}
 
 			_extIORCombo.Data = data;
-
-			//Air for default exterior IOR
-			string default_value;
-
-			if (StandardIORTypes.Types.TryGetValue("air", out default_value))
-				_extIORCombo.SelectedItem = default_value;
-
+			_intIORCombo.SelectedItem = IntIOR.SecondParameter ?? _DEFAULT_INTIOR;
+			_extIORCombo.SelectedItem = ExtIOR.SecondParameter ?? _DEFAULT_EXTIOR;
 			_intIORCombo.OnChange += Combo_OnChange;
 			_extIORCombo.OnChange += Combo_OnChange;
 
@@ -168,6 +177,8 @@ namespace MitsubaRender.Materials
 		private void Combo_OnChange(object sender, System.EventArgs e)
 		{
 			ReadDataFromUI();
+			_intIORField.Value = IntIOR.SecondParameter;
+			_extIORField.Value = ExtIOR.SecondParameter;
 		}
 
 		/// <summary>
@@ -175,28 +186,50 @@ namespace MitsubaRender.Materials
 		/// </summary>
 		protected override void ReadDataFromUI()
 		{
+			//Interior Index of Refraction
 			if (_intIORCombo != null) {
 				var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _intIORCombo.SelectedItem).Key;
 				IntIOR.SecondParameter = myValue;
 			}
+			else {
+				//If we're reading a RMTL file, take the value from this file
+				string intIOR_key;
+				Fields.TryGetValue(INTIOR_FIELD, out intIOR_key);
 
+				//Set the combobox value
+				string combo_value;
+				StandardIORTypes.Types.TryGetValue(intIOR_key, out combo_value);
+				if (_extIORCombo != null) _extIORCombo.SelectedItem = combo_value;
+				IntIOR.SecondParameter = combo_value;
+			}
+
+			//Exterior Index of Refraction
 			if (_extIORCombo != null) {
 				var myValue = StandardIORTypes.Types.FirstOrDefault(x => x.Value == _extIORCombo.SelectedItem).Key;
 				ExtIOR.SecondParameter = myValue;
 			}
+			else {
+				//If we're reading a RMTL file, take the value from this file
+				string extIOR_key;
+				Fields.TryGetValue(EXTIOR_FIELD, out extIOR_key);
 
-			/*
-			//Exterior Index of Refraction
-			float extIOR;
-			Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
-			ExtIOR.FirstParameter = extIOR;
+				//Set the combobox value
+				string combo_value;
+				StandardIORTypes.Types.TryGetValue(extIOR_key, out combo_value);
+				if (_extIORCombo != null) _extIORCombo.SelectedItem = combo_value;
+				ExtIOR.SecondParameter = combo_value;
+			}
 
-			//Interior Index of Refraction
-			float intIOR;
-			if (Fields.TryGetValue(INTIOR_FIELD, out intIOR))
-			    IntIOR.FirstParameter = intIOR;
-			else IntIOR.FirstParameter = -1;
-			*/
+			////Exterior Index of Refraction
+			//float extIOR;
+			//Fields.TryGetValue(EXTIOR_FIELD, out extIOR);
+			//ExtIOR.FirstParameter = extIOR;
+
+			////Interior Index of Refraction
+			//float intIOR;
+			//if (Fields.TryGetValue(INTIOR_FIELD, out intIOR))
+			//    IntIOR.FirstParameter = intIOR;
+			//else IntIOR.FirstParameter = -1;
 		}
 
 		/// <summary>
@@ -208,9 +241,8 @@ namespace MitsubaRender.Materials
 		public override void SimulateMaterial(ref Rhino.DocObjects.Material simulation, bool isForDataOnly)
 		{
 			ReadDataFromUI();
-
-			// TODO que transparencia poner ??
-			if (IntIOR.FirstParameter > 0) simulation.Transparency = 0.5D;
+			//if (IntIOR.FirstParameter > 0) simulation.Transparency = 0.5D;
+			simulation.Transparency = 0.5D;
 		}
 	}
 }

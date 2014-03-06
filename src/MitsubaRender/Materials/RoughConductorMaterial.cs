@@ -13,6 +13,7 @@
 //
 // Copyright 2014 TDM Solutions SL
 
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using MitsubaRender.Materials.Wrappers;
@@ -20,6 +21,7 @@ using MitsubaRender.UI;
 using Rhino.Display;
 using MitsubaRender.Materials.Interfaces;
 using Rhino.Render;
+using Rhino.Render.Fields;
 
 namespace MitsubaRender.Materials
 {
@@ -34,6 +36,8 @@ namespace MitsubaRender.Materials
 		/// </summary>
 		private static int _count;
 
+		#region ComboBoxes
+
 		/// <summary>
 		/// This field handles the comboBox for the Distribution property.
 		/// </summary>
@@ -44,6 +48,17 @@ namespace MitsubaRender.Materials
 		/// </summary>
 		private MaterialCombo _materialCombo;
 
+		/// <summary>
+		/// The distribution Rhino field for its comboBox.
+		/// </summary>
+		private StringField _distributionField;
+
+		/// <summary>
+		/// The material Rhino field for its comboBox.
+		/// </summary>
+		private StringField _materialField;
+
+		#endregion
 
 		#region Material Parameters
 
@@ -160,8 +175,9 @@ namespace MitsubaRender.Materials
 
 			_materialCombo.Data = data;
 
-			if (Material != null)
-				_materialCombo.SelectedItem = Material;
+			//The deafults or current values
+			_materialCombo.SelectedItem = Material ?? _DEFAULT_MATERIAL;
+			_distributionCombo.SelectedItem = Distribution ?? _DEFAULT_DISTRIBUTION;
 
 			//The comboBoxes OnChange
 			_distributionCombo.OnChange += Combo_OnChange;
@@ -170,9 +186,13 @@ namespace MitsubaRender.Materials
 			base.OnAddUserInterfaceSections();
 		}
 
-		private void Combo_OnChange(object sender, System.EventArgs e)
+		private void Combo_OnChange(object sender, EventArgs e)
 		{
 			ReadDataFromUI();
+
+			//The comboBoxes
+			_distributionField.Value = Distribution;
+			_materialField.Value = Material;
 		}
 
 		/// <summary>
@@ -203,7 +223,6 @@ namespace MitsubaRender.Materials
 		public override string GetMaterialId()
 		{
 			if (string.IsNullOrEmpty(MaterialId)) MaterialId = "__roughconductor" + _count++;
-
 			return MaterialId;
 		}
 
@@ -237,6 +256,12 @@ namespace MitsubaRender.Materials
 			BindParameterToField(EXT_ETA_FLOAT_FIELD, extEta_float_field, ChangeContexts.UI);
 			BindParameterToField(EXT_ETA_TEXTURE_FIELD, EXT_ETA_TEXTURE_SLOT,
 			                     extEta_texture_field, ChangeContexts.UI);
+
+			//The comboBoxes
+			_distributionField = Fields.Add(DISTRIBUTION_FIELD, Distribution);
+			_materialField = Fields.Add(MATERIAL_FIELD, Material);
+			BindParameterToField(DISTRIBUTION_FIELD, _distributionField, ChangeContexts.UI);
+			BindParameterToField(MATERIAL_FIELD, _materialField, ChangeContexts.UI);
 		}
 
 		/// <summary>
@@ -249,10 +274,29 @@ namespace MitsubaRender.Materials
 				var myValue = StandardConductorTypes.Types.FirstOrDefault(x => x.Value == _materialCombo.SelectedItem).Key;
 				Material = myValue;
 			}
+			else {
+				//If we're reading a RMTL file, take the value from this file
+				string material_key;
+				Fields.TryGetValue(MATERIAL_FIELD, out material_key);
+
+				//Set the combobox value
+				string combo_value;
+				StandardConductorTypes.Types.TryGetValue(material_key, out combo_value);
+				if (_materialCombo != null) _materialCombo.SelectedItem = combo_value;
+				Material = combo_value;
+			}
 
 			//Distribution
 			if (_distributionCombo != null)
 				Distribution = _distributionCombo.SelectedItem;
+			else {
+				string distribution_key;
+				Fields.TryGetValue(DISTRIBUTION_FIELD, out distribution_key);
+
+				//Setting the _distributionCombo value
+				if (_distributionCombo != null) _distributionCombo.SelectedItem = distribution_key;
+				Distribution = distribution_key;
+			}
 
 			//Alpha
 			bool hasTexture;
@@ -400,7 +444,5 @@ namespace MitsubaRender.Materials
 			ReadDataFromUI();
 			//TODO simulate RoughConductorMaterial
 		}
-
-
 	}
 }
