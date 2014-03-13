@@ -31,6 +31,7 @@ namespace MitsubaRender.Tools
 		public static string CopyTextureToScenePath(string file)
 		{
 			if (file == null) return null;
+		    if (!File.Exists(file)) return null;
 
 			//Copy the texture if the file does not exists
 			var tempRhinoName = Path.GetFileName(file);

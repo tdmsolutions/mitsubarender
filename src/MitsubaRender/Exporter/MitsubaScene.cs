@@ -36,7 +36,7 @@ namespace MitsubaRender.Exporter
 		/// <summary>
 		///   This constant it's used to put the Mitsuba version in its XML.
 		/// </summary>
-		public const string MITSUBA_SCENE_VERSION = "0.4.0";
+		public const string MITSUBA_SCENE_VERSION = "0.5.0";
 
 		/// <summary>
 		/// </summary>
